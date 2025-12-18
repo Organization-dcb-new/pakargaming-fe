@@ -3,9 +3,8 @@
 import { Link } from '../../i18n/routing'
 import { Search, Filter, SlidersHorizontal, Star } from 'lucide-react'
 import { useState } from 'react'
-import { gamesData } from '../data/gamesData'
 import { useTranslations } from 'next-intl'
-import { useGetCategory } from '../hooks/Category'
+import { gamesData } from '../../data/gamesData'
 
 export function Games() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -14,8 +13,6 @@ export function Games() {
   const t = useTranslations('Games')
   const categories = ['All', 'Action', 'RPG', 'Adventure', 'Strategy', 'Racing']
   
-  // Get Category Hooks
-  const { data } = useGetCategory()
 
   const filteredGames = gamesData
     .filter((game) => {

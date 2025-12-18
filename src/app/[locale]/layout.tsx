@@ -5,7 +5,7 @@ import { routing } from '../../i18n/routing'
 import '../globals.css'
 import { Navigation } from '../components/Navigation'
 import { Footer } from '../components/Footer'
-import { CartProvider } from '../context/CartContext'
+import { CartProvider } from '../../context/CartContext'
 import { ThemeProvider } from '../components/ThemeProvider'
 import QueryProvider from '../../providers/query-provider'
 
