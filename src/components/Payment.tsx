@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useCart } from '../../context/CartContext'
+import { useCart } from '../context/CartContext'
 import { CreditCard, Wallet, Smartphone, ShieldCheck, Gamepad2, AlertCircle } from 'lucide-react'
-import { useRouter, Link } from '../../i18n/routing'
+import { useRouter, Link } from '../i18n/routing'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 

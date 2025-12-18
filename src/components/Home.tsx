@@ -1,11 +1,11 @@
 'use client'
 
-import { Link } from '../../i18n/routing'
+import { Link } from '../i18n/routing'
 import { ArrowRight, Star, TrendingUp, Zap } from 'lucide-react'
-import { useCart } from '../../context/CartContext'
+import { useCart } from '../context/CartContext'
 import { toast } from 'sonner'
-import { gamesData } from '../../data/gamesData'
-import { GameItem } from '../../context/CartContext'
+import { gamesData } from '../data/gamesData'
+import { GameItem } from '../context/CartContext'
 import { useTranslations } from 'next-intl'
 
 const featuredGames = gamesData.slice(0, 3)

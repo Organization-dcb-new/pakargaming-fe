@@ -1,9 +1,9 @@
 'use client'
 
-import { Link, usePathname } from '../../i18n/routing'
+import { Link, usePathname } from '../i18n/routing'
 import { ShoppingCart, Menu, X, Gamepad2 } from 'lucide-react'
 import { useState } from 'react'
-import { useCart } from '../../context/CartContext'
+import { useCart } from '../context/CartContext'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { ThemeToggle } from './ThemeToggle'

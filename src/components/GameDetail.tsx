@@ -1,12 +1,12 @@
 'use client'
 
-import { Link, useRouter } from '../../i18n/routing'
+import { Link, useRouter } from '../i18n/routing'
 import { useParams } from 'next/navigation'
 import { Star, Shield, Zap, Monitor, ArrowLeft, Heart, ShoppingCart, Check } from 'lucide-react'
-import { useCart } from '../../context/CartContext'
+import { useCart } from '../context/CartContext'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
-import { gamesData } from '../../data/gamesData'
+import { gamesData } from '../data/gamesData'
 
 export function GameDetail() {
   const params = useParams()

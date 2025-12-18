@@ -1,10 +1,10 @@
 'use client'
 
-import { Link } from '../../i18n/routing'
+import { Link } from '../i18n/routing'
 import { Search, Filter, SlidersHorizontal, Star } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { gamesData } from '../../data/gamesData'
+import { gamesData } from '../data/gamesData'
 
 export function Games() {
   const [searchTerm, setSearchTerm] = useState('')
