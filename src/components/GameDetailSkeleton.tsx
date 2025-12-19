@@ -2,6 +2,7 @@ export const GameDetailSkeleton = () => {
   return (
     <div className="max-w-6xl mx-auto flex flex-row gap-4 p-4 animate-pulse">
       {/* LEFT - Header */}
+      
       <div className="bg-white/10 backdrop-blur-lg flex items-center rounded-3xl px-6 py-5 mb-6 border border-white/20 shadow-xl min-h-[120px] max-h-32 w-full">
         <div className="flex items-center gap-5 w-full">
           {/* Thumbnail */}
@@ -17,7 +18,9 @@ export const GameDetailSkeleton = () => {
             </div>
           </div>
         </div>
+        
       </div>
+      
 
       {/* RIGHT - Forms */}
       <div className="w-full space-y-6">

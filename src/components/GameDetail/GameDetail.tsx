@@ -61,17 +61,20 @@ export function GameDetailComponent() {
 
   return (
     <div className="min-h-screen  bg-gradient-to-br from-background via-purple-50/50 dark:via-purple-900/50 to-background">
-      <div className="max-w-6xl mx-auto flex flex-row gap-4 p-4">
+      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-4 p-4">
         <div>
           {/* Header */}
           <HeaderGameDetail GameDetail={dataGameDetail} />
           {/* Order Summary Navbar - Sticky Bottom */}
-          <OrderSummary
-            activePackage={activePackage}
-            activePayment={activePayment}
-            formatPrice={formatPrice}
-            onSubmit={handleSubmit}
-          />
+
+          <div className="hidden lg:block">
+            <OrderSummary
+              activePackage={activePackage}
+              activePayment={activePayment}
+              formatPrice={formatPrice}
+              onSubmit={handleSubmit}
+            />
+          </div>
         </div>
 
         {/* Input Game */}
@@ -94,6 +97,15 @@ export function GameDetailComponent() {
           />
           {/* Email Input */}
           <EmailInput email={email} setEmail={setEmail} />
+
+          <div className="lg:hidden mt-6">
+            <OrderSummary
+              activePackage={activePackage}
+              activePayment={activePayment}
+              formatPrice={formatPrice}
+              onSubmit={handleSubmit}
+            />
+          </div>
 
           <OrderDetailModal
             open={showModal}
