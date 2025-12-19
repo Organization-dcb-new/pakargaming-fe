@@ -30,6 +30,7 @@ export default function EmailInput({ email, setEmail }: EmailProps) {
 
       <input
         type="email"
+        required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="contoh@email.com"

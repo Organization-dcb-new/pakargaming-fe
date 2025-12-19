@@ -18,7 +18,7 @@ export function Footer() {
   const tNav = useTranslations("Navigation");
 
   return (
-    <footer className="bg-white/80 dark:bg-black/40 backdrop-blur-sm border-t border-purple-200 dark:border-purple-500/20 pt-16 pb-8 mb-10">
+    <footer className="bg-white/80 dark:bg-black/40 backdrop-blur-sm border-t border-purple-200 dark:border-purple-500/20 pt-16 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}

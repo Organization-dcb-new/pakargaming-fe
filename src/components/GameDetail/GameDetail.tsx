@@ -62,8 +62,18 @@ export function GameDetailComponent() {
   return (
     <div className="min-h-screen  bg-gradient-to-br from-background via-purple-50/50 dark:via-purple-900/50 to-background">
       <div className="max-w-6xl mx-auto flex flex-row gap-4 p-4">
-        {/* Header */}
-        <HeaderGameDetail GameDetail={dataGameDetail} />
+        <div>
+          {/* Header */}
+          <HeaderGameDetail GameDetail={dataGameDetail} />
+          {/* Order Summary Navbar - Sticky Bottom */}
+          <OrderSummary
+            activePackage={activePackage}
+            activePayment={activePayment}
+            formatPrice={formatPrice}
+            onSubmit={handleSubmit}
+          />
+        </div>
+
         {/* Input Game */}
         <div>
           {/* Field Input Game */}
@@ -84,14 +94,6 @@ export function GameDetailComponent() {
           />
           {/* Email Input */}
           <EmailInput email={email} setEmail={setEmail} />
-
-          {/* Order Summary Navbar - Sticky Bottom */}
-          <OrderSummary
-            activePackage={activePackage}
-            activePayment={activePayment}
-            formatPrice={formatPrice}
-            onSubmit={handleSubmit}
-          />
 
           <OrderDetailModal
             open={showModal}

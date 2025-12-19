@@ -21,67 +21,62 @@ export default function OrderSummary({
   return (
     <div
       className="
-    fixed bottom-0 left-0 right-0 z-50
-    bg-white/80 dark:bg-white/10
-    backdrop-blur-lg
-    border-t border-gray-200 dark:border-white/20
-    shadow-2xl
-  "
+        bg-white/80 dark:bg-white/10
+        backdrop-blur-lg
+        rounded-3xl
+        p-5
+        border border-gray-200 dark:border-white/20
+        shadow-xl
+        mt-6
+      "
     >
-      <div className="max-w-6xl mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-4">
-          {/* Order Info */}
-          <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="hidden sm:flex items-center gap-2">
-              <span className="text-gray-500 dark:text-purple-200 text-xs whitespace-nowrap">
-                Paket:
-              </span>
-              <span className="text-gray-900 dark:text-white font-medium text-xs truncate">
-                {activePackage?.name || '-'}
-              </span>
-            </div>
+      {/* Header */}
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Ringkasan Pesanan : </h2>
 
-            <div className="hidden md:flex items-center gap-2">
-              <span className="text-gray-500 dark:text-purple-200 text-xs whitespace-nowrap">
-                Pembayaran:
-              </span>
-              <span className="text-gray-900 dark:text-white font-medium text-xs truncate">
-                {activePayment?.full_name || '-'}
-              </span>
-            </div>
-          </div>
+      {/* Info */}
+      <div className="space-y-3 text-sm mb-4">
+        <div className="flex justify-between">
+          <span className="text-gray-500 dark:text-purple-200">Paket</span>
+          <span className="font-medium text-gray-900 dark:text-white text-right">
+            {activePackage?.name || '-'}
+          </span>
+        </div>
 
-          {/* Total & Button */}
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-gray-500 dark:text-purple-200 text-[10px]">Total</p>
-              <p className="text-gray-900 dark:text-white font-bold text-sm">
-                {activePackage ? `Rp. ${formatPrice(activePackage.selling_price)}` : '-'}
-              </p>
-            </div>
+        <div className="flex justify-between">
+          <span className="text-gray-500 dark:text-purple-200">Pembayaran</span>
+          <span className="font-medium text-gray-900 dark:text-white text-right">
+            {activePayment?.full_name || '-'}
+          </span>
+        </div>
 
-            <button
-              onClick={onSubmit}
-              className="
-            cursor-pointer
-            bg-gradient-to-r from-pink-500 to-purple-600
-            hover:from-pink-600 hover:to-purple-700
-            text-white font-semibold
-            py-2 px-4 sm:px-6
-            rounded-full
-            transition-all duration-300
-            shadow-md hover:shadow-lg hover:scale-[1.02]
-            flex items-center justify-center gap-2
-            text-xs sm:text-sm whitespace-nowrap
-          "
-            >
-              <ShoppingCart className="w-4 h-4" />
-              <span className="hidden sm:inline">Beli Sekarang</span>
-              <span className="sm:hidden">Beli</span>
-            </button>
-          </div>
+        <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-white/10">
+          <span className="font-semibold">Total</span>
+          <span className="font-bold text-purple-600">
+            {activePackage ? `Rp. ${formatPrice(activePackage.selling_price)}` : '-'}
+          </span>
         </div>
       </div>
+
+      {/* Action */}
+      <button
+        onClick={onSubmit}
+        className="
+          w-full
+          cursor-pointer
+          bg-gradient-to-r from-pink-500 to-purple-600
+          hover:from-pink-600 hover:to-purple-700
+          text-white font-semibold
+          py-3
+          rounded-full
+          transition-all duration-300
+          shadow-md hover:shadow-lg hover:scale-[1.02]
+          flex items-center justify-center gap-2
+          text-sm
+        "
+      >
+        <ShoppingCart className="w-4 h-4" />
+        Beli Sekarang
+      </button>
     </div>
   )
 }
