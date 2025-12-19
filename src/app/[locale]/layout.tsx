@@ -8,6 +8,8 @@ import { Footer } from '../../components/Footer'
 import { ThemeProvider } from '../../components/ThemeProvider'
 import QueryProvider from '../../providers/query-provider'
 
+import { Toaster } from 'sonner'
+
 export const metadata = {
   title: 'Aura Game',
   description: 'Platform terpercaya untuk membeli game digital',
@@ -44,7 +46,10 @@ export default async function RootLayout({
             <NextIntlClientProvider messages={messages}>
               <div className="min-h-screen bg-gradient-to-br from-background via-purple-50/50 dark:via-purple-900/50 to-background">
                 <Navigation />
-                <main>{children}</main>
+                <main>
+                  {children}
+                  <Toaster position="top-center" richColors closeButton expand />
+                </main>
                 <Footer />
               </div>
             </NextIntlClientProvider>
