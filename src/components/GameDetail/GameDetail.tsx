@@ -19,10 +19,7 @@ import { useForm } from 'react-hook-form'
 import { OrderFormValues, orderSchema } from '../../schemas/order_schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCreateTransaction } from '../../hooks/useTransaction'
-
-const generateOrderId = () => {
-  return `TRX-${Date.now()}`
-}
+import { AlertCircle } from 'lucide-react'
 
 export function GameDetailComponent() {
   // Routing
@@ -39,6 +36,7 @@ export function GameDetailComponent() {
   // Handle Form
   const orderForm = useForm<OrderFormValues>({
     resolver: zodResolver(orderSchema),
+
     defaultValues: {
       email: '',
       game_data: {},
@@ -55,7 +53,11 @@ export function GameDetailComponent() {
     },
   })
 
-  const { handleSubmit, setValue } = orderForm
+  const {
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = orderForm
 
   const [showModal, setShowModal] = useState<boolean>(false)
   const [selectedPackage, setSelectedPackage] = useState<Price | null>(null)
@@ -64,13 +66,7 @@ export function GameDetailComponent() {
   const activePackage = selectedPackage ?? null
   const activePayment = selectedPayment ?? null
 
-  const onSubmit = (data: OrderFormValues) => {
-    if (!activePackage || !activePayment) {
-      toast.error('Pilih paket dan metode pembayaran')
-      return
-    }
-    console.log(data)
-
+  const onSubmit = () => {
     setShowModal(true)
   }
 
@@ -83,14 +79,15 @@ export function GameDetailComponent() {
       setShowModal(false)
 
       router.push(`/${locale}/transaction/${res.data.id}`)
-    } catch (err) {
-      // error sudah di-handle di hook
-    }
+    } catch (err) {}
   }
 
   if (isLoadingGameDetail && isLoadingPaymentMethods) {
     return <GameDetailSkeleton />
   }
+
+  const packageError = errors.package?.product_id?.message
+  const paymentError = errors.payment?.payment_method_id?.message
 
   return (
     <div className="min-h-screen  bg-gradient-to-br from-background via-purple-50/50 dark:via-purple-900/50 to-background">
@@ -120,28 +117,32 @@ export function GameDetailComponent() {
           />
 
           {/* Package Selection */}
+
           <PackageGame
+            packageError={packageError}
             PackageGame={dataGameDetail}
             activePackage={activePackage}
             setSelectedPackage={(pkg) => {
               setSelectedPackage(pkg)
-              setValue('package.product_id', pkg.id)
+              setValue('package.product_id', pkg.id, { shouldValidate: true })
               setValue('package.product_name', pkg.name)
               setValue('package.product_sku', pkg.sku)
-              setValue('amount', pkg.selling_price)
+              setValue('amount', pkg.selling_price, { shouldValidate: true })
             }}
           />
 
           {/* Payment Method */}
           <PaymentMethodComponent
+            paymentError={paymentError}
             PaymentMethod={dataPaymentMethods}
             activePayment={activePayment}
             setSelectedPayment={(pm) => {
               setSelectedPayment(pm)
-              setValue('payment.payment_method_id', pm.id)
+              setValue('payment.payment_method_id', pm.id, { shouldValidate: true })
               setValue('payment.payment_channel', pm.name)
             }}
           />
+
           {/* Email Input */}
           <EmailInput
             register={orderForm.register}

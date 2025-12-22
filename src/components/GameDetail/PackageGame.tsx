@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle2 } from 'lucide-react'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import { GetGameResponse, Price } from '../../types/Game'
 import Image from 'next/image'
 import { formatPrice } from '../../utils/format_price'
@@ -9,11 +9,13 @@ interface PackageGameProps {
   PackageGame: GetGameResponse
   activePackage: Price | null
   setSelectedPackage: (pkg: Price) => void
+  packageError: string
 }
 export default function PackageGame({
   PackageGame,
   activePackage,
   setSelectedPackage,
+  packageError,
 }: PackageGameProps) {
   return (
     <div className="relative">
@@ -98,6 +100,12 @@ export default function PackageGame({
             )
           })}
         </div>
+        {packageError && (
+          <div className="mt-2 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 px-3 py-2 text-xs text-red-600 dark:text-red-400">
+            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>{packageError}</span>
+          </div>
+        )}
       </div>
     </div>
   )

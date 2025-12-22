@@ -5,12 +5,12 @@ export const orderSchema = z.object({
 
   game_data: z.record(z.string(), z.string().min(1, 'Field wajib diisi')),
   package: z.object({
-    product_id: z.uuid(),
+    product_id: z.uuid('Pilih Top Up'),
     product_name: z.string().min(1),
     product_sku: z.string().min(1),
   }),
   payment: z.object({
-    payment_method_id: z.uuid(),
+    payment_method_id: z.uuid('Pilih Pembayaran'),
     payment_channel: z.string().min(1),
   }),
   amount: z.int(),

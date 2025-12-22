@@ -1,6 +1,6 @@
 'use client'
 
-import { Info } from 'lucide-react'
+import { AlertCircle, Info } from 'lucide-react'
 import { Controller, Control, FieldErrors } from 'react-hook-form'
 import { GetGameResponse } from '../../types/Game'
 import { OrderFormValues } from '../../schemas/order_schema'
@@ -94,11 +94,11 @@ export default function InputGame({ InputGame, control, errors }: InputProps) {
                         text-sm
                       "
                     />
-
                     {errors?.game_data?.[input.key] && (
-                      <p className="text-red-500 text-xs mt-1">
+                      <div className="mt-2 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 px-3 py-2 text-xs text-red-600 dark:text-red-400">
+                        <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
                         {errors.game_data[input.key]?.message}
-                      </p>
+                      </div>
                     )}
                   </div>
                 )}

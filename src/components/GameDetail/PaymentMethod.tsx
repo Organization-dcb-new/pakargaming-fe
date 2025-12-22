@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle2 } from 'lucide-react'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import { GetPaymentMethodResponse, PaymentMethod } from '../../types/PaymentMethod'
 import Image from 'next/image'
 
@@ -8,12 +8,14 @@ interface PaymentMethodProps {
   PaymentMethod: GetPaymentMethodResponse
   activePayment: PaymentMethod | null
   setSelectedPayment: (pay: PaymentMethod) => void
+  paymentError: string
 }
 
 export default function PaymentMethodComponent({
   PaymentMethod,
   activePayment,
   setSelectedPayment,
+  paymentError,
 }: PaymentMethodProps) {
   return (
     <div className="relative">
@@ -105,6 +107,12 @@ export default function PaymentMethodComponent({
             )
           })}
         </div>
+        {paymentError && (
+          <div className="mt-2 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 px-3 py-2 text-xs text-red-600 dark:text-red-400">
+            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>{paymentError}</span>
+          </div>
+        )}
       </div>
     </div>
   )

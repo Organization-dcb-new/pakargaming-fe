@@ -1,5 +1,5 @@
 'use client'
-import { Mail } from 'lucide-react'
+import { AlertCircle, Mail } from 'lucide-react'
 import { OrderFormValues } from '../../schemas/order_schema'
 import { UseFormRegister } from 'react-hook-form'
 
@@ -46,12 +46,10 @@ export default function EmailInput({ register, error }: EmailProps) {
           <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Email</h2>
           <Mail className="w-4 h-4 text-purple-400 dark:text-purple-300" />
         </div>
-
         {/* Description */}
         <p className="text-gray-600 dark:text-purple-200 mb-4 text-xs leading-snug">
           Email digunakan untuk mengirimkan bukti pembayaran & status transaksi.
         </p>
-
         {/* Input */}
         <input
           type="email"
@@ -72,7 +70,20 @@ export default function EmailInput({ register, error }: EmailProps) {
         text-sm
       "
         />
-        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+        {error && (
+          <div
+            className="
+    mt-2 flex items-start gap-2
+    rounded-lg
+    bg-red-50 dark:bg-red-500/10
+    px-3 py-2
+    text-xs text-red-600 dark:text-red-400
+  "
+          >
+            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
       </div>
     </div>
   )
