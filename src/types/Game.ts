@@ -36,6 +36,7 @@ export interface GameInput {
 export interface Price {
   id: string
   image: string
+  sku: string
   name: string
   selling_price: number
 }

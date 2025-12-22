@@ -2,7 +2,6 @@
 import { useParams, useRouter } from 'next/navigation'
 import { useGetGamesBySlug } from '../../hooks/useGame'
 import { useState } from 'react'
-import { CheckCircle2, Info, Mail, ShoppingCart } from 'lucide-react'
 import { GameDetailSkeleton } from '../../components/GameDetailSkeleton'
 import { toast } from 'sonner'
 import { useGetPaymentMethod } from '../../hooks/usePaymentMethod'
@@ -16,42 +15,77 @@ import PaymentMethodComponent from './PaymentMethod'
 import EmailInput from './EmailInput'
 import OrderSummary from './OrderSummary'
 import OrderDetailModal from './OrderModal'
+import { useForm } from 'react-hook-form'
+import { OrderFormValues, orderSchema } from '../../schemas/order_schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useCreateTransaction } from '../../hooks/useTransaction'
 
 const generateOrderId = () => {
   return `TRX-${Date.now()}`
 }
 
 export function GameDetailComponent() {
+  // Routing
   const { slug } = useParams<{ slug: string }>()
   const params = useParams<{ locale: 'id' | 'en' }>()
   const router = useRouter()
   const locale = params.locale ?? 'id'
 
+  // Data Game Input and Payment Methods
   const { data: dataGameDetail, isLoading: isLoadingGameDetail } = useGetGamesBySlug(slug)
   const { data: dataPaymentMethods, isLoading: isLoadingPaymentMethods } = useGetPaymentMethod()
+  const { mutateAsync: createTransaction, isPending: isPendingCreateTrx } = useCreateTransaction()
 
-  const [email, setEmail] = useState<string>('')
+  // Handle Form
+  const orderForm = useForm<OrderFormValues>({
+    resolver: zodResolver(orderSchema),
+    defaultValues: {
+      email: '',
+      game_data: {},
+      package: {
+        product_id: '',
+        product_name: '',
+        product_sku: '',
+      },
+      payment: {
+        payment_method_id: '',
+        payment_channel: '',
+      },
+      amount: 0,
+    },
+  })
+
+  const { handleSubmit, setValue } = orderForm
+
   const [showModal, setShowModal] = useState<boolean>(false)
   const [selectedPackage, setSelectedPackage] = useState<Price | null>(null)
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(null)
 
-  const activePackage = selectedPackage ?? dataGameDetail?.data?.product?.[0] ?? null
-  const activePayment = selectedPayment ?? dataPaymentMethods?.data?.[0] ?? null
+  const activePackage = selectedPackage ?? null
+  const activePayment = selectedPayment ?? null
 
-  const handleSubmit = () => {
+  const onSubmit = (data: OrderFormValues) => {
     if (!activePackage || !activePayment) {
-      toast.error('Lengkapi Field yang Kosong')
+      toast.error('Pilih paket dan metode pembayaran')
       return
     }
+    console.log(data)
 
     setShowModal(true)
   }
 
-  const handleConfirmOrder = () => {
-    const orderId = generateOrderId()
+  const handleConfirmOrder = async () => {
+    try {
+      const payload = orderForm.getValues()
 
-    setShowModal(false)
-    router.push(`/${locale}/transaction/${orderId}`)
+      const res = await createTransaction(payload)
+
+      setShowModal(false)
+
+      router.push(`/${locale}/transaction/${res.data.id}`)
+    } catch (err) {
+      // error sudah di-handle di hook
+    }
   }
 
   if (isLoadingGameDetail && isLoadingPaymentMethods) {
@@ -71,7 +105,7 @@ export function GameDetailComponent() {
               activePackage={activePackage}
               activePayment={activePayment}
               formatPrice={formatPrice}
-              onSubmit={handleSubmit}
+              onSubmit={handleSubmit(onSubmit)}
             />
           </div>
         </div>
@@ -79,39 +113,57 @@ export function GameDetailComponent() {
         {/* Input Game */}
         <div>
           {/* Field Input Game */}
-          <InputGame InputGame={dataGameDetail} />
+          <InputGame
+            InputGame={dataGameDetail}
+            control={orderForm.control}
+            errors={orderForm.formState.errors}
+          />
 
           {/* Package Selection */}
           <PackageGame
             PackageGame={dataGameDetail}
             activePackage={activePackage}
-            setSelectedPackage={setSelectedPackage}
+            setSelectedPackage={(pkg) => {
+              setSelectedPackage(pkg)
+              setValue('package.product_id', pkg.id)
+              setValue('package.product_name', pkg.name)
+              setValue('package.product_sku', pkg.sku)
+              setValue('amount', pkg.selling_price)
+            }}
           />
 
           {/* Payment Method */}
           <PaymentMethodComponent
             PaymentMethod={dataPaymentMethods}
             activePayment={activePayment}
-            setSelectedPayment={setSelectedPayment}
+            setSelectedPayment={(pm) => {
+              setSelectedPayment(pm)
+              setValue('payment.payment_method_id', pm.id)
+              setValue('payment.payment_channel', pm.name)
+            }}
           />
           {/* Email Input */}
-          <EmailInput email={email} setEmail={setEmail} />
+          <EmailInput
+            register={orderForm.register}
+            error={orderForm.formState.errors.email?.message}
+          />
 
           <div className="lg:hidden mt-6">
             <OrderSummary
               activePackage={activePackage}
               activePayment={activePayment}
               formatPrice={formatPrice}
-              onSubmit={handleSubmit}
+              onSubmit={handleSubmit(onSubmit)}
             />
           </div>
 
           <OrderDetailModal
+            isPendingCreateTrx={isPendingCreateTrx}
             open={showModal}
             onClose={() => setShowModal(false)}
             packageData={activePackage}
             payment={activePayment}
-            email={email}
+            email={orderForm.watch('email')}
             formatPrice={formatPrice}
             onConfirm={handleConfirmOrder}
           />

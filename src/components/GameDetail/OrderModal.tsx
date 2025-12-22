@@ -1,5 +1,5 @@
 'use client'
-import { X, CheckCircle2 } from 'lucide-react'
+import { X, CheckCircle2, Clock } from 'lucide-react'
 import { Price } from '../../types/Game'
 import { PaymentMethod } from '../../types/PaymentMethod'
 import { useEffect, useState } from 'react'
@@ -12,6 +12,7 @@ interface OrderDetailModalProps {
   email: string
   formatPrice: (price: number) => string
   onConfirm: () => void
+  isPendingCreateTrx: boolean
 }
 
 export default function OrderDetailModal({
@@ -22,6 +23,7 @@ export default function OrderDetailModal({
   email,
   formatPrice,
   onConfirm,
+  isPendingCreateTrx,
 }: OrderDetailModalProps) {
   const [mounted, setMounted] = useState(false)
 
@@ -101,18 +103,31 @@ export default function OrderDetailModal({
 
         {/* Action */}
         <button
+          type="button"
           onClick={onConfirm}
-          className="
-            mt-6 w-full flex items-center justify-center gap-2
-            rounded-full bg-gradient-to-r from-pink-500 to-purple-600
-            hover:from-pink-600 hover:to-purple-700
-            active:scale-95 cursor-pointer
-            text-white font-semibold py-3
-            transition-all duration-200
-          "
+          disabled={isPendingCreateTrx}
+          className={`
+    mt-6 w-full flex items-center justify-center gap-2
+    rounded-full
+    bg-gradient-to-r from-pink-500 to-purple-600
+    hover:from-pink-600 hover:to-purple-700
+    active:scale-95
+    text-white font-semibold py-3
+    transition-all duration-200
+    ${isPendingCreateTrx ? 'opacity-70 cursor-not-allowed active:scale-100' : 'cursor-pointer'}
+  `}
         >
-          <CheckCircle2 className="w-4 h-4" />
-          Konfirmasi & Bayar
+          {isPendingCreateTrx ? (
+            <>
+              <Clock className="w-4 h-4 animate-spin" />
+              Memproses...
+            </>
+          ) : (
+            <>
+              <CheckCircle2 className="w-4 h-4" />
+              Konfirmasi & Bayar
+            </>
+          )}
         </button>
       </div>
     </div>

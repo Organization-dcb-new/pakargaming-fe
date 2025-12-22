@@ -1,12 +1,14 @@
 'use client'
 import { Mail } from 'lucide-react'
+import { OrderFormValues } from '../../schemas/order_schema'
+import { UseFormRegister } from 'react-hook-form'
 
 interface EmailProps {
-  email: string
-  setEmail: (email: string) => void
+  register: UseFormRegister<OrderFormValues>
+  error?: string
 }
 
-export default function EmailInput({ email, setEmail }: EmailProps) {
+export default function EmailInput({ register, error }: EmailProps) {
   return (
     <div className="relative">
       {/* Step Badge */}
@@ -54,8 +56,7 @@ export default function EmailInput({ email, setEmail }: EmailProps) {
         <input
           type="email"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          {...register('email')}
           placeholder="contoh@email.com"
           className="
         w-full px-4 py-3 rounded-2xl
@@ -71,6 +72,7 @@ export default function EmailInput({ email, setEmail }: EmailProps) {
         text-sm
       "
         />
+        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
       </div>
     </div>
   )

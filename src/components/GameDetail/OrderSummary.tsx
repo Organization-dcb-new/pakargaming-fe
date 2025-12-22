@@ -60,6 +60,7 @@ export default function OrderSummary({
       {/* Action */}
       <button
         onClick={onSubmit}
+        type="button"
         className="
           w-full
           cursor-pointer
