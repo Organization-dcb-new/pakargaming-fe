@@ -21,7 +21,7 @@ export default function OrderSummary({
   return (
     <div
       className="
-        bg-white/80 dark:bg-white/10
+           bg-black/5 dark:bg-white/10
         backdrop-blur-lg
         rounded-3xl
         p-5

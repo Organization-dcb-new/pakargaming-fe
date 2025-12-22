@@ -23,7 +23,9 @@ const generateOrderId = () => {
 
 export function GameDetailComponent() {
   const { slug } = useParams<{ slug: string }>()
+  const params = useParams<{ locale: 'id' | 'en' }>()
   const router = useRouter()
+  const locale = params.locale ?? 'id'
 
   const { data: dataGameDetail, isLoading: isLoadingGameDetail } = useGetGamesBySlug(slug)
   const { data: dataPaymentMethods, isLoading: isLoadingPaymentMethods } = useGetPaymentMethod()
@@ -44,9 +46,6 @@ export function GameDetailComponent() {
 
     setShowModal(true)
   }
-  const params = useParams<{ locale: 'id' | 'en' }>()
-
-  const locale = params.locale ?? 'id'
 
   const handleConfirmOrder = () => {
     const orderId = generateOrderId()
