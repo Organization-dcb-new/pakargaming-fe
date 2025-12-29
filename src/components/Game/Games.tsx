@@ -16,10 +16,20 @@ export function Games() {
   const t = useTranslations('Games')
 
   // Data Games
-  const { data: dataGames, isLoading: isLoadingGame } = useGetGames()
+  const {
+    data: dataGames,
+    isLoading: isLoadingGame,
+    isError: isErrorGames,
+    refetch: refetchGames,
+  } = useGetGames()
 
   // Data Category
-  const { data: dataCategory, isLoading: isLoadingCategory } = useGetCategory()
+  const {
+    data: dataCategory,
+    isLoading: isLoadingCategory,
+    isError: isErrorCategories,
+    refetch: refetchCategories,
+  } = useGetCategory()
 
   const filteredGames = useMemo(() => {
     if (!dataGames?.data) return []
@@ -78,6 +88,19 @@ export function Games() {
                   />
                 ))}
               </div>
+            ) : isErrorCategories ? (
+              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-red-50 dark:bg-red-500/10 text-sm">
+                <span className="text-red-600 dark:text-red-400 font-medium">
+                  Failed to load categories
+                </span>
+
+                <button
+                  onClick={() => refetchCategories()}
+                  className="inline-flex items-center gap-1 cursor-pointer text-purple-600 dark:text-purple-400 hover:underline font-medium"
+                >
+                  Retry
+                </button>
+              </div>
             ) : (
               categories.map((category) => (
                 <button
@@ -114,6 +137,42 @@ export function Games() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {isLoadingGame ? (
           <GameCardSkeleton count={8} />
+        ) : isErrorGames ? (
+          <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-red-100 dark:bg-red-500/10 mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-7 h-7 text-red-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01M5.455 19h13.09c1.14 0 1.845-1.243 1.255-2.197L13.8 4.803c-.57-.964-1.83-.964-2.4 0L4.2 16.803C3.61 17.757 4.315 19 5.455 19z"
+                />
+              </svg>
+            </div>
+
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+              Failed to load games
+            </h3>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-sm">
+              Something went wrong while fetching the games. Please try again.
+            </p>
+
+            <button
+              onClick={() => refetchGames()}
+              className="mt-4 inline-flex items-center cursor-pointer gap-2 px-5 py-2 rounded-full text-sm font-medium
+               bg-purple-600 text-white hover:bg-purple-700
+               shadow-lg shadow-purple-500/30 transition-all"
+            >
+              Retry
+            </button>
+          </div>
         ) : (
           filteredGames?.map((game, index) => (
             <Link

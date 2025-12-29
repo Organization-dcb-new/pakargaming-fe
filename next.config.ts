@@ -26,16 +26,24 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 's3.nevaobjects.id',
       },
+      {
+        protocol: 'https',
+        hostname: 'media.licdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'instagram.fcgk3-2.fna.fbcdn.net',
+      },
     ],
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env.BACKEND_URL}/:path*`,
-      },
-    ]
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/api/:path*',
+  //       destination: `${process.env.BACKEND_URL}/:path*`,
+  //     },
+  //   ]
+  // },
 }
 
 export default withNextIntl(nextConfig)

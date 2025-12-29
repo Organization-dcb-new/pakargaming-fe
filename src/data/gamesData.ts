@@ -1,34 +1,72 @@
-import { GameItem } from '../context/CartContext'
+import { Game } from '../types/Game'
+import { ApiResponse } from '../types/Global'
 
-export const gamesData: GameItem[] = [
-  {
-    id: '1',
-    title: 'Madden 26',
-    price: 59.99,
-    discount: 50,
-    image:
-      'https://res.cloudinary.com/dfyl3dprx/image/upload/v1766041080/avatar/oe3rat6y8ipvyubv0ypp.jpg',
-    category: 'RPG',
-    rating: 4.5,
-  },
-  {
-    id: '2',
-    title: 'College Football 26',
-    price: 49.99,
-    discount: 30,
-    image:
-      'https://res.cloudinary.com/dfyl3dprx/image/upload/v1766040966/avatar/ex4qmqqe64v9c3lbckxk.webp',
-    category: 'Adventure',
-    rating: 4.8,
-  },
-  {
-    id: '3',
-    title: 'Madden 23',
-    price: 39.99,
-    discount: 20,
-    image:
-      'https://res.cloudinary.com/dfyl3dprx/image/upload/v1766041101/avatar/ci6hxd9gkl0ecseidrsx.jpg',
-    category: 'Racing',
-    rating: 4.6,
-  },
-]
+export const gamesResponse: ApiResponse<Game[]> = {
+  status: 'success',
+  message: 'Games fetched successfully',
+  data: [
+    {
+      id: 'g-1',
+      category_id: '1',
+      provider_id: 'prov-1',
+      name: 'Blade of Destiny',
+      slug: 'blade-of-destiny',
+      code: 'BOD001',
+      thumbnail_url:
+        'https://instagram.fcgk3-2.fna.fbcdn.net/v/t51.2885-19/587571276_18350199925205487_5043110222282966685_n.jpg?efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDgwLmMyIn0&_nc_ht=instagram.fcgk3-2.fna.fbcdn.net&_nc_cat=103&_nc_oc=Q6cZ2QHQxLhpVgMfXjNsDVwC-v60IuMGkiCV6P48OpGujBUZjYTDfDg1ymtLDIIKp3Eh4fc&_nc_ohc=DUh6VWvE5B8Q7kNvwGTQoo0&_nc_gid=Vu6n5UZQ2Fo4BMzEZXoX5g&edm=ALGbJPMBAAAA&ccb=7-5&oh=00_AfnKO_-V0ohbol_CrtqIRuKt2iz846G_AtWYOWcfiK01Cg&oe=6957FBE4&_nc_sid=7d3ac5',
+      banner_url: 'https://images.unsplash.com/photo-1606112219348-204d7d8b94ee',
+      description: 'An intense action game with fast combat and epic boss fights.',
+      instruction: 'Use joystick to move, tap attack button to strike enemies.',
+      developer: 'Redi Studio',
+      publisher: 'Redi Games',
+      is_featured: true,
+      is_active: true,
+      popularity_score: 95,
+      created_at: '2025-01-02T08:00:00Z',
+      updated_at: '2025-01-02T08:00:00Z',
+      category: {
+        id: '1',
+        name: 'Action',
+        slug: 'action',
+        icon_url:
+          'https://media.licdn.com/dms/image/v2/D5635AQHD56X8tMWddg/profile-framedphoto-shrink_800_800/profile-framedphoto-shrink_800_800/0/1698219054843?e=1767600000&v=beta&t=IXtyt7ZjaUnm-_Y9zoZck_XkoIx1QPDENf6e-ZvSGJs',
+        description: 'Fast-paced games that focus on combat and reflexes.',
+        sort_order: 1,
+        is_active: true,
+        created_at: '2025-01-01T08:00:00Z',
+        updated_at: '2025-01-01T08:00:00Z',
+      },
+    },
+    {
+      id: 'g-2',
+      category_id: '2',
+      provider_id: 'prov-1',
+      name: 'Lost Island Quest',
+      slug: 'lost-island-quest',
+      code: 'LIQ002',
+      thumbnail_url:
+        'https://media.licdn.com/dms/image/v2/D5635AQHD56X8tMWddg/profile-framedphoto-shrink_800_800/profile-framedphoto-shrink_800_800/0/1698219054843?e=1767600000&v=beta&t=IXtyt7ZjaUnm-_Y9zoZck_XkoIx1QPDENf6e-ZvSGJs',
+      banner_url: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1',
+      description: 'Explore mysterious islands and uncover hidden treasures.',
+      instruction: 'Tap to move, interact with objects to solve puzzles.',
+      developer: 'Aurora Dev',
+      publisher: 'Aurora Games',
+      is_featured: false,
+      is_active: true,
+      popularity_score: 82,
+      created_at: '2025-01-03T08:00:00Z',
+      updated_at: '2025-01-03T08:00:00Z',
+      category: {
+        id: '2',
+        name: 'Adventure',
+        slug: 'adventure',
+        icon_url: 'https://img.icons8.com/fluency/96/treasure-map.png',
+        description: 'Story-driven games with exploration and puzzle elements.',
+        sort_order: 2,
+        is_active: true,
+        created_at: '2025-01-01T08:05:00Z',
+        updated_at: '2025-01-01T08:05:00Z',
+      },
+    },
+  ],
+}

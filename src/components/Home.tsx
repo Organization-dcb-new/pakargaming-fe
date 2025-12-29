@@ -2,12 +2,11 @@
 
 import { Link } from '../i18n/routing'
 import { ArrowRight, Star, TrendingUp, Zap } from 'lucide-react'
-import { toast } from 'sonner'
-import { gamesData } from '../data/gamesData'
-import { GameItem } from '../context/CartContext'
 import { useTranslations } from 'next-intl'
+import { gamesResponse } from '../data/gamesData'
+import Image from 'next/image'
 
-const featuredGames = gamesData.slice(0, 3)
+const featuredGames = gamesResponse.data.slice(0, 3)
 
 export function Home() {
   const t = useTranslations('Home')
@@ -80,68 +79,31 @@ export function Home() {
             >
               <Link href={`/games/${game.id}`} className="block">
                 <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={game.image}
-                    alt={game.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  <Image
+                    src={game.thumbnail_url}
+                    alt={game.name}
+                    fill
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                   />
-                  {game.discount && (
-                    <div className="absolute top-4 right-4 bg-pink-500 text-white px-3 py-1 rounded-full">
-                      -{game.discount}%
-                    </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4">
-                    <span className="inline-block bg-purple-500/30 dark:bg-purple-500/30 backdrop-blur-sm px-3 py-1 rounded-full text-purple-100 dark:text-purple-200 text-sm">
-                      {game.category}
-                    </span>
-                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4"></div>
                 </div>
               </Link>
 
               <div className="p-6">
                 <Link href={`/games/${game.id}`}>
                   <h3 className="text-xl text-gray-900 dark:text-white mb-2 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
-                    {game.title}
+                    {game.name}
                   </h3>
                 </Link>
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < Math.floor(game.rating)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-300 dark:text-gray-600'
-                      }`}
-                    />
-                  ))}
-                  <span className="text-gray-600 dark:text-gray-400 text-sm ml-2">
-                    {game.rating}
-                  </span>
-                </div>
 
                 <div className="flex items-center justify-between">
-                  <div>
-                    {game.discount ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-500 dark:text-gray-400 line-through text-sm">
-                          Rp {game.price.toLocaleString()}
-                        </span>
-                        <span className="text-2xl text-purple-600 dark:text-purple-400">
-                          Rp {(game.price * (1 - game.discount / 100)).toLocaleString()}
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-2xl text-purple-600 dark:text-purple-400">
-                        Rp {game.price.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
+                  <div></div>
                   <button
                     onClick={(e) => {
                       e.preventDefault()
                     }}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+                    className="bg-gradient-to-r from-purple-500 cursor-pointer to-pink-500 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all"
                   >
                     {t('buy')}
                   </button>

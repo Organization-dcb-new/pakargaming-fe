@@ -3,7 +3,7 @@ import { GetGameResponse, GetGamesResponse } from '../types/Game'
 import { api } from '../api/axios'
 
 export function useGetGames() {
-  const { data, isLoading } = useQuery<GetGamesResponse>({
+  const { data, isLoading, isError, refetch } = useQuery<GetGamesResponse>({
     queryKey: ['get-games'],
     queryFn: async () => {
       const res = await api.get('/v1/games')
@@ -11,7 +11,7 @@ export function useGetGames() {
     },
   })
 
-  return { data, isLoading }
+  return { data, isLoading, isError, refetch }
 }
 
 export function useGetGamesBySlug(slug: string) {

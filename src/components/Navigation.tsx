@@ -24,7 +24,7 @@ export function Navigation() {
           <Link href="/" className="flex items-center gap-2">
             <Gamepad2 className="w-8 h-8 text-purple-500 dark:text-purple-500" />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-600">
-              AuraGame
+              AuraGaming
             </span>
           </Link>
 
