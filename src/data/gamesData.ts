@@ -9,7 +9,7 @@ export const gamesResponse: ApiResponse<Game[]> = {
       id: 'g-1',
       category_id: '1',
       provider_id: 'prov-1',
-      name: 'Stecu Gaming',
+      name: 'Lord of Stecu Gaming',
       slug: 'blade-of-destiny',
       code: 'BOD001',
       thumbnail_url:

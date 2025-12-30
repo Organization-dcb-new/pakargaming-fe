@@ -30,7 +30,6 @@ export function Games() {
     isError: isErrorCategories,
     refetch: refetchCategories,
   } = useGetCategory()
-
   const filteredGames = useMemo(() => {
     if (!dataGames?.data) return []
 
@@ -100,6 +99,10 @@ export function Games() {
                 >
                   Retry
                 </button>
+              </div>
+            ) : categories.length === 0 ? (
+              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-gray-50 dark:bg-white/5 text-sm text-gray-500 dark:text-gray-400">
+                No categories available
               </div>
             ) : (
               categories.map((category) => (
@@ -172,6 +175,10 @@ export function Games() {
             >
               Retry
             </button>
+          </div>
+        ) : filteredGames.length === 0 ? (
+          <div className=" col-span-full flex flex-col items-center justify-center py-16 text-center">
+            No Games available
           </div>
         ) : (
           filteredGames?.map((game, index) => (
