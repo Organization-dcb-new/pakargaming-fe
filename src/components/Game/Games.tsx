@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import { Link } from '../../i18n/routing'
-import { Search, Filter, SlidersHorizontal, Star } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { useTranslations } from 'next-intl'
-import Image from 'next/image'
-import { useGetGames } from '../../hooks/useGame'
-import { useGetCategory } from '../../hooks/useCategory'
-import { GameCardSkeleton } from '../GameCardSkeleton'
+import { Link } from "../../i18n/routing";
+import { Search, Filter, SlidersHorizontal, Star } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { useGetGames } from "../../hooks/useGame";
+import { useGetCategory } from "../../hooks/useCategory";
+import { GameCardSkeleton } from "../GameCardSkeleton";
 
 export function Games() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [sortBy, setSortBy] = useState('featured')
-  const t = useTranslations('Games')
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [sortBy, setSortBy] = useState("featured");
+  const t = useTranslations("Games");
 
   // Data Games
   const {
@@ -21,7 +21,7 @@ export function Games() {
     isLoading: isLoadingGame,
     isError: isErrorGames,
     refetch: refetchGames,
-  } = useGetGames()
+  } = useGetGames();
 
   // Data Category
   const {
@@ -29,30 +29,33 @@ export function Games() {
     isLoading: isLoadingCategory,
     isError: isErrorCategories,
     refetch: refetchCategories,
-  } = useGetCategory()
+  } = useGetCategory();
   const filteredGames = useMemo(() => {
-    if (!dataGames?.data) return []
+    if (!dataGames?.data) return [];
 
     return dataGames.data.filter((game) => {
-      const matchesSearch = game.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesSearch = game.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
-      const matchesCategory = selectedCategory === 'all' || game.category.slug === selectedCategory
+      const matchesCategory =
+        selectedCategory === "all" || game.category.slug === selectedCategory;
 
-      return matchesSearch && matchesCategory
-    })
-  }, [dataGames, searchTerm, selectedCategory])
+      return matchesSearch && matchesCategory;
+    });
+  }, [dataGames, searchTerm, selectedCategory]);
 
   const categories = useMemo(() => {
-    if (!dataCategory?.data) return []
+    if (!dataCategory?.data) return [];
 
     return [
-      { label: t('allCategories'), slug: 'all' },
+      { label: t("allCategories"), slug: "all" },
       ...dataCategory.data.map((cat) => ({
         label: cat.name,
         slug: cat.slug,
       })),
-    ]
-  }, [dataCategory, t])
+    ];
+  }, [dataCategory, t]);
 
   return (
     <div className="min-h-screen pt-20 pb-12 px-4 sm:px-6 lg:px-8">
@@ -60,13 +63,13 @@ export function Games() {
       <div className="max-w-7xl mx-auto mb-12 space-y-6">
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-600">
-            {t('title')}
+            {t("title")}
           </h1>
           <div className="relative w-full md:w-96 group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 group-focus-within:text-purple-600 dark:group-focus-within:text-purple-500 transition-colors" />
             <input
               type="text"
-              placeholder={t('searchPlaceholder')}
+              placeholder={t("searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-gray-100 dark:bg-black/40 border border-purple-200 dark:border-purple-500/20 rounded-full py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-all placeholder-gray-500"
@@ -95,8 +98,7 @@ export function Games() {
 
                 <button
                   onClick={() => refetchCategories()}
-                  className="inline-flex items-center gap-1 cursor-pointer text-purple-600 dark:text-purple-400 hover:underline font-medium"
-                >
+                  className="inline-flex items-center gap-1 cursor-pointer text-purple-600 dark:text-purple-400 hover:underline font-medium">
                   Retry
                 </button>
               </div>
@@ -111,10 +113,9 @@ export function Games() {
                   onClick={() => setSelectedCategory(category.slug)}
                   className={`px-4 py-2 rounded-full whitespace-nowrap transition-all text-sm ${
                     selectedCategory === category.slug
-                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/25'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/5'
-                  }`}
-                >
+                      ? "bg-purple-600 text-white shadow-lg shadow-purple-500/25"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/5"
+                  }`}>
                   {category.label}
                 </button>
               ))
@@ -126,11 +127,10 @@ export function Games() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-gray-100 dark:bg-black/40 border border-purple-200 dark:border-purple-500/20 rounded-lg py-2 px-4 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 text-sm w-full md:w-auto cursor-pointer hover:bg-gray-200 dark:hover:bg-black/60 transition-colors"
-            >
-              <option value="featured">{t('sortBy')}</option>
-              <option value="price-asc">{t('priceAsc')}</option>
-              <option value="price-desc">{t('priceDesc')}</option>
+              className="bg-gray-100 dark:bg-black/40 border border-purple-200 dark:border-purple-500/20 rounded-lg py-2 px-4 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 text-sm w-full md:w-auto cursor-pointer hover:bg-gray-200 dark:hover:bg-black/60 transition-colors">
+              <option value="featured">{t("sortBy")}</option>
+              <option value="price-asc">{t("priceAsc")}</option>
+              <option value="price-desc">{t("priceDesc")}</option>
             </select>
           </div>
         </div>
@@ -148,8 +148,7 @@ export function Games() {
                 className="w-7 h-7 text-red-500"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+                stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -171,8 +170,7 @@ export function Games() {
               onClick={() => refetchGames()}
               className="mt-4 inline-flex items-center cursor-pointer gap-2 px-5 py-2 rounded-full text-sm font-medium
                bg-purple-600 text-white hover:bg-purple-700
-               shadow-lg shadow-purple-500/30 transition-all"
-            >
+               shadow-lg shadow-purple-500/30 transition-all">
               Retry
             </button>
           </div>
@@ -188,15 +186,16 @@ export function Games() {
               className="group relative bg-white dark:bg-slate-800/50 rounded-2xl overflow-hidden hover:-translate-y-2 transition-all duration-300 border border-gray-200 dark:border-white/5 hover:border-purple-400 dark:hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/20"
               style={{
                 animationDelay: `${index * 50}ms`,
-              }}
-            >
+              }}>
               <div className="aspect-[16/9] overflow-hidden relative">
-                <Image
-                  fill
-                  src={game.thumbnail_url || 'https://api.dicebear.com/9.x/glass/svg'}
-                  alt={game.name}
-                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
-                />
+                {game.thumbnail_url ? (
+                  <Image
+                    fill
+                    src={game.thumbnail_url}
+                    alt={game.name}
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                  />
+                ) : null}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
 
@@ -216,5 +215,5 @@ export function Games() {
         )}
       </div>
     </div>
-  )
+  );
 }
