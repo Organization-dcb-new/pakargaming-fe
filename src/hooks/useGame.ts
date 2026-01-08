@@ -25,3 +25,19 @@ export function useGetGamesBySlug(slug: string) {
 
   return { data, isLoading }
 }
+
+export function useCatalogGame(letter: string) {
+  const { data, isLoading, isError, refetch } = useQuery<GetGamesResponse>({
+    queryKey: ['get-games-catalog', letter],
+    queryFn: async () => {
+      const res = await api.get('/v1/games/letter', {
+        params: {
+          letter,
+        },
+      })
+      return res.data
+    },
+  })
+
+  return { data, isLoading, isError, refetch }
+}
