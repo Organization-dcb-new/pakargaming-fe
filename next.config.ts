@@ -1,11 +1,11 @@
-import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
+import type { NextConfig } from 'next'
+import createNextIntlPlugin from 'next-intl/plugin'
 
-const withNextIntl = createNextIntlPlugin();
+const withNextIntl = createNextIntlPlugin()
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: "standalone",
+  output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -15,35 +15,43 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
       },
       {
-        protocol: "https",
-        hostname: "s3.nevaobjects.id",
+        protocol: 'https',
+        hostname: 's3.nevaobjects.id',
       },
       {
-        protocol: "https",
-        hostname: "picsum.photos",
+        protocol: 'https',
+        hostname: 'picsum.photos',
       },
       {
-        protocol: "https",
-        hostname: "api.dicebear.com",
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
       },
       {
-        protocol: "https",
-        hostname: "s3.nevaobjects.id",
+        protocol: 'https',
+        hostname: 's3.nevaobjects.id',
       },
       {
-        protocol: "https",
-        hostname: "media.licdn.com",
+        protocol: 'https',
+        hostname: 'media.licdn.com',
       },
       {
-        protocol: "https",
-        hostname: "instagram.fcgk3-2.fna.fbcdn.net",
+        protocol: 'https',
+        hostname: 'instagram.fcgk3-2.fna.fbcdn.net',
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/v1/:path*',
+        destination: 'http://103.228.118.187:4001/v1/:path*',
+      },
+    ]
+  },
 }
- 
-export default withNextIntl(nextConfig);
+
+export default withNextIntl(nextConfig)
