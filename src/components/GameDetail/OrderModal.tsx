@@ -13,6 +13,7 @@ interface OrderDetailModalProps {
   formatPrice: (price: number) => string
   onConfirm: () => void
   isPendingCreateTrx: boolean
+  Account: string
 }
 
 export default function OrderDetailModal({
@@ -24,6 +25,7 @@ export default function OrderDetailModal({
   formatPrice,
   onConfirm,
   isPendingCreateTrx,
+  Account,
 }: OrderDetailModalProps) {
   const [mounted, setMounted] = useState(false)
 
@@ -98,6 +100,10 @@ export default function OrderDetailModal({
             <span className="font-bold text-purple-600">
               Rp. {formatPrice(packageData.selling_price)}
             </span>
+          </div>
+          <div className="flex justify-between text-base">
+            <span className="font-semibold">Account</span>
+            <span className="font-bold text-purple-600">{Account}</span>
           </div>
         </div>
 

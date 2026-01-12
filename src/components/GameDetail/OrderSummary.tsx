@@ -1,6 +1,6 @@
 'use client'
 import { ShoppingCart } from 'lucide-react'
-import { GameInput, Price } from '../../types/Game'
+import { Price } from '../../types/Game'
 import { PaymentMethod } from '../../types/PaymentMethod'
 import { OrderFormValues } from '../../schemas/order_schema'
 import { useCheckID } from '../../hooks/useTransaction'
@@ -12,6 +12,7 @@ interface OrderSummaryProps {
   onSubmit: () => void
   orderFormValue: OrderFormValues
   category_code: string
+  setAccount: (account: string) => void
 }
 
 export default function OrderSummary({
@@ -21,6 +22,7 @@ export default function OrderSummary({
   onSubmit,
   orderFormValue,
   category_code,
+  setAccount,
 }: // gameInput,
 OrderSummaryProps) {
   const { mutateAsync, isPending } = useCheckID()
@@ -33,7 +35,7 @@ OrderSummaryProps) {
         provider_id: orderFormValue.provider_id,
         game_data: orderFormValue.game_data,
       })
-
+      setAccount(res.username)
       onSubmit()
     } catch (err) {
       console.error(err)
@@ -91,6 +93,7 @@ OrderSummaryProps) {
     py-3
     rounded-full
     transition-all
+    cursor-pointer
     flex items-center justify-center gap-2
     text-sm
     disabled:opacity-60

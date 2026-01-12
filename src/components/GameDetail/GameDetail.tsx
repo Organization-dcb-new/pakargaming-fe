@@ -61,6 +61,7 @@ export function GameDetailComponent() {
   const [showModal, setShowModal] = useState<boolean>(false)
   const [selectedPackage, setSelectedPackage] = useState<Price | null>(null)
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(null)
+  const [account, setAccount] = useState<string>('')
 
   const [isRedirecting, setIsRedirecting] = useState(false)
 
@@ -203,7 +204,8 @@ export function GameDetailComponent() {
 
             <div className="hidden lg:block">
               <OrderSummary
-                category_code="ML"
+                setAccount={setAccount}
+                category_code={dataGameDetail.data.code}
                 orderFormValue={orderFormValue}
                 activePackage={activePackage}
                 activePayment={activePayment}
@@ -292,16 +294,18 @@ export function GameDetailComponent() {
 
             <div className="lg:hidden mt-6">
               <OrderSummary
-                category_code="ML"
+                setAccount={setAccount}
+                category_code={dataGameDetail.data.code}
                 orderFormValue={orderFormValue}
                 activePackage={activePackage}
                 activePayment={activePayment}
                 formatPrice={formatPrice}
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={onSubmit}
               />
             </div>
 
             <OrderDetailModal
+              Account={account}
               isPendingCreateTrx={isPendingCreateTrx}
               open={showModal}
               onClose={() => setShowModal(false)}
