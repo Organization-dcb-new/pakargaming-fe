@@ -1,7 +1,6 @@
 'use client'
 
 import BannerComponent from './Banner/Banner'
-import Stats from './Banner/Stats'
 import GamesByShow from './Game/GamesByShow'
 
 export function Home() {
@@ -12,8 +11,8 @@ export function Home() {
       {/* Game Show  */}
       <GamesByShow />
 
-      {/* Stats Section */}
-      <Stats />
+      {/* Stats Section
+      <Stats /> */}
     </div>
   )
 }

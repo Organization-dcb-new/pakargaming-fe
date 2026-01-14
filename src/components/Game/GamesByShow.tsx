@@ -3,10 +3,12 @@ import Image from 'next/image'
 import { useLocale } from 'next-intl'
 import { useGetShows } from '../../hooks/useShow'
 import { Show } from '../../types/Show'
+import { useState } from 'react'
 
 export default function GamesByShow() {
   const locale = useLocale()
   const { data, isLoading } = useGetShows()
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   if (isLoading) return <GamesByShowSkeleton />
 
@@ -15,38 +17,33 @@ export default function GamesByShow() {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
       {shows.map((show) => {
-        const enableScroll = show.Games.length > 6
+        const isExpanded = expanded[show.ID] ?? false
+        const hasManyGames = show.Games.length > 6
+        const games = isExpanded ? show.Games : show.Games.slice(0, 6)
         const ribbon = getRibbon(show)
 
         return (
           <div key={show.ID}>
             {/* HEADER */}
-            <div className="mb-8">
+            <div className="mb-6">
               <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
                 {show.Name}
               </h2>
             </div>
 
-            {/* GAMES */}
-            <div
-              className={
-                enableScroll
-                  ? 'flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide'
-                  : 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6'
-              }
-            >
-              {show.Games.map((game) => (
+            {/* GAMES (VERTICAL GRID ONLY) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              {games.map((game) => (
                 <Link
                   key={game.ID}
                   href={`/${locale}/games/${game.Slug}`}
-                  className={`group relative rounded-2xl overflow-hidden
-                  bg-black border border-white/10
-                  hover:border-purple-500/60
-                  hover:shadow-lg hover:shadow-purple-500/20
-                  transition-all duration-300
-                  ${enableScroll ? 'min-w-[160px] sm:min-w-[180px] snap-start' : ''}`}
+                  className="group relative rounded-2xl overflow-hidden
+                    bg-black border border-white/10
+                    hover:border-purple-500/60
+                    hover:shadow-lg hover:shadow-purple-500/20
+                    transition-all duration-300"
                 >
-                  {/* RIBBON (PRIORITY) */}
+                  {/* RIBBON */}
                   {ribbon && (
                     <div
                       className={`absolute top-3 left-[-42px] rotate-[-45deg]
@@ -75,6 +72,23 @@ export default function GamesByShow() {
                 </Link>
               ))}
             </div>
+
+            {/* TOMBOL TAMPILKAN LEBIH BANYAK */}
+            {hasManyGames && (
+              <div className="mt-4 flex justify-center">
+                <button
+                  onClick={() =>
+                    setExpanded((prev) => ({
+                      ...prev,
+                      [show.ID]: !isExpanded,
+                    }))
+                  }
+                  className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline"
+                >
+                  {isExpanded ? 'Tampilkan lebih sedikit' : 'Tampilkan lebih banyak'}
+                </button>
+              </div>
+            )}
           </div>
         )
       })}
