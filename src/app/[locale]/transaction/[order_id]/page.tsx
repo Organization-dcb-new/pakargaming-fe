@@ -6,7 +6,7 @@ import { formatPrice } from '../../../../utils/format_price'
 import { useGetTransaction } from '../../../../hooks/useTransaction'
 import { TransactionNotFound } from '../../../../components/Transaction/TransactionNotFound'
 
-type Status = 'PENDING' | 'SUCCESS' | 'FAILED'
+type Status = 'PENDING' | 'PAID' | 'FAILED'
 
 export default function TransactionStatusPage() {
   const { order_id } = useParams<{ order_id: string }>()
@@ -39,7 +39,7 @@ export default function TransactionStatusPage() {
       btnClass:
         'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700',
     },
-    SUCCESS: {
+    PAID: {
       icon: <CheckCircle2 className="w-14 h-14 text-emerald-500" />,
       title: 'Pembayaran Berhasil',
       desc: 'Top up berhasil dan item sudah masuk ke akun kamu',
@@ -103,7 +103,7 @@ export default function TransactionStatusPage() {
             ) : null
           ) : (
             <button
-              className={`w-full text-white rounded-full cursor-pointer py-3 font-semibold transition active:scale-95 ${config.btnClass}`}
+              className={`w-full text-white rounded-full cursor-pointer py-3 font-semibold transition active:scale-95 ${config?.btnClass}`}
             >
               {config.button}
             </button>
