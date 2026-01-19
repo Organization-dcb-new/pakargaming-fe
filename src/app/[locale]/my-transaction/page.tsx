@@ -29,7 +29,7 @@ export default function MyTransaction() {
   const meta = data?.meta
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 p-6">
+    <div className="min-h-screen bg-purple-50 text-slate-900 dark:bg-purple-950 dark:text-slate-100 p-6">
       <h1 className="text-2xl font-semibold mb-6">
         My <span className="text-purple-600 dark:text-purple-400">Transaction</span>
       </h1>
@@ -74,7 +74,7 @@ export default function MyTransaction() {
                   <span
                     className={`inline-flex rounded-full px-3 py-1 text-xs font-medium
                       ${
-                        trx.status === 'SUCCESS'
+                        trx.status === 'PAID'
                           ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
                           : trx.status === 'PENDING'
                             ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400'
