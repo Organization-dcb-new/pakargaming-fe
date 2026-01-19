@@ -66,18 +66,17 @@ export function Footer() {
               <li className="flex items-start gap-3 text-gray-600 dark:text-gray-400">
                 <MapPin className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-1" />
                 <span>
-                  Jl. Gaming No. 123,
-                  <br />
-                  Jakarta Selatan, 12345
+                  Jl. Damai 1 No.11, RT.7/RW.01, Cipete Utara, Kec. Kby. Baru, Kota Jakarta,
+                  Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12150
                 </span>
               </li>
               <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
                 <Phone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                <span>+62 812 3456 7890</span>
+                <span>0821-7220-1364</span>
               </li>
               <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
                 <Mail className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                <span>support@pakargaming.id</span>
+                <span>pakargaming1@gmail.com</span>
               </li>
             </ul>
           </div>
