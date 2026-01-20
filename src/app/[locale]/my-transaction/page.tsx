@@ -1,7 +1,6 @@
 'use client'
 
 import useAuth from '../../../components/Navigation'
-import { TransactionSkeleton } from '../../../components/Transaction/SkeletonTransaction'
 import { useGetTransactionByEmail } from '../../../hooks/useTransaction'
 import { useRouter, useParams } from 'next/navigation'
 import { useState } from 'react'
@@ -46,7 +45,7 @@ export default function MyTransaction() {
         {transactions.map((trx) => (
           <div
             key={trx.id}
-            onClick={() => router.push(`/${locale}/transaction/${trx.id}`)}
+            onClick={() => router.push(`/${locale}/detail-trx/${trx.id}`)}
             className="cursor-pointer  bg-white dark:bg-slate-900  dark:border-slate-800 rounded-xl shadow-sm p-3 sm:p-4 flex flex-row transition hover:shadow-lg"
           >
             {/* Left Column */}

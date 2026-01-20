@@ -65,6 +65,7 @@ export interface DetailProduct {
   item_image: string
   email: string
   category: string
+  payment_image: string
 }
 
 export interface PaymentGuide {

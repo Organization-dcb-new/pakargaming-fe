@@ -1,60 +1,71 @@
 import Image from 'next/image'
+import { PaymentDataWithDetailProduct } from '../../types/Transaction'
 
-export default function ProductDetailCard() {
+type ProductDetailCardProps = {
+  data: PaymentDataWithDetailProduct
+}
+
+export default function ProductDetailCard({ data }: ProductDetailCardProps) {
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 mt-6">
-      <div className="rounded-2xl border border-gray-200 bg-white px-5 py-6 shadow-sm">
+    <div className="w-full max-w-3xl mx-auto px-4 mt-4">
+      <div className="rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm">
         {/* Title */}
-        <h2 className="mb-6 text-lg sm:text-xl font-semibold text-gray-900">Detail Produk</h2>
+        <h2 className="mb-4 text-sm font-semibold text-gray-900">Detail Produk</h2>
 
         {/* Header product */}
-        <div className="mb-6 flex items-start gap-4">
+        <div className="mb-4 flex items-start gap-3 ">
           {/* Icon */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 items-center flex justify-center">
             <Image
-              src="/terabox.png" // taruh di /public
-              alt="TeraBox"
-              width={56}
-              height={56}
-              className="rounded-xl object-contain"
+              src={data?.detail_product?.item_image || 'https://api.dicebear.com/9.x/pixel-art/svg'}
+              alt="Logo Product"
+              width={128}
+              height={128}
+              className="object-contain rounded-md"
             />
           </div>
 
           {/* Info */}
-          <div>
-            <span className="inline-block rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">
-              VOUCHER
+          <div className="flex-1">
+            <span className="inline-block rounded-full bg-red-500 px-2 py-0.5 text-[11px] font-semibold text-white">
+              {data?.detail_product?.category}
             </span>
 
-            <h3 className="mt-2 text-base sm:text-lg font-semibold text-gray-900">
-              TeraBox 1 Month Premium
+            <h3 className="mt-1 text-sm font-semibold text-gray-900">
+              {data?.detail_product?.item_product}
             </h3>
 
-            <p className="text-sm text-gray-500">TeraBox Gift Card</p>
+            <p className="text-xs text-gray-500">{data?.detail_product?.item_name}</p>
           </div>
         </div>
 
         {/* Detail list */}
-        <div className="space-y-4 text-sm sm:text-base">
+        <div className="space-y-2 text-xs sm:text-sm">
           <div className="grid grid-cols-3 gap-2">
             <span className="text-gray-500">Produk</span>
-            <span className="col-span-2 font-medium text-gray-900">TeraBox Gift Card</span>
+            <span className="col-span-2 font-medium text-gray-900">
+              {data?.detail_product?.item_name}
+            </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
             <span className="text-gray-500">Nominal</span>
-            <span className="col-span-2 font-medium text-gray-900">TeraBox 1 Month Premium</span>
+            <span className="col-span-2 font-medium text-gray-900">
+              {data?.detail_product?.item_product}
+            </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
             <span className="text-gray-500">Jumlah</span>
-            <span className="col-span-2 font-medium text-gray-900">1</span>
+            <span className="col-span-2 font-medium text-gray-900">
+              {data?.detail_product?.item_quantity}
+            </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
             <span className="text-gray-500">Email</span>
             <span className="col-span-2 font-medium text-gray-900 break-all">
-              alfian.jw@gmail.com
+              {data?.detail_product?.email}
             </span>
           </div>
         </div>

@@ -3,31 +3,31 @@ import { Info } from 'lucide-react'
 
 export default function SecurityCard() {
   return (
-    <div className="w-full max-w-3xl mx-auto px-4">
-      <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm">
-        {/* Icon kiri */}
+    <div className=" max-w-md mx-auto px-4">
+      <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+        {/* Icon */}
         <div className="flex-shrink-0">
           <Image
-            src="/secure-badge.png" // taruh di /public
+            src="https://s3.nevaobjects.id/image-dev/uploads/20260120142828.webp"
             alt="Garansi Aman"
-            width={56}
-            height={56}
+            width={48}
+            height={48}
             className="object-contain"
           />
         </div>
 
         {/* Text */}
-        <p className="text-sm sm:text-base text-gray-800 leading-relaxed">
-          <span className="font-semibold">Transaksi ini dijamin aman</span> dan garansi uang kembali{' '}
-          <span className="font-semibold">10x lipat</span>.
+        <p className="flex-1 text-xs sm:text-sm text-gray-800 leading-snug">
+          <span className="block">Transaksi ini dijamin aman</span>
+          <span className="block">dan garansi uang kembali 10x lipat</span>
         </p>
 
-        {/* Info icon */}
+        {/* Button */}
         <button
-          className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
+          className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
           aria-label="Info"
         >
-          <Info size={16} />
+          <Info size={14} />
         </button>
       </div>
     </div>

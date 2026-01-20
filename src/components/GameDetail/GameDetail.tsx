@@ -143,7 +143,7 @@ export function GameDetailComponent() {
       const res = await createTransaction(payload)
       setIsRedirecting(true)
 
-      router.push(`/${locale}/transaction/${res.data.id}`)
+      router.push(`/${locale}/detail-trx/${res.data.id}`)
     } catch (err) {
       setIsRedirecting(false)
     }
