@@ -31,7 +31,7 @@ export default function TransactionStatusCard({ data }: TransactionStatusCardPro
   const cfg = statusConfig[data.status] || statusConfig.PENDING
 
   const paymentChannel = data.payment_channel?.toLowerCase()
-  const isWallet = paymentChannel === 'shopeepay' || paymentChannel === 'gopay'
+  const isWallet = paymentChannel === 'shopeepay' || paymentChannel === 'gopay' ||  paymentChannel === 'dana'
   const isQRIS = !!(data.qr_code_url || data.qr_string)
 
   return (

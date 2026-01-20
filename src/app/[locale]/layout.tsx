@@ -13,6 +13,14 @@ import { Toaster } from 'sonner'
 export const metadata = {
   title: 'Pakar Gaming',
   description: 'Platform terpercaya untuk membeli game digital',
+  icons: {
+    icon: [
+      { url: '/logo-new.png', sizes: '512x512' },
+      { url: '/logo-new.png', sizes: '192x192' }, // Android
+      { url: '/logo-new.png', sizes: '512x512' }, // PWA
+    ],
+    apple: '/logo-new.png', // iOS
+  },
 }
 
 export default async function RootLayout({
