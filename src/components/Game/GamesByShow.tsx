@@ -43,7 +43,7 @@ export default function GamesByShow() {
   if (isLoading) return <GamesByShowSkeleton />
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
+    <section className="w-full ">
       {/* ===== SHOW NAVIGATION ===== */}
       <div
         className="
@@ -111,7 +111,11 @@ export default function GamesByShow() {
         const ribbon = getRibbon(show)
 
         return (
-          <div key={show.ID} id={`show-${show.ID}`} className="scroll-mt-36">
+          <div
+            key={show.ID}
+            id={`show-${show.ID}`}
+            className="scroll-mt-36 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12"
+          >
             {/* HEADER */}
             <div className="mb-6">
               <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
