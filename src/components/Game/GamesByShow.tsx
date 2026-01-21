@@ -11,6 +11,7 @@ export default function GamesByShow() {
   const { data, isLoading } = useGetShows()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [isNavSticky, setIsNavSticky] = useState(false)
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id)
@@ -23,6 +24,15 @@ export default function GamesByShow() {
 
   useEffect(() => {
     const handleScroll = () => {
+      // Check if navigation is stuck (scrolled past navbar)
+      const navElement = document.getElementById('show-navigation')
+      if (navElement) {
+        const navTop = navElement.getBoundingClientRect().top
+        // Assuming navbar height is 56px (top-14) or 64px (top-16)
+        setIsNavSticky(navTop <= 64)
+      }
+
+      // Update selected show based on scroll position
       let currentId: string | null = null
       shows.forEach((show) => {
         const el = document.getElementById(`show-${show.ID}`)
@@ -46,16 +56,23 @@ export default function GamesByShow() {
     <section className="w-full ">
       {/* ===== SHOW NAVIGATION ===== */}
       <div
-        className="
-    sticky top-14 md:top-16 z-30
-    py-2 md:py-3
-    mb-8 md:mb-12
-    flex md:flex-wrap
-    gap-2 md:gap-4
-    justify-start md:justify-center
-    overflow-x-auto md:overflow-visible
-    scrollbar-thin scrollbar-thumb-purple-400 scrollbar-track-purple-100
-  "
+        id="show-navigation"
+        className={`
+          sticky top-14 md:top-16 z-30
+          py-2 md:py-3
+          mb-8 md:mb-12
+          flex md:flex-wrap
+          gap-2 md:gap-4
+          justify-start md:justify-center
+          overflow-x-auto md:overflow-visible
+          scrollbar-thin scrollbar-thumb-purple-400 scrollbar-track-purple-100
+          transition-all duration-300
+          ${
+            isNavSticky
+              ? 'bg-white  dark:bg-black/20 border-b border-purple-500/20 backdrop-blur-sm'
+              : 'bg-transparent'
+          }
+        `}
       >
         {shows.map((show) => {
           const isSelected = selectedId === `show-${show.ID}`
