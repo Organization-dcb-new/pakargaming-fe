@@ -1,6 +1,5 @@
 'use client'
 import { Link, usePathname } from '../i18n/routing'
-import { Menu, X, Gamepad2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
@@ -108,7 +107,7 @@ export function Navigation() {
               <img
                 src="https://s3.nevaobjects.id/image-dev/uploads/20260121141804.png"
                 alt="Logo"
-                className="object-contain w-48" 
+                className="object-contain w-48"
               />
             </Link>
 
