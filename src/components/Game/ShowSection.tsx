@@ -3,7 +3,7 @@ import { Show } from '../../types/Show'
 import { useLocale } from 'next-intl'
 import { getRibbon } from './../../utils/ribbon'
 import Image from 'next/image'
-import { Link } from '../../i18n/routing'
+import Link from 'next/link'
 
 interface ShowSectionProps {
   shows: Show[]
