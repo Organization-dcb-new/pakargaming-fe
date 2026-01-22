@@ -41,6 +41,7 @@ export interface Price {
   name: string
   selling_price: number
 }
+
 export interface GamDetail {
   id: string
   category_id: string
@@ -65,6 +66,14 @@ export interface GamDetail {
   input: GameInput[]
   product: Price[]
 }
+
+export interface SearchGame {
+  id: string
+  name: string
+  slug: string
+  thumbnail_url: string
+}
+
 export interface GameByCategory {
   category_id: string
   category_name: string
@@ -74,3 +83,4 @@ export interface GameByCategory {
 export type GetGamesByCategoryResponse = ApiResponse<GameByCategory[]>
 export type GetGamesResponse = ApiResponse<Game[]>
 export type GetGameResponse = ApiResponse<GamDetail>
+export type GetGamesBySearchResponse = ApiResponse<SearchGame[]>

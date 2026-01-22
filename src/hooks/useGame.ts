@@ -1,5 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { GetGameResponse, GetGamesByCategoryResponse, GetGamesResponse } from '../types/Game'
+import {
+  GetGameResponse,
+  GetGamesByCategoryResponse,
+  GetGamesBySearchResponse,
+  GetGamesResponse,
+} from '../types/Game'
 import { api } from '../api/axios'
 
 export function useGetGames() {
@@ -52,4 +57,17 @@ export function useGetGameByCategory() {
   })
 
   return { data, isLoading, isError, refetch }
+}
+
+export function useGetGameBySearch(search: string) {
+  return useQuery<GetGamesBySearchResponse>({
+    queryKey: ['games-search', search],
+    enabled: !!search,
+    queryFn: async () => {
+      const res = await api.get('/v1/games/search', {
+        params: { search },
+      })
+      return res.data
+    },
+  })
 }

@@ -8,6 +8,7 @@ import { LogOut } from 'lucide-react'
 import Cookies from 'js-cookie'
 
 import UseLoginGoogleOauth from '../hooks/useLogin'
+import SearchComponent from './Search/Search'
 
 type AuthUser = {
   name: string
@@ -62,11 +63,7 @@ export function Navigation() {
     return () => window.removeEventListener('click', handler)
   }, [])
 
-  const navLinks = [
-    { path: '/', label: t('home'), auth: false },
-    { path: '/games', label: t('games'), auth: false },
-    { path: '/my-transaction', label: t('transaction'), auth: true },
-  ]
+  const navLinks = [{ path: '/my-transaction', label: t('transaction'), auth: true }]
   const visibleNavLinks = navLinks.filter((link) => !link.auth || user)
 
   if (loading) {
@@ -114,17 +111,24 @@ export function Navigation() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8">
               <div className="flex items-center gap-6">
-                {visibleNavLinks.map(({ path, label }) => (
+                <SearchComponent />
+                {visibleNavLinks.map((link) => (
                   <Link
-                    key={path}
-                    href={path}
-                    className={`${
-                      pathname === path
-                        ? 'text-purple-700 font-semibold dark:text-purple-400'
-                        : 'text-gray-900 dark:text-gray-300 hover:text-purple-700 dark:hover:text-white'
-                    } transition-colors duration-200 font-medium`}
+                    key={link.path}
+                    href={link.path}
+                    className="
+    relative text-sm font-semibold
+    text-purple-600 dark:text-purple-400
+    transition-colors duration-200
+    hover:text-purple-600 dark:hover:text-purple-400
+    after:absolute after:left-0 after:-bottom-1
+    after:h-[2px] after:w-0
+    after:bg-purple-600 dark:after:bg-purple-400
+    after:transition-all after:duration-300
+    hover:after:w-full
+  "
                   >
-                    {label}
+                    {link.label}
                   </Link>
                 ))}
               </div>

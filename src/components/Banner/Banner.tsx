@@ -35,8 +35,32 @@ export default function BannerCarousel() {
 
   // Loading / Error / Empty state
   if (isLoading) return <ShowSkeleton />
-  if (isError) return <p className="text-red-500">Failed to load banners.</p>
-  if (total === 0) return <p>No banners found.</p>
+  if (isError) {
+    return (
+      <div className="py-10 flex justify-center items-center min-h-screen">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-red-200 bg-red-50 p-6 text-center">
+          <p className="text-sm font-semibold text-red-600">Failed to load Content</p>
+
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 cursor-pointer rounded-md bg-red-500 px-4 py-2 text-xs text-white hover:bg-red-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (total === 0) {
+    return (
+      <div className="py-10 flex justify-center  items-center min-h-screen">
+        <div className="rounded-xl border border-dashed bg-gray-50 px-6 py-8 text-center">
+          <p className="text-sm font-medium text-gray-600">No banners available</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-10">
