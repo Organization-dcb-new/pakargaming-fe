@@ -1,6 +1,5 @@
-import { GameDetailComponent } from "../../../../components/GameDetail/GameDetail";
-import GameTransaction from "../../../../components/GameTransaction/GameTransaction";
+import { GameDetailComponent } from '../../../../components/GameDetail/GameDetail'
 
 export default function GamesDetailPage() {
-  return <GameTransaction />
+  return <GameDetailComponent />
 }
