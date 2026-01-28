@@ -15,7 +15,7 @@ export default function GameTransaction() {
 
   return (
     <LayoutGamesTransaction>
-      <BannerGameTransaction />
+      <BannerGameTransaction game={dataGameDetail.data} />
     </LayoutGamesTransaction>
   )
 }
