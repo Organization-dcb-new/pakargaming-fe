@@ -91,7 +91,7 @@ export default function InputGame({ InputGame, control, errors }: InputProps) {
           text-sm
         "
                       >
-                        <option value="">Pilih Server</option>
+                        <option value="">{input.placeholder}</option>
                         {input.Options?.map((opt, i) => (
                           <option key={i} value={opt.value}>
                             {opt.name}
