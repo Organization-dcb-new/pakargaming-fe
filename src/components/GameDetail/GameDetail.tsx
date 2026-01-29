@@ -224,7 +224,6 @@ export function GameDetailComponent() {
               errors={orderForm.formState.errors}
             />
 
-            {/* Package Selection */}
 
             {/* Package Selection */}
             <div ref={packageRef}>

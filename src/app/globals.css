@@ -2,7 +2,6 @@
 @import '../styles/tailwind.css';
 @import '../styles/theme.css';
 
-
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -18,3 +17,35 @@
   animation: fadeInUp 0.45s ease-out;
 }
 
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes floatSoft {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-floatSoft {
+  animation: floatSoft 4s ease-in-out 1s infinite;
+}
