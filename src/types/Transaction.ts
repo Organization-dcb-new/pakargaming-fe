@@ -48,7 +48,6 @@ export interface PaymentDataWithDetailProduct {
   payment_method_id: string
   payment_channel: string
   detail_product: DetailProduct
-
   payment_url: string
   qr_code_url: string
   qr_string: string
@@ -67,6 +66,8 @@ export interface DetailProduct {
   category: string
   payment_image: string
   game_slug: string
+  voucher_code: string
+  payment_name: string
 }
 
 export interface PaymentGuide {

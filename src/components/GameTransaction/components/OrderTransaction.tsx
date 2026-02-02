@@ -5,12 +5,12 @@ import { PaymentMethod } from '../../../types/PaymentMethod'
 import { formatPrice } from '../../../utils/format_price'
 
 interface OrderProps {
-  onSubmit: () => void
   Product: Price
   Payment: PaymentMethod
+  setOpenModal: (v: boolean) => void
 }
 
-export default function OrderSummary({ onSubmit, Payment, Product }: OrderProps) {
+export default function OrderSummary({ Payment, Product, setOpenModal }: OrderProps) {
   return (
     <div className=" hidden xl:block sticky top-24 mt-5">
       <div className="bg-black/5  xl:w-100  dark:bg-white/10 rounded-3xl p-4 sm:p-6 border border-purple-500/30 shadow-xl">
@@ -47,7 +47,9 @@ export default function OrderSummary({ onSubmit, Payment, Product }: OrderProps)
         </div>
 
         <button
-          onClick={onSubmit}
+          onClick={() => {
+            setOpenModal(true)
+          }}
           className="
     w-full
     bg-gradient-to-r from-pink-500 to-purple-600
@@ -70,8 +72,6 @@ export default function OrderSummary({ onSubmit, Payment, Product }: OrderProps)
           Beli
         </button>
       </div>
-
-      
     </div>
   )
 }

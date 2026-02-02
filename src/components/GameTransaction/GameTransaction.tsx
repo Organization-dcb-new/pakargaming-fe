@@ -19,6 +19,7 @@ import MobileOrderBar from './components/MobileOrderTransaction'
 import { useCreateTransactionV2 } from './hooks/useCreateTransaction'
 import { toast } from 'sonner'
 import useAuth from '../../hooks/useAuth'
+import ConfirmModal from './components/Confirmation'
 
 export default function GameTransaction() {
   const { slug } = useParams<{ slug: string }>()
@@ -27,6 +28,7 @@ export default function GameTransaction() {
   const [email, setSelectedEmail] = useState<string>(null)
   const { user } = useAuth()
   const [account, setSelectedAccount] = useState<Record<string, any> | null>(null)
+  const [openModal, setOpenModal] = useState<boolean>(false)
 
   const { data: dataPaymentMethods } = useGetPaymentMethod()
   const { data: dataGameDetail, isLoading: isLoadingGameDetail } = useGetGamesBySlug(slug)
@@ -51,7 +53,7 @@ export default function GameTransaction() {
   const validations = [
     ...(inputs.length > 0 ? [{ value: account, message: 'Akun Tidak Ditemukan' }] : []),
 
-    { value: selectedPackage, message: 'Pilih package dulu' },
+    { value: selectedPackage, message: 'Pilih Produk' },
     { value: selectedPayment, message: 'Pilih metode pembayaran' },
     { value: email, message: 'Email belum diisi' },
   ]
@@ -126,9 +128,9 @@ export default function GameTransaction() {
         <div className="flex items-center flex-col ">
           <HelpCard />
           <OrderTransactionComponent
-            onSubmit={handleCreateOrder}
             Payment={activePayment}
             Product={activeProduct}
+            setOpenModal={setOpenModal}
           />
         </div>
       </LayoutData>
@@ -137,6 +139,7 @@ export default function GameTransaction() {
         Product={activeProduct}
         onSubmit={handleCreateOrder}
       />
+      <ConfirmModal onConfirm={handleCreateOrder} />
     </LayoutGamesTransaction>
   )
 }

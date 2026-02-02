@@ -60,7 +60,7 @@ export default function PaymentDetailCard({ data }: PaymentDetailCardProps) {
                 height={18}
                 className="object-contain"
               />
-              <span className="text-xs font-medium text-gray-900">{data?.payment_channel}</span>
+              <span className="text-xs font-medium text-gray-900">{data?.detail_product.payment_name}</span>
             </div>
           </div>
         </div>
