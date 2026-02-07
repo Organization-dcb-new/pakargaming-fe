@@ -59,7 +59,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                   className="
     group flex flex-col overflow-hidden rounded-2xl
     border border-white/10
-    bg-white dark:bg-zinc-900/40
+    bg-gray-300 dark:bg-zinc-900/40
     transition-all duration-300
     hover:border-purple-500/60
     hover:shadow-lg hover:shadow-purple-500/20
