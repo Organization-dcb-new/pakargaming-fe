@@ -1,11 +1,15 @@
 import Image from 'next/image'
 import { PaymentDataWithDetailProduct } from '../../types/Transaction'
+import { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 
 type ProductDetailCardProps = {
   data: PaymentDataWithDetailProduct
 }
 
 export default function ProductDetailCard({ data }: ProductDetailCardProps) {
+  const [showVoucher, setShowVoucher] = useState(false)
+
   return (
     <div className="w-full max-w-3xl">
       <div className="rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm">
@@ -72,8 +76,18 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
             <div className="grid grid-cols-3 items-center gap-2 rounded-lg bg-green-50 px-3 py-2">
               <span className="text-xs font-medium text-gray-500">Voucher</span>
 
-              <span className="col-span-2 flex items-center gap-2 font-semibold text-green-700 break-all">
-                🎟️ {data.detail_product.voucher_code}
+              <span className="col-span-2 flex items-center justify-between gap-2 font-semibold text-green-700">
+                <span className="break-all">
+                  🎟️ {showVoucher ? data.detail_product.voucher_code : '••••••••••••••'}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setShowVoucher(!showVoucher)}
+                  className="text-green-600 cursor-pointer hover:text-green-800"
+                >
+                  {showVoucher ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </span>
             </div>
           )}

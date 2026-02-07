@@ -1,6 +1,3 @@
-import { Price } from '../../../types/Game'
-import { PaymentMethod } from '../../../types/PaymentMethod'
-
 export interface CreateOrderRequest {
   email: string
   game_data: Record<string, any>
@@ -15,5 +12,5 @@ export interface CreateOrderRequest {
   }
   provider_id: string
   game_id: string
-  amount: number
+  product_id: string
 }

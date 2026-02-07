@@ -48,7 +48,7 @@ export function GameDetailComponent() {
       },
       provider_id: '',
       game_id: '',
-      amount: 0,
+      product_id: '',
     },
   })
 
@@ -224,7 +224,6 @@ export function GameDetailComponent() {
               errors={orderForm.formState.errors}
             />
 
-
             {/* Package Selection */}
             <div ref={packageRef}>
               <PackageGame
@@ -244,7 +243,7 @@ export function GameDetailComponent() {
                   setValue('game_id', dataGameDetail?.data?.id || '', {
                     shouldValidate: true,
                   })
-                  setValue('amount', pkg.selling_price, {
+                  setValue('product_id', pkg.id, {
                     shouldValidate: true,
                   })
 

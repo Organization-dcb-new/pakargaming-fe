@@ -79,7 +79,7 @@ export default function GameTransaction() {
       },
       email: email,
       game_data: account,
-      amount: selectedPackage.selling_price,
+      product_id: selectedPackage.id,
       provider_id: dataGameDetail.data.provider_id,
     })
   }

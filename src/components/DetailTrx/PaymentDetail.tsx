@@ -60,7 +60,9 @@ export default function PaymentDetailCard({ data }: PaymentDetailCardProps) {
                 height={18}
                 className="object-contain"
               />
-              <span className="text-xs font-medium text-gray-900">{data?.detail_product.payment_name}</span>
+              <span className="text-xs font-medium text-gray-900">
+                {data?.detail_product.payment_name}
+              </span>
             </div>
           </div>
         </div>
@@ -72,12 +74,16 @@ export default function PaymentDetailCard({ data }: PaymentDetailCardProps) {
         <div className="space-y-2 text-xs sm:text-sm">
           <div className="flex items-center justify-between">
             <span className="text-gray-500">Total transaksi</span>
-            <span className="font-medium text-gray-900">Rp {data?.amount}</span>
+            <span className="font-medium text-gray-900">
+              Rp {data?.amount?.toLocaleString('id-ID')}
+            </span>
           </div>
 
           <div className="flex items-center justify-between">
             <span className="text-gray-500">Total pembayaran</span>
-            <span className="text-sm font-bold text-gray-900">Rp {data?.amount}</span>
+            <span className="text-sm font-bold text-gray-900">
+              Rp {data?.amount?.toLocaleString('id-ID')}
+            </span>
           </div>
         </div>
       </div>
