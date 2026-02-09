@@ -23,11 +23,11 @@ export default function BannerGameTransaction({ game }: GameTransactionProps) {
   return (
     <div className="w-full flex flex-col justify-center items-center border-b border-purple-500/30 dark:border-purple-500/20 ">
       {/* COVER */}
-      <div className="relative h-52 sm:h-60 md:h-90 w-full overflow-hidden">
+      <div className="relative w-full aspect-[2560/460] overflow-hidden">
         <img
           src={game.banner_url || 'https://images.unsplash.com/photo-1542751371-adc38448a05e'}
           alt="cover"
-          className="h-full w-full object-contain"
+          className="h-full w-full object-cover"
         />
       </div>
 
