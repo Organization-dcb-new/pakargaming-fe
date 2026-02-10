@@ -1,0 +1,30 @@
+name: Deploy Dev PakarGaming Client
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    name: Deploy Client (Dev)
+    runs-on: [self-hosted]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Dashboard
+        shell: bash
+        run: |
+          set -e
+
+          echo "Workspace: $GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE"
+
+          echo "Listing files"
+          ls -la
+
+          docker compose -f docker-compose.dev.yml down || true
+          docker compose -f docker-compose.dev.yml build
+          docker compose -f docker-compose.dev.yml up -d
