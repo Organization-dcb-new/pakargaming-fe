@@ -5,6 +5,7 @@ import { GetPaymentMethodResponse, PaymentMethod } from '../../../types/PaymentM
 import Image from 'next/image'
 import { Price } from '../../../types/Game'
 import { formatPrice } from '../../../utils/format_price'
+import { useEffect } from 'react'
 
 interface PaymentMethodProps {
   PaymentMethod: GetPaymentMethodResponse
@@ -12,12 +13,13 @@ interface PaymentMethodProps {
   step?: number
   setSelectedPaymentMethod: React.Dispatch<React.SetStateAction<PaymentMethod | null>>
   ActiveProduct: Price
+  selectedPackage: Price | null
 }
 
 export const calculateTotalPrice = (payment: PaymentMethod, ActiveProduct: Price) => {
   if (!ActiveProduct) return null
 
-  const base = ActiveProduct?.selling_price || 0 
+  const base = ActiveProduct?.selling_price || 0
   const feePercent = base * (payment?.fee_percentage / 100) || 0
   const total = base + feePercent
   return formatPrice(Math.round(total))
@@ -27,11 +29,24 @@ export default function PaymentMethodTransactionComponent({
   PaymentMethod,
   activePayment,
   step,
+
   ActiveProduct,
   setSelectedPaymentMethod,
+  selectedPackage,
 }: PaymentMethodProps) {
+  const scrollToPayment = () => {
+    const el = document.getElementById('payment-method-section')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+  useEffect(() => {
+    if (selectedPackage) {
+      scrollToPayment()
+    }
+  }, [selectedPackage])
   return (
-    <div className="relative w-full sm:w-150 ">
+    <div id="payment-method-section" className="relative w-full sm:w-150  scroll-mt-28">
       {/* Step Badge */}
       <div className="absolute -top-2 -left-2 sm:-top-3 sm:-left-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-md border-2 border-white dark:border-zinc-900 z-10">
         {step}

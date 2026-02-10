@@ -20,6 +20,7 @@ import { useCreateTransactionV2 } from './hooks/useCreateTransaction'
 import { toast } from 'sonner'
 import useAuth from '../../hooks/useAuth'
 import ConfirmModal from './components/Confirmation'
+import { useGetCategoryProduct } from './hooks/useGetCategoryProduct'
 
 export default function GameTransaction() {
   const { slug } = useParams<{ slug: string }>()
@@ -32,6 +33,10 @@ export default function GameTransaction() {
 
   const { data: dataPaymentMethods } = useGetPaymentMethod()
   const { data: dataGameDetail, isLoading: isLoadingGameDetail } = useGetGamesBySlug(slug)
+
+  const gameId = dataGameDetail?.data?.id
+
+  const { data: categoryProduct } = useGetCategoryProduct(gameId)
 
   const { mutate, isPending } = useCreateTransactionV2()
 
@@ -116,17 +121,21 @@ export default function GameTransaction() {
       : []),
 
     <ProductComponent
+      productGame={dataGameDetail}
       setSelectedPackage={setSelectedPackage}
       key="product"
-      game={dataGameDetail}
+      product={categoryProduct}
       activeProduct={activeProduct}
     />,
+
     <PaymentMethodTransactionComponent
       ActiveProduct={activeProduct}
       setSelectedPaymentMethod={setSelectedPayment}
       PaymentMethod={dataPaymentMethods}
       activePayment={activePayment}
+      selectedPackage={selectedPackage}
     />,
+
     <ContactForm setSelectedEmail={setSelectedEmail} email={email} />,
   ]
 
