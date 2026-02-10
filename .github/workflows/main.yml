@@ -1,14 +1,13 @@
-name: Deploy Dev PakarGaming Client
+name: Deploy Prod PakarGaming Client
 
 on:
   push:
     branches:
-      - dev
-
+      - main
 jobs:
   deploy:
-    name: Deploy Client (Dev)
-    runs-on: [self-hosted, dev]
+    name: Deploy Client (Prod)
+    runs-on: [self-hosted, main]
 
     steps:
       - name: Checkout repository
@@ -25,6 +24,6 @@ jobs:
           echo "Listing files"
           ls -la
 
-          docker compose -f docker-compose.dev.yml down || true
-          docker compose -f docker-compose.dev.yml build
-          docker compose -f docker-compose.dev.yml up -d
+          docker compose -f docker-compose.main.yml down || true
+          docker compose -f docker-compose.main.yml build
+          docker compose -f docker-compose.main.yml up -d
