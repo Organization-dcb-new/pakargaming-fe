@@ -5,6 +5,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
 # Install deps
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
@@ -22,8 +25,6 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-ARG NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
 # Only copy needed files
 COPY --from=builder /app/package.json ./
