@@ -6,7 +6,7 @@ on:
       - main
 jobs:
   deploy:
-    name: Deploy Client (Prod)
+    name: Deploy Client  (Prod)
     runs-on: [self-hosted, main]
 
     steps:
