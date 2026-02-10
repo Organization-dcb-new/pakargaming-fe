@@ -1,0 +1,14 @@
+services:
+  fe-dashboard:
+    container_name: fe-client-prod
+    image: fe-client:prod
+
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_API_BASE_URL: https://api.pakargaming.id
+
+    ports:
+      - '3000:3000'
+
+    restart: unless-stopped

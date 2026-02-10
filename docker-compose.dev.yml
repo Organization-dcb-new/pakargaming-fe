@@ -1,0 +1,14 @@
+services:
+  fe-dashboard:
+    container_name: fe-client-dev
+    image: fe-client:dev
+
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_API_BASE_URL: https://dev-api.pakargaming.id
+
+    ports:
+      - '3000:3000'
+
+    restart: unless-stopped
