@@ -7,7 +7,6 @@ export default function Information() {
 
       <Link
         href="/en/term-and-condition"
-        target='_blank'
         className="block text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-300 text-sm font-medium"
       >
         Syarat & Ketentuan
