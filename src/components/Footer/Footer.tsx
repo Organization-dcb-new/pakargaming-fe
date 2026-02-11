@@ -3,6 +3,7 @@
 import BrandComponent from './Brand'
 import ContactComponent from './Contact'
 import CopyrightComponent from './Copyright'
+import Information from './Information'
 import LayoutFooter from './Layout'
 import NewsletterComponent from './NewsLettter'
 
@@ -14,6 +15,7 @@ export function Footer() {
         <BrandComponent />
         {/* Contact */}
         <ContactComponent />
+        <Information />
         {/* Newsletter */}
         <NewsletterComponent />
       </div>
