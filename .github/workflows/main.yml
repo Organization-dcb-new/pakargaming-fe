@@ -25,11 +25,11 @@ jobs:
           ls -la
 
           echo "🔨 Building image..."
-            if docker compose -f docker-compose.prod.yml build; then
+            if docker compose -f docker-compose.main.yml build; then
               echo "✅ Build success"
 
               echo "🚀 Restarting container..."
-              docker compose -f docker-compose.prod.yml up -d
+              docker compose -f docker-compose.main.yml up -d
 
               echo "🎉 Deploy success"
             else
