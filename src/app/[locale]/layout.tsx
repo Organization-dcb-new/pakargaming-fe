@@ -11,8 +11,9 @@ import QueryProvider from "../../providers/query-provider";
 import { Toaster } from "sonner";
 
 export const metadata = {
-  title: "Pakar Gaming",
-  description: "Platform terpercaya untuk membeli game digital",
+  title: "Pakar Gaming - Ahlinya Top Up Game Murah, Instan & Terpercaya",
+  description:
+    "Website top up game yang terpercaya, cepat, aman, dan didukung layanan CS 24 jam yang siap membantu kapan saja.",
   icons: {
     icon: "/logo.png",
   },
