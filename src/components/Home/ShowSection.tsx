@@ -1,41 +1,41 @@
-import { useEffect, useState } from 'react'
-import { Show } from '../../types/Show'
-import { useLocale } from 'next-intl'
-import { getRibbon } from '../../utils/ribbon'
-import Image from 'next/image'
-import Link from 'next/link'
+import { useEffect, useState } from "react";
+import { Show } from "../../types/Show";
+import { useLocale } from "next-intl";
+import { getRibbon } from "../../utils/ribbon";
+import Image from "next/image";
+import Link from "next/link";
 
 interface ShowSectionProps {
-  shows: Show[]
+  shows: Show[];
 }
 export default function ShowSectionGames({ shows }: ShowSectionProps) {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
-  const locale = useLocale()
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const locale = useLocale();
 
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640)
-    }
+      setIsMobile(window.innerWidth < 640);
+    };
 
-    checkMobile() // initial
-    window.addEventListener('resize', checkMobile)
+    checkMobile(); // initial
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   return (
     <>
       {/* ===== SHOW SECTIONS ===== */}
       {shows.map((show) => {
-        const limit = isMobile ? 3 : 5
-        const isExpanded = expanded[show.ID] ?? false
-        const hasManyGames = show.Games.length > limit
+        const limit = isMobile ? 3 : 7;
+        const isExpanded = expanded[show.ID] ?? false;
+        const hasManyGames = show.Games.length > limit;
 
-        const games = isExpanded ? show.Games : show.Games.slice(0, limit)
+        const games = isExpanded ? show.Games : show.Games.slice(0, limit);
 
-        const ribbon = getRibbon(show)
+        const ribbon = getRibbon(show);
 
         return (
           <div
@@ -51,13 +51,18 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
             </div>
 
             {/* GAMES GRID */}
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols- gap-3 sm:gap-4">
+            <div
+              className="grid grid-cols-3 justify-items-center
+ sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-3 sm:gap-4"
+            >
               {games.map((game) => (
                 <Link
                   key={game.ID}
                   href={`/${locale}/games/${game.Slug}`}
                   className="
-    group flex flex-col overflow-hidden rounded-2xl
+    group relative
+    w-[120px] h-[120px]
+    overflow-hidden rounded-2xl
     border border-white/10
     bg-gray-300 dark:bg-zinc-900/40
     transition-all duration-300
@@ -65,80 +70,63 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
     hover:shadow-lg hover:shadow-purple-500/20
   "
                 >
-                  {/* IMAGE CONTAINER - Switched to aspect-video for consistency */}
-                  <div className="relative aspect-video w-full overflow-hidden">
+                  <div className="relative w-full h-full overflow-hidden">
                     {/* RIBBON */}
                     {ribbon && (
                       <div
                         className={`
-      absolute z-20
-      /* Positioning: Diagonal offset adjustments */
-      top-2 left-[-34px]
-      md:top-3 md:left-[-38px]
-      lg:top-3.5 lg:left-[-42px]
-      
-      rotate-[-45deg]
-      bg-gradient-to-r ${ribbon.className}
-      
-      /* Width: Fixed width works best for rotation stability */
-      w-[115px] 
-      md:w-[135px] 
-      lg:w-[155px]
-      
-      /* Vertical Thickness */
-      py-0.5 
-      md:py-1
-      
-      /* Typography */
-      text-[7px] 
-      md:text-[9px] 
-      lg:text-[10px]
-      
-      font-extrabold text-white 
-      uppercase tracking-wider 
-      text-center shadow-md
-    `}
+          absolute z-20
+          top-2 left-[-40px]
+          rotate-[-45deg]
+          bg-gradient-to-r ${ribbon.className}
+          w-[130px]
+          py-1
+          text-[8px]
+          font-extrabold text-white
+          uppercase tracking-wider
+          text-center shadow-md
+        `}
                       >
                         {ribbon.label}
                       </div>
                     )}
 
+                    {/* IMAGE */}
                     <Image
-                      src={game.ThumbnailURL || 'https://api.dicebear.com/9.x/pixel-art/svg'}
+                      src={
+                        game.ThumbnailURL ||
+                        "https://api.dicebear.com/9.x/pixel-art/svg"
+                      }
                       alt={game.Name}
                       fill
-                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                       priority
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-
-                  {/* TITLE SECTION - Improved padding and vertical alignment */}
-                  <div
-                    className="
-    /* Layout */
-    flex grow flex-col justify-center
-    border-t border-gray-100 dark:border-zinc-800
-    bg-gray-50 dark:bg-zinc-800/50
-    
-    /* Responsive Sizing */
-    p-1.5 sm:p-2 md:p-3           /* Padding lebih tipis di HP */
-    min-h-[36px] sm:min-h-[44px]  /* Tinggi minimum lebih pendek di HP */
-    
-    text-center
-  "
-                  >
-                    <p
                       className="
-      /* Responsive Text */
-      text-[10px] sm:text-xs md:text-sm 
-      font-semibold leading-tight
-      text-gray-800 dark:text-zinc-100
-      line-clamp-2
+        object-cover
+        transition-transform duration-500
+        group-hover:scale-105
+      "
+                    />
+
+                    {/* TITLE OVERLAY */}
+                    <div
+                      className="
+      absolute bottom-0 left-0 w-full
+      bg-gradient-to-t from-black/80 via-black/40 to-transparent
+      px-2 py-1
     "
                     >
-                      {game.Name}
-                    </p>
+                      <p
+                        className="
+        text-[10px]
+        font-semibold
+        text-white
+        text-center
+        line-clamp-2
+      "
+                      >
+                        {game.Name}
+                      </p>
+                    </div>
                   </div>
                 </Link>
               ))}
@@ -156,13 +144,15 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                   }
                   className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline"
                 >
-                  {isExpanded ? 'Tampilkan lebih sedikit' : 'Tampilkan lebih banyak'}
+                  {isExpanded
+                    ? "Tampilkan lebih sedikit"
+                    : "Tampilkan lebih banyak"}
                 </button>
               </div>
             )}
           </div>
-        )
+        );
       })}
     </>
-  )
+  );
 }
