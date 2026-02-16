@@ -1,6 +1,7 @@
 export default function TermAndConditionPages() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 text-gray-800 leading-relaxed">
+    <div className="max-w-4xl mx-auto px-4 py-10">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-md p-8 space-y-6 text-gray-800 dark:text-gray-200 leading-relaxed">
       <h1 className="text-3xl font-bold mb-8 text-center">
         Syarat dan Ketentuan Penggunaan PakarGaming
       </h1>
@@ -163,6 +164,7 @@ export default function TermAndConditionPages() {
           <p>📱 WhatsApp: +62 8131 7937 08</p>
         </div>
       </Section>
+    </div>
     </div>
   );
 }
