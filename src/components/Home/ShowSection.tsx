@@ -53,7 +53,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
     sm:grid-cols-4
     md:grid-cols-5
     lg:grid-cols-6
-    gap-3 sm:gap-4
+    gap-3 
     justify-items-center
   "
             >
@@ -124,7 +124,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                     >
                       <p
                         className="
-        text-[10px]
+        text-[15px]
         font-semibold
         text-white
         text-center
