@@ -108,7 +108,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                       fill
                       priority
                       className="
-        object-contain
+        object-cover
         transition-transform duration-500
         group-hover:scale-105
       "
