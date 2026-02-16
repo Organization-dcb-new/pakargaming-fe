@@ -8,6 +8,12 @@ export default function Information() {
       </h3>
 
       <div className=" flex flex-col gap-2">
+        <Link
+          href="/en/about"
+          className="block text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-300 text-sm "
+        >
+          Tentang Kami
+        </Link>
 
         <Link
           href="/en/term-and-condition"

@@ -15,6 +15,7 @@ export function Footer() {
         <BrandComponent />
         {/* Contact */}
         <ContactComponent />
+        {/* Information */}
         <Information />
         {/* Newsletter */}
         <NewsletterComponent />

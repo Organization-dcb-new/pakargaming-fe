@@ -1,6 +1,6 @@
-@import '../styles/fonts.css';
-@import '../styles/tailwind.css';
-@import '../styles/theme.css';
+@import "../styles/fonts.css";
+@import "../styles/tailwind.css";
+@import "../styles/theme.css";
 
 @keyframes fadeInUp {
   from {
@@ -48,4 +48,36 @@
 
 .animate-floatSoft {
   animation: floatSoft 4s ease-in-out 1s infinite;
+}
+
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Animasi Slide In dari Kanan */
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Utility Classes */
+.animate-slide-in-left {
+  animation: slide-in-left 0.8s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.8s ease-out forwards;
 }
