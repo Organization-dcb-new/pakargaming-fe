@@ -17,11 +17,9 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
   const LIMIT_MAP = {
     mobile: 3,
     tablet: 5,
-    desktop: 7,
-    xl: 8, // 1440px
-    "2xl": 9, // 1536px+
+    desktop: 6,
   } as const;
-  const limit = LIMIT_MAP[breakpoint] ?? 7;
+  const limit = LIMIT_MAP[breakpoint] ?? 6;
 
   return (
     <>
@@ -54,9 +52,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
     grid-cols-3
     sm:grid-cols-4
     md:grid-cols-5
-    lg:grid-cols-7
-    xl:grid-cols-8
-    2xl:grid-cols-9
+    lg:grid-cols-6
     gap-3 sm:gap-4
     justify-items-center
   "
@@ -68,6 +64,11 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                   className="
     group relative
     w-[120px] h-[120px]
+    sm:w-[130px] sm:h-[130px]
+    md:w-[140px] md:h-[140px]
+    lg:w-[150px] lg:h-[150px]
+    xl:w-[170px] xl:h-[170px]
+    2xl:w-[190px] 2xl:h-[190px]
     overflow-hidden rounded-2xl
     border border-white/10
     bg-gray-300 dark:bg-zinc-900/40
@@ -107,7 +108,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                       fill
                       priority
                       className="
-        object-cover
+        object-contain
         transition-transform duration-500
         group-hover:scale-105
       "
