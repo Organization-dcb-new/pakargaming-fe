@@ -4,6 +4,7 @@ import { useLocale } from "next-intl";
 import { getRibbon } from "../../utils/ribbon";
 import Image from "next/image";
 import Link from "next/link";
+import { useBreakpoint } from "../../hooks/useBreakpoint";
 
 interface ShowSectionProps {
   shows: Show[];
@@ -12,24 +13,20 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const locale = useLocale();
 
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-
-    checkMobile(); // initial
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const breakpoint = useBreakpoint();
+  const LIMIT_MAP = {
+    mobile: 3,
+    tablet: 5,
+    desktop: 7,
+    xl: 8, // 1440px
+    "2xl": 9, // 1536px+
+  } as const;
+  const limit = LIMIT_MAP[breakpoint] ?? 7;
 
   return (
     <>
       {/* ===== SHOW SECTIONS ===== */}
       {shows.map((show) => {
-        const limit = isMobile ? 3 : 7;
         const isExpanded = expanded[show.ID] ?? false;
         const hasManyGames = show.Games.length > limit;
 
@@ -52,8 +49,17 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
 
             {/* GAMES GRID */}
             <div
-              className="grid grid-cols-3 justify-items-center
- sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-3 sm:gap-4"
+              className="
+    grid
+    grid-cols-3
+    sm:grid-cols-4
+    md:grid-cols-5
+    lg:grid-cols-7
+    xl:grid-cols-8
+    2xl:grid-cols-9
+    gap-3 sm:gap-4
+    justify-items-center
+  "
             >
               {games.map((game) => (
                 <Link
