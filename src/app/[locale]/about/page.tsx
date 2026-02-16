@@ -1,15 +1,6 @@
 import Image from 'next/image'
 
 export default function AboutPage() {
-  const popularGames = [
-    'Mobile Legends',
-    'PUBG Mobile',
-    'Free Fire',
-    'Genshin Impact',
-    'Steam Wallet',
-    'Google Play',
-  ]
-
   return (
     <div className="min-h-screen bg-white dark:bg-[#09090b] text-gray-800 dark:text-gray-200">
       <div className="max-w-6xl mx-auto px-6 py-16 space-y-24">
@@ -85,7 +76,8 @@ export default function AboutPage() {
           </div>
         </section>
         {/* --- GAME PREVIEW --- */}
-        <section className="text-center space-y-10">
+        <section className="text-center space-y-8  bg-gray-50 dark:bg-zinc-900/50  p-8 md:p-12  rounded-3xl  border border-gray-100 dark:border-zinc-800">
+          {/* Header Section */}
           <div className="space-y-2">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Katalog Produk</h2>
             <p className="text-gray-500 max-w-xl mx-auto">
@@ -93,15 +85,13 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
-            {popularGames.map((game) => (
-              <div key={game} className="group space-y-3">
-                <div className="aspect-square bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-2xl font-black text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-purple-500/20 group-hover:-translate-y-1">
-                  {game[0]}
-                </div>
-                <p className="text-sm font-bold opacity-80 group-hover:opacity-100">{game}</p>
-              </div>
-            ))}
+          {/* Single Image Display */}
+          <div className="flex justify-center px-4 ">
+            <img
+              src="https://s3.nevaobjects.id/image-dev/uploads/20260216104127.png"
+              alt="Katalog Produk"
+              className="w-full max-w-3xl h-auto rounded-3xl shadow-lg border border-gray-100 dark:border-zinc-800 object-contain"
+            />
           </div>
         </section>
       </div>
