@@ -1,17 +1,18 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import { CheckCircle2 } from 'lucide-react'
-import { GetGameResponse, Price } from '../../../types/Game'
-import { formatPrice } from '../../../utils/format_price'
-import { CategoryProductListResponse } from '../types/CategoryProduct'
+import Image from "next/image";
+import { CheckCircle2 } from "lucide-react";
+import { GetGameResponse, Price } from "../../../types/Game";
+import { formatPrice } from "../../../utils/format_price";
+import { CategoryProductListResponse } from "../types/CategoryProduct";
+import { useState } from "react";
 
 interface ProductComponentProps {
-  productGame: GetGameResponse
-  product: CategoryProductListResponse
-  activeProduct: Price | null
-  step?: number
-  setSelectedPackage: React.Dispatch<React.SetStateAction<Price | null>>
+  productGame: GetGameResponse;
+  product: CategoryProductListResponse;
+  activeProduct: Price | null;
+  step?: number;
+  setSelectedPackage: React.Dispatch<React.SetStateAction<Price | null>>;
 }
 
 export function ProductComponent({
@@ -21,21 +22,32 @@ export function ProductComponent({
   step = 2,
   setSelectedPackage,
 }: ProductComponentProps) {
-  const hasCategoryProduct = product?.data?.length > 0
+  const hasCategoryProduct = product?.data?.length > 0;
 
   const categorizedProductIds = new Set(
-    (product?.data ?? []).flatMap((cat) => cat.product.map((p) => p.id))
-  )
+    (product?.data ?? []).flatMap((cat) => cat.product.map((p) => p.id)),
+  );
 
   const remainingProducts =
-    productGame?.data?.product?.filter((p) => !categorizedProductIds.has(p.id)) ?? []
+    productGame?.data?.product?.filter(
+      (p) => !categorizedProductIds.has(p.id),
+    ) ?? [];
 
   const scrollToCategory = (id: string) => {
-    const el = document.getElementById(id)
+    const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }
+  };
+
+  const [showAllRemaining, setShowAllRemaining] = useState(false);
+
+  const remainingLimit = 9;
+  const hasManyRemaining = remainingProducts.length > remainingLimit;
+
+  const displayedRemaining = showAllRemaining
+    ? remainingProducts
+    : remainingProducts.slice(0, remainingLimit);
 
   return (
     <div className="relative w-full sm:w-150">
@@ -88,7 +100,7 @@ export function ProductComponent({
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
                   {category.product.map((pkg) => {
-                    const isSelected = activeProduct?.id === pkg.id
+                    const isSelected = activeProduct?.id === pkg.id;
 
                     return (
                       <div
@@ -99,8 +111,8 @@ export function ProductComponent({
                 transition-all duration-300
                 ${
                   isSelected
-                    ? 'border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]'
-                    : 'border border-purple-500/30 bg-white/80 dark:bg-white/20 hover:border-purple-500 hover:bg-white dark:hover:bg-white/30 hover:scale-[1.01]'
+                    ? "border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]"
+                    : "border border-purple-500/30 bg-white/80 dark:bg-white/20 hover:border-purple-500 hover:bg-white dark:hover:bg-white/30 hover:scale-[1.01]"
                 }
               `}
                       >
@@ -111,9 +123,9 @@ export function ProductComponent({
                         )}
 
                         <p className="text-xs font-semibold text-gray-900 dark:text-white text-center mb-0.5">
-                          {pkg.name.split('(').map((part, idx, arr) => (
+                          {pkg.name.split("(").map((part, idx, arr) => (
                             <span key={idx}>
-                              {idx > 0 ? '(' : ''}
+                              {idx > 0 ? "(" : ""}
                               {part}
                               {idx < arr.length - 1 && <br />}
                             </span>
@@ -125,7 +137,7 @@ export function ProductComponent({
                             <Image
                               src={
                                 pkg.image ||
-                                'https://s3.nevaobjects.id/image-dev/uploads/20260123164455.webp'
+                                "https://s3.nevaobjects.id/image-dev/uploads/20260123164455.webp"
                               }
                               alt="img-product"
                               width={40}
@@ -139,14 +151,14 @@ export function ProductComponent({
                           </p>
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </div>
             ))}
 
           {/* REMAINING PRODUCT */}
-          {remainingProducts.length > 0 && (
+          {displayedRemaining.length > 0 && (
             <div className="space-y-3">
               {hasCategoryProduct && (
                 <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -155,8 +167,8 @@ export function ProductComponent({
               )}
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
-                {remainingProducts.map((pkg) => {
-                  const isSelected = activeProduct?.id === pkg.id
+                {displayedRemaining.map((pkg) => {
+                  const isSelected = activeProduct?.id === pkg.id;
 
                   return (
                     <div
@@ -167,8 +179,8 @@ export function ProductComponent({
                 transition-all duration-300
                 ${
                   isSelected
-                    ? 'border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]'
-                    : 'border border-purple-500/30 bg-white/80 dark:bg-white/20 hover:border-purple-500 hover:bg-white dark:hover:bg-white/30 hover:scale-[1.01]'
+                    ? "border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]"
+                    : "border border-purple-500/30 bg-white/80 dark:bg-white/20 hover:border-purple-500 hover:bg-white dark:hover:bg-white/30 hover:scale-[1.01]"
                 }
               `}
                     >
@@ -187,7 +199,7 @@ export function ProductComponent({
                           <Image
                             src={
                               pkg.image ||
-                              'https://s3.nevaobjects.id/image-dev/uploads/20260123164455.webp'
+                              "https://s3.nevaobjects.id/image-dev/uploads/20260123164455.webp"
                             }
                             alt="img-product"
                             width={40}
@@ -201,13 +213,25 @@ export function ProductComponent({
                         </p>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
+            </div>
+          )}
+          {hasManyRemaining && (
+            <div className="mt-2 flex justify-center">
+              <button
+                onClick={() => setShowAllRemaining(!showAllRemaining)}
+                className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline"
+              >
+                {showAllRemaining
+                  ? "Tampilkan lebih sedikit"
+                  : "Tampilkan produk lainnya"}
+              </button>
             </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }
