@@ -62,20 +62,24 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                   key={game.ID}
                   href={`/${locale}/games/${game.Slug}`}
                   className="
-    group relative
-    w-[120px] h-[120px]
-    sm:w-[130px] sm:h-[130px]
-    md:w-[140px] md:h-[140px]
-    lg:w-[150px] lg:h-[150px]
-    xl:w-[170px] xl:h-[170px]
-    2xl:w-[190px] 2xl:h-[190px]
-    overflow-hidden rounded-2xl
-    border border-white/10
-    bg-gray-300 dark:bg-zinc-900/40
-    transition-all duration-300
-    hover:border-purple-500/60
-    hover:shadow-lg hover:shadow-purple-500/20
-  "
+  group relative
+  w-[120px] h-[120px]
+  sm:w-[130px] sm:h-[130px]
+  md:w-[140px] md:h-[140px]
+  lg:w-[150px] lg:h-[150px]
+  xl:w-[170px] xl:h-[170px]
+  2xl:w-[190px] 2xl:h-[190px]
+  overflow-hidden rounded-2xl
+  border border-white/10
+  bg-gray-300 dark:bg-zinc-900/40
+  transition-all duration-300 ease-out
+
+  hover:border-purple-500/70
+  hover:shadow-lg hover:shadow-purple-500/20
+  hover:scale-[1.03]
+
+  active:scale-[0.98]
+"
                 >
                   <div className="relative w-full h-full overflow-hidden">
                     {/* RIBBON */}
