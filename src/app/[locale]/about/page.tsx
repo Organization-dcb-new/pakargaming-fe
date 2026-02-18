@@ -88,7 +88,7 @@ export default function AboutPage() {
           {/* Single Image Display */}
           <div className="flex justify-center px-4 ">
             <img
-              src="https://s3.nevaobjects.id/image-dev/uploads/20260216104127.png"
+              src="https://s3.nevaobjects.id/image-dev/uploads/20260218020928.png"
               alt="Katalog Produk"
               className="w-full max-w-3xl h-auto rounded-3xl shadow-lg border border-gray-100 dark:border-zinc-800 object-contain"
             />
