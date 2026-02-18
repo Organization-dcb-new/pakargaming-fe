@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import { PaymentDataWithDetailProduct } from '../../types/Transaction'
 import { useState } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { Check, Copy, Eye, EyeOff } from 'lucide-react'
+import { toast } from 'sonner'
 
 type ProductDetailCardProps = {
   data: PaymentDataWithDetailProduct
@@ -9,6 +10,16 @@ type ProductDetailCardProps = {
 
 export default function ProductDetailCard({ data }: ProductDetailCardProps) {
   const [showVoucher, setShowVoucher] = useState(false)
+
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    if (!data?.payment_number) return
+    await navigator.clipboard.writeText(data?.payment_number)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+    toast.success('Nomor transaksi berhasil disalin')
+  }
 
   return (
     <div className="w-full max-w-3xl">
@@ -45,6 +56,23 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
 
         {/* Detail list */}
         <div className="space-y-2 text-xs sm:text-sm">
+          <div className="grid grid-cols-3 gap-2 items-center">
+            <span className="text-gray-500">Nomor Transaksi</span>
+
+            <div
+              onClick={handleCopy}
+              className="col-span-2 flex items-center gap-2 font-medium text-gray-900 dark:text-white cursor-pointer group"
+            >
+              <span className="truncate">{data?.payment_number}</span>
+
+              {copied ? (
+                <Check className="w-4 h-4 text-green-500" />
+              ) : (
+                <Copy className="w-4 h-4 text-gray-400 group-hover:text-purple-600 transition" />
+              )}
+            </div>
+          </div>
+
           <div className="grid grid-cols-3 gap-2">
             <span className="text-gray-500">Produk</span>
             <span className="col-span-2 font-medium text-gray-900">

@@ -76,6 +76,7 @@ export default function TransactionStatusPage() {
 
           {/* DETAIL */}
           <div className="space-y-3 text-sm">
+            
             <Row label="Order ID" value={data.order_id} />
             <Row label="Payment No" value={data.payment_number} />
             <Row label="Metode" value={data.payment_channel?.toUpperCase()} />
