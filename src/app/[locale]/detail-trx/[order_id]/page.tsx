@@ -5,6 +5,7 @@ import ProductDetailCard from '../../../../components/DetailTrx/ProductDetail'
 import TransactionTracking from '../../../../components/DetailTrx/StatusTrx'
 import { useGetTransaction } from '../../../../hooks/useTransaction'
 import { Loader2 } from 'lucide-react'
+import PaymentFAQ from '../../../../components/DetailTrx/FAQPayment'
 
 export default function DetailTransactionPage() {
   const { order_id } = useParams<{ order_id: string }>()
@@ -29,6 +30,8 @@ export default function DetailTransactionPage() {
             <PaymentDetailCard data={dataTrx} />
           </div>
         </div>
+
+        <PaymentFAQ />
       </div>
     </div>
   )
