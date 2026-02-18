@@ -81,3 +81,22 @@
 .animate-slide-in-right {
   animation: slide-in-right 0.8s ease-out forwards;
 }
+
+#nprogress {
+  pointer-events: none;
+}
+
+
+#nprogress .bar {
+  background: #8b5cf6 !important;
+  height: 2px !important; /* lebih tipis */
+  box-shadow: none !important; /* hilangkan glow */
+}
+
+#nprogress .peg {
+  box-shadow: none !important;
+}
+
+#nprogress .spinner {
+  display: none !important;
+}

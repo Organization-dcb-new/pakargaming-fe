@@ -9,6 +9,7 @@ import { ThemeProvider } from "../../components/ThemeProvider";
 import QueryProvider from "../../providers/query-provider";
 
 import { Toaster } from "sonner";
+import ProgressBar from "../../components/ProgressBar";
 
 export const metadata = {
   title: "Pakar Gaming - Ahlinya Top Up Game Murah, Instan & Terpercaya",
@@ -44,15 +45,18 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <body
         className="min-h-screen bg-background text-foreground"
-        suppressHydrationWarning>
+        suppressHydrationWarning
+      >
         <QueryProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
             enableSystem
-            disableTransitionOnChange>
+            disableTransitionOnChange
+          >
             <NextIntlClientProvider messages={messages}>
               <div className="min-h-screen bg-gradient-to-br from-background via-purple-50/50 dark:via-purple-900/50 to-background">
+                <ProgressBar />
                 <Navigation />
                 <main>
                   {children}
