@@ -1,52 +1,50 @@
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
-import { notFound } from "next/navigation";
-import { routing } from "../../i18n/routing";
-import "../globals.css";
-import { Navigation } from "../../components/Navigation";
-import { Footer } from "../../components/Footer/Footer";
-import { ThemeProvider } from "../../components/ThemeProvider";
-import QueryProvider from "../../providers/query-provider";
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages } from 'next-intl/server'
+import { notFound } from 'next/navigation'
+import { routing } from '../../i18n/routing'
+import '../globals.css'
+import { Navigation } from '../../components/Navigation'
+import { Footer } from '../../components/Footer/Footer'
+import { ThemeProvider } from '../../components/ThemeProvider'
+import QueryProvider from '../../providers/query-provider'
 
-import { Toaster } from "sonner";
-import ProgressBar from "../../components/ProgressBar";
+import { Toaster } from 'sonner'
+import ProgressBar from '../../components/ProgressBar'
+import GlobalWhatsAppButton from '../../components/CSButton'
 
 export const metadata = {
-  title: "Pakar Gaming - Ahlinya Top Up Game Murah, Instan & Terpercaya",
+  title: 'Pakar Gaming - Ahlinya Top Up Game Murah, Instan & Terpercaya',
   description:
-    "Website top up game yang terpercaya, cepat, aman, dan didukung layanan CS 24 jam yang siap membantu kapan saja.",
+    'Website top up game yang terpercaya, cepat, aman, dan didukung layanan CS 24 jam yang siap membantu kapan saja.',
   icons: {
-    icon: "/logo.png",
+    icon: '/logo.png',
   },
   verification: {
-    google: "h27BvVEjm8BhnYDrPzmkkkg6wwVrsNVpKxtazmr06HQ",
+    google: 'h27BvVEjm8BhnYDrPzmkkkg6wwVrsNVpKxtazmr06HQ',
   },
-};
+}
 
 export default async function RootLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
-  params: { locale: string };
+  children: React.ReactNode
+  params: { locale: string }
 }) {
-  const { locale } = await params;
+  const { locale } = await params
 
   // Ensure that the incoming `locale` is valid
   if (!routing.locales.includes(locale as any)) {
-    notFound();
+    notFound()
   }
 
   // Providing all messages to the client
   // side is the easiest way to get started
-  const messages = await getMessages();
+  const messages = await getMessages()
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body
-        className="min-h-screen bg-background text-foreground"
-        suppressHydrationWarning
-      >
+      <body className="min-h-screen bg-background text-foreground" suppressHydrationWarning>
         <QueryProvider>
           <ThemeProvider
             attribute="class"
@@ -60,19 +58,16 @@ export default async function RootLayout({
                 <Navigation />
                 <main>
                   {children}
-                  <Toaster
-                    position="top-center"
-                    richColors
-                    closeButton
-                    expand
-                  />
+                  <Toaster position="top-center" richColors closeButton expand />
                 </main>
                 <Footer />
+
+                <GlobalWhatsAppButton />
               </div>
             </NextIntlClientProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>
     </html>
-  );
+  )
 }
