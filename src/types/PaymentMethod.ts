@@ -21,6 +21,18 @@ export interface PaymentMethod {
   is_active: boolean
   created_at: string
   updated_at: string
+  category_id: string
 }
 
-export type GetPaymentMethodResponse = ApiResponse<PaymentMethod[]>
+export interface PaymentMethodCategoryWithPaymentMethodResponse {
+  id: string
+  name: string
+  slug: string
+  icon_url: string
+  payment_method: PaymentMethod[]
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type GetPaymentMethodResponse = ApiResponse<PaymentMethodCategoryWithPaymentMethodResponse[]>
