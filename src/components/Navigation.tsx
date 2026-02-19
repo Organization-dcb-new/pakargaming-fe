@@ -27,7 +27,7 @@ export function Navigation() {
 
   const navLinks = [
     // { path: '/en/my-transaction', label: t('transaction'), auth: true },
-    { path: '/en/check-transaction', label: 'Cek Transaksi', auth: false },
+    // { path: '/en/check-transaction', label: 'Cek Transaksi', auth: false },
   ]
   const visibleNavLinks = navLinks.filter((link) => !link.auth || user)
 

@@ -20,7 +20,7 @@ export default function SearchComponent() {
     relative transition-all duration-300
     w-12
     ${open ? 'w-72' : 'w-12'}
-    lg:!w-92
+    lg:!w-170
   `}
     >
       {/* INPUT */}
