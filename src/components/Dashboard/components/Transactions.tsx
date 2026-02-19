@@ -123,19 +123,19 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
-          title="Pending"
+          title="PENDING"
           value={DataDashboard?.data?.transactions_pending || 0}
           icon={Clock}
           color="amber"
         />
         <StatCard
-          title="Failed"
+          title="FAILED"
           value={DataDashboard?.data?.transactions_failed || 0}
           icon={AlertCircle}
           color="rose"
         />
         <StatCard
-          title="Success"
+          title="PAID"
           value={DataDashboard?.data?.transactions_paid || 0}
           icon={CheckCircle}
           color="blue"
@@ -199,11 +199,11 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
 // Badge component
 function StatusBadge({ status }: { status: string }) {
   const config: any = {
-    Success: { color: 'bg-green-100 text-green-700', Icon: CheckCircle },
-    Failed: { color: 'bg-red-100 text-red-700', Icon: XCircle },
-    Pending: { color: 'bg-yellow-100 text-yellow-700', Icon: Clock },
+    PAID: { color: 'bg-green-100 text-green-700', Icon: CheckCircle },
+    FAILED: { color: 'bg-red-100 text-red-700', Icon: XCircle },
+    PENDING: { color: 'bg-yellow-100 text-yellow-700', Icon: Clock },
   }
-  const { color, Icon } = config[status] || config['Pending']
+  const { color, Icon } = config[status] || config['PENDING']
   return (
     <span
       className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-semibold ${color} gap-1`}
