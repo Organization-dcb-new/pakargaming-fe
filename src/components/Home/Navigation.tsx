@@ -1,4 +1,7 @@
 import { Show } from '../../types/Show'
+import Image from 'next/image'
+
+import Link from 'next/link'
 
 interface NavigationShowProps {
   isNavSticky: boolean
@@ -78,6 +81,34 @@ export default function NavigationShowGame({
           </button>
         )
       })}
+      <Link
+        href="/en/check-transaction"
+        className={`
+    flex-shrink-0
+    px-3 md:px-4
+    py-1.5 md:py-2
+    rounded-full
+    text-xs md:text-sm
+    font-semibold
+    transition-all duration-200
+    cursor-pointer
+    shadow-sm
+
+    bg-emerald-500
+    text-white
+    border border-emerald-500
+    hover:bg-emerald-600
+    hover:scale-[1.05]
+    dark:bg-emerald-400
+    dark:border-emerald-400
+    dark:hover:bg-emerald-500
+
+    flex items-center gap-2
+  `}
+      >
+        <span className="text-base">🔍</span>
+        Cek Transaksi
+      </Link>
     </div>
   )
 }
