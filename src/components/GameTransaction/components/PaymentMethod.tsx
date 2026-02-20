@@ -102,32 +102,39 @@ export default function PaymentMethodTransactionComponent({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 pt-0 mt-4">
                   {category.payment_method?.map((payment) => {
                     const isSelected = activePayment?.id === payment.id
+                    const isDisabled = !payment.is_active
                     const totalPrice = calculateTotalPrice(payment, ActiveProduct)
 
                     return (
                       <div
                         key={payment.id}
-                        onClick={() => setSelectedPaymentMethod(payment)}
+                        onClick={() => {
+                          if (!isDisabled) setSelectedPaymentMethod(payment)
+                        }}
                         className={`
-                          relative cursor-pointer rounded-2xl p-3
-                          transition-all duration-300 
-                          flex flex-row items-center gap-3 min-h-[60px]
-                          ${
-                            isSelected
-                              ? 'border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]'
-                              : 'border border-purple-500/30 bg-white/80 dark:bg-white/20 dark:hover:bg-white/30 hover:scale-[1.01]'
-                          }
-                        `}
+        relative rounded-2xl p-3
+        transition-all duration-300 
+        flex flex-row items-center gap-3 min-h-[60px]
+        ${
+          isDisabled
+            ? 'opacity-50 cursor-not-allowed border border-gray-300 bg-gray-100 dark:bg-white/10'
+            : isSelected
+              ? 'cursor-pointer border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]'
+              : 'cursor-pointer border border-purple-500/30 bg-white/80 dark:bg-white/20 dark:hover:bg-white/30 hover:scale-[1.01]'
+        }
+      `}
                       >
-                        {isSelected && (
+                        {/* Badge Selected */}
+                        {isSelected && !isDisabled && (
                           <div className="absolute -top-2 -right-2 bg-purple-500 rounded-full p-1 shadow-md">
                             <CheckCircle2 className="w-4 h-4 text-white" />
                           </div>
                         )}
 
+                      
                         <div
                           className={`flex items-center justify-center h-12 w-12 rounded-xl transition-all ${
-                            isSelected ? 'bg-white shadow-md' : 'bg-transparent'
+                            isSelected && !isDisabled ? 'bg-white shadow-md' : 'bg-transparent'
                           }`}
                         >
                           <Image
