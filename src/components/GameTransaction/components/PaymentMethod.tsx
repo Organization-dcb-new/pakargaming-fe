@@ -92,7 +92,7 @@ export default function PaymentMethodTransactionComponent({
                     {category.payment_method?.map((payment) => (
                       <div
                         key={payment.id}
-                        className="w-6 h-6 justify-center flex gap-10 items-center"
+                        className="w-8 h-8 justify-center flex gap-10 items-center"
                       >
                         <Image
                           src={payment.icon_url}
