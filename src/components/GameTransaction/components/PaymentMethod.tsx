@@ -32,7 +32,7 @@ export default function PaymentMethodTransactionComponent({
   setSelectedPaymentMethod,
   selectedPackage,
 }: PaymentMethodProps) {
-  const [activeIndex, setActiveIndex] = useState<number | null>(0)
+  const [activeIndexes, setActiveIndexes] = useState<number[]>([])
 
   const scrollToPayment = () => {
     const el = document.getElementById('payment-method-section')
@@ -50,7 +50,12 @@ export default function PaymentMethodTransactionComponent({
   const categories = PaymentMethod?.data ?? []
 
   const toggle = (index: number) => {
-    setActiveIndex(activeIndex === index ? null : index)
+    setActiveIndexes(
+      (prev) =>
+        prev.includes(index)
+          ? prev.filter((i) => i !== index) // tutup kalau sudah terbuka
+          : [...prev, index] // buka tanpa menutup yang lain
+    )
   }
 
   return (
@@ -82,7 +87,9 @@ export default function PaymentMethodTransactionComponent({
 
                 <svg
                   className={`w-5 h-5 text-purple-500 transition-all duration-300 ${
-                    activeIndex === index ? 'rotate-180 scale-110' : 'rotate-0 scale-100 opacity-70'
+                    activeIndexes.includes(index)
+                      ? 'rotate-180 scale-110'
+                      : 'rotate-0 scale-100 opacity-70'
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -96,7 +103,7 @@ export default function PaymentMethodTransactionComponent({
               {/* COLLAPSE CONTENT */}
               <div
                 className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                  activeIndex === index ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+                  activeIndexes.includes(index) ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 pt-0 mt-4">
@@ -131,7 +138,6 @@ export default function PaymentMethodTransactionComponent({
                           </div>
                         )}
 
-                      
                         <div
                           className={`flex items-center justify-center h-12 w-12 rounded-xl transition-all ${
                             isSelected && !isDisabled ? 'bg-white shadow-md' : 'bg-transparent'
