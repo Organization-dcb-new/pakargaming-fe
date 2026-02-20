@@ -79,21 +79,41 @@ export default function PaymentMethodTransactionComponent({
               {/* HEADER */}
               <button
                 onClick={() => toggle(index)}
-                className="w-full text-left px-4 py-3 flex justify-between items-center hover:bg-purple-500/5 transition-all"
+                className="w-full px-4 py-3 flex justify-between items-center hover:bg-purple-500/5 transition-all"
               >
-                <span className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
-                  {category.name}
-                </span>
+                {/* LEFT SIDE */}
+                <div className="flex justify-between w-full gap-3">
+                  <span className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+                    {category.name}
+                  </span>
 
+                  {/* ICON LIST */}
+                  <div className="flex justify-center gap-3 mr-1">
+                    {category.payment_method?.map((payment) => (
+                      <div
+                        key={payment.id}
+                        className="w-6 h-6 justify-center flex gap-10 items-center"
+                      >
+                        <Image
+                          src={payment.icon_url}
+                          alt={payment.name}
+                          width={48}
+                          height={48}
+                          className="object-contain"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* ARROW */}
                 <svg
-                  className={`w-5 h-5 text-purple-500 transition-all duration-300 ${
-                    activeIndexes.includes(index)
-                      ? 'rotate-180 scale-110'
-                      : 'rotate-0 scale-100 opacity-70'
+                  className={`w-4 h-4 text-purple-500 transition-all duration-300 ${
+                    activeIndexes.includes(index) ? 'rotate-180' : 'opacity-70'
                   }`}
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="1.8"
                   viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
