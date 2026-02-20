@@ -35,7 +35,8 @@ export default function TransactionStatusCard({ data }: TransactionStatusCardPro
     paymentChannel === 'shopeepay' ||
     paymentChannel === 'gopay' ||
     paymentChannel === 'dana' ||
-    paymentChannel === 'ovo'
+    paymentChannel === 'ovo' ||
+    paymentChannel === 'smartfren_airtime'
   const isQRIS = !!(data.qr_code_url || data.qr_string)
 
   return (
