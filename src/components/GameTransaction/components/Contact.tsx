@@ -32,9 +32,12 @@ export default function ContactForm({ step, setSelectedEmail, email }: ContactFo
       <div className="bg-black/5 dark:bg-white/10  rounded-3xl p-4 sm:p-6 border border-purple-500/30 hover:border-purple-500 transition-all duration-300 shadow-xl">
         {/* Header */}
         <div className="flex items-center gap-2 mb-2">
-          <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Email</h2>
+          <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+            Email <span className="text-red-500">*</span>
+          </h2>
           <Mail className="w-4 h-4 text-purple-400 dark:text-purple-300" />
         </div>
+
         {/* Description */}
         <p className="text-gray-600 dark:text-purple-200 mb-4 text-xs leading-snug">
           Email digunakan untuk mengirim kode voucher & bukti transaksi

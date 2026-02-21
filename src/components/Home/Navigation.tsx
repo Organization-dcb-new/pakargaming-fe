@@ -1,6 +1,4 @@
 import { Show } from '../../types/Show'
-import Image from 'next/image'
-
 import Link from 'next/link'
 
 interface NavigationShowProps {
@@ -81,9 +79,11 @@ export default function NavigationShowGame({
           </button>
         )
       })}
-      <Link
-        href="/en/check-transaction"
-        className={`
+
+      {shows.length > 0 && (
+        <Link
+          href="/en/check-transaction"
+          className={`
     flex-shrink-0
     px-3 md:px-4
     py-1.5 md:py-2
@@ -105,10 +105,11 @@ export default function NavigationShowGame({
 
     flex items-center gap-2
   `}
-      >
-        <span className="text-base">🔍</span>
-        Cek Transaksi
-      </Link>
+        >
+          <span className="text-base">🔍</span>
+          Cek Transaksi
+        </Link>
+      )}
     </div>
   )
 }

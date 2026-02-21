@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Price } from '../../../types/Game'
 import { PaymentMethod } from '../../../types/PaymentMethod'
 import { formatPrice } from '../../../utils/format_price'
+import { calculateTotalPrice } from './PaymentMethod'
 
 interface ConfirmModalProps {
   loading?: boolean
@@ -22,6 +23,7 @@ export default function ConfirmModal({
   Payment,
 }: ConfirmModalProps) {
   const [visible, setVisible] = useState(false)
+  const finalPrice = calculateTotalPrice(Payment, Product)
 
   useEffect(() => {
     if (open) {
@@ -76,9 +78,7 @@ export default function ConfirmModal({
 
           <div className="flex justify-between border-t border-purple-200 pt-2">
             <span className="font-medium text-gray-700">Total</span>
-            <span className="font-bold text-green-600">
-              Rp {formatPrice(Math.round(Product?.selling_price))}
-            </span>
+            <span className="font-bold text-green-600">Rp {finalPrice}</span>
           </div>
         </div>
 

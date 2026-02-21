@@ -32,7 +32,7 @@ export default function PaymentMethodTransactionComponent({
   setSelectedPaymentMethod,
   selectedPackage,
 }: PaymentMethodProps) {
-  const [activeIndexes, setActiveIndexes] = useState<number[]>([])
+  const [activeIndexes, setActiveIndexes] = useState<number[]>([0])
 
   const scrollToPayment = () => {
     const el = document.getElementById('payment-method-section')
@@ -53,8 +53,8 @@ export default function PaymentMethodTransactionComponent({
     setActiveIndexes(
       (prev) =>
         prev.includes(index)
-          ? prev.filter((i) => i !== index) // tutup kalau sudah terbuka
-          : [...prev, index] // buka tanpa menutup yang lain
+          ? prev.filter((i) => i !== index) 
+          : [...prev, index] 
     )
   }
 
