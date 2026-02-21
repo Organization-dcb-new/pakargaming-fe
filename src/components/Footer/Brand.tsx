@@ -8,7 +8,7 @@ export default function BrandComponent() {
   const t = useTranslations('Footer')
 
   return (
-    <div className="max-w-sm">
+    <div className="">
       <div className="flex flex-col gap-3 mb-4">
         {/* Logo */}
         <img

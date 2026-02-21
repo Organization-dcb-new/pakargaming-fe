@@ -1,27 +1,26 @@
-import { Mail, MapPin, Phone } from 'lucide-react'
+import { Mail, Phone } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 export default function ContactComponent() {
-  const t = useTranslations('Footer')
-
   return (
-    <div>
-      <h3 className="text-gray-900 dark:text-white font-bold text-lg mb-6">{t('contact')}</h3>
-      <ul className="space-y-4">
-        <li className="flex items-start gap-3 text-gray-600 dark:text-gray-400">
-          <MapPin className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-1" />
-          <span className="text-sm">
-            Jl. Damai 1 No.11, RT.7/RW.01, Cipete Utara, Kec. Kby. Baru, Kota Jakarta, Jakarta
-            Selatan, Daerah Khusus Ibukota Jakarta 12150
-          </span>
+    <div className="flex flex-col gap-3">
+      <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wide">
+        Hubungi Kami
+      </h3>
+
+      <ul className="space-y-3">
+        <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200">
+          <Phone className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <a href="https://wa.me/628131793708" target="_blank" className="text-sm font-medium">
+            +62 813-1793-708
+          </a>
         </li>
-        <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-          <Phone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-          <span className="text-sm">+628131793708</span>
-        </li>
-        <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-          <Mail className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-          <span className="text-sm">pakargaming1@gmail.com</span>
+
+        <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200">
+          <Mail className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <a href="mailto:pakargaming1@gmail.com" className="text-sm font-medium break-all">
+            pakargaming1@gmail.com
+          </a>
         </li>
       </ul>
     </div>
