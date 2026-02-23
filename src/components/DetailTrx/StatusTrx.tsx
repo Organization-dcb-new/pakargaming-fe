@@ -49,7 +49,12 @@ export default function TransactionStatusCard({ data }: TransactionStatusCardPro
     paymentChannel === 'ovo' ||
     paymentChannel === 'smartfren_airtime' ||
     paymentChannel === 'va_mandiri' ||
-    paymentChannel === 'va_bca'
+    paymentChannel === 'va_bca' ||
+    paymentChannel === 'va_bri' ||
+    paymentChannel === 'va_bni' ||
+    paymentChannel === 'va_permata' ||
+    paymentChannel === 'va_sinarmas'
+
   const isQRIS = !!(data.qr_code_url || data.qr_string)
   const isVA = paymentChannel?.includes('va')
 
@@ -116,7 +121,7 @@ export default function TransactionStatusCard({ data }: TransactionStatusCardPro
                 <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 text-center">
                   {paymentChannel === 'ovo'
                     ? 'Bayar lewat aplikasi OVO'
-                    : `Bayar menggunakan ${data.payment_channel}`}
+                    : `Bayar menggunakan ${data.detail_product.payment_name}`}
                 </p>
 
                 <a
