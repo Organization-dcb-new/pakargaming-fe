@@ -20,10 +20,20 @@ export const calculateTotalPrice = (payment: PaymentMethod, ActiveProduct: Price
   if (!ActiveProduct) return null
 
   const base = ActiveProduct?.selling_price || 0
-  const feePercent = base * (payment?.fee_percentage / 100) || 0
-  const total = base + feePercent
+
+  const isVA = payment?.name?.toLowerCase().includes('va')
+  let total = base
+
+  if (isVA) {
+    total += payment?.fee_fixed || 0
+  } else {
+    const feePercent = base * ((payment?.fee_percentage || 0) / 100)
+    total += feePercent
+  }
+
   return formatPrice(Math.round(total))
 }
+
 export default function PaymentMethodTransactionComponent({
   PaymentMethod,
   activePayment,
@@ -50,11 +60,8 @@ export default function PaymentMethodTransactionComponent({
   const categories = PaymentMethod?.data ?? []
 
   const toggle = (index: number) => {
-    setActiveIndexes(
-      (prev) =>
-        prev.includes(index)
-          ? prev.filter((i) => i !== index) 
-          : [...prev, index] 
+    setActiveIndexes((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
     )
   }
 

@@ -1,6 +1,7 @@
-import { Check, X, Clock } from 'lucide-react'
+import { Check, X, Clock, Copy } from 'lucide-react'
 import { PaymentDataWithDetailProduct } from '../../types/Transaction'
 import Link from 'next/link'
+import { useState } from 'react'
 
 interface TransactionStatusCardProps {
   data: PaymentDataWithDetailProduct
@@ -28,6 +29,16 @@ export default function TransactionStatusCard({ data }: TransactionStatusCardPro
     },
   }
 
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    if (!data.va_number) return
+
+    await navigator.clipboard.writeText(data.va_number)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   const cfg = statusConfig[data.status] || statusConfig.PENDING
 
   const paymentChannel = data.payment_channel?.toLowerCase()
@@ -36,8 +47,11 @@ export default function TransactionStatusCard({ data }: TransactionStatusCardPro
     paymentChannel === 'gopay' ||
     paymentChannel === 'dana' ||
     paymentChannel === 'ovo' ||
-    paymentChannel === 'smartfren_airtime'
+    paymentChannel === 'smartfren_airtime' ||
+    paymentChannel === 'va_mandiri' ||
+    paymentChannel === 'va_bca'
   const isQRIS = !!(data.qr_code_url || data.qr_string)
+  const isVA = paymentChannel?.includes('va')
 
   return (
     <div className="w-full max-w-sm">
@@ -60,6 +74,39 @@ export default function TransactionStatusCard({ data }: TransactionStatusCardPro
               ? 'Transaksi gagal.'
               : 'Transaksi sedang menunggu pembayaran.'}
         </p>
+
+        {isVA && data.va_number && (
+          <div className="w-full mt-4 space-y-3">
+            <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 text-center">
+              Nomor Virtual Account
+            </p>
+
+            <div className="flex items-center justify-between rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-zinc-800 px-4 py-3">
+              <span className="text-sm font-mono tracking-wide text-gray-800 dark:text-white">
+                {data.va_number}
+              </span>
+
+              <button
+                onClick={handleCopy}
+                className="flex  cursor-pointer items-center gap-1 text-xs font-medium text-purple-600 hover:text-purple-700 transition"
+              >
+                {copied ? (
+                  <>
+                    <Check size={14} /> Tersalin
+                  </>
+                ) : (
+                  <>
+                    <Copy size={14} /> Copy
+                  </>
+                )}
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              Salin nomor VA ini dan lakukan pembayaran melalui ATM / m-banking
+            </p>
+          </div>
+        )}
 
         {/* Payment Action */}
         {data.status === 'PENDING' && (
