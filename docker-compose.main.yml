@@ -6,8 +6,9 @@ services:
     build:
       context: .
       args:
-        NEXT_PUBLIC_API_BASE_URL: https://api.pakargaming.id
-
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+        NEXT_PUBLIC_ENCRYPT_KEY: ${NEXT_PUBLIC_ENCRYPT_KEY}
+        ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY}
     ports:
       - '3000:3000'
 

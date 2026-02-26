@@ -18,12 +18,16 @@ jobs:
         run: |
           set -e
 
-          
+
           echo "Workspace: $GITHUB_WORKSPACE"
           cd "$GITHUB_WORKSPACE"
 
           echo "Listing files"
           ls -la
+          export NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_PROD }}
+          export NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY }}
+          export ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY }}
+
 
           echo "🔨 Building image..."
             if docker compose -f docker-compose.main.yml build; then
