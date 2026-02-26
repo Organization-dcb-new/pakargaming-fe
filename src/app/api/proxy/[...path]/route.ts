@@ -50,6 +50,16 @@ async function proxyRequest(
   pathSegments: string[],
   method: string,
 ) {
+  if (!BACKEND_URL) {
+    console.error(
+      "[Proxy Error] BACKEND_URL (NEXT_PUBLIC_API_BASE_URL) is not set",
+    );
+    return NextResponse.json(
+      { message: "Proxy misconfigured: backend URL not set" },
+      { status: 500 },
+    );
+  }
+
   try {
     const targetPath = pathSegments.join("/");
     const search = req.nextUrl.search;
@@ -91,7 +101,11 @@ async function proxyRequest(
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error("[Proxy Error]", error);
+    console.error("[Proxy Error]", {
+      backendUrl: BACKEND_URL,
+      path: pathSegments.join("/"),
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({ message: "Proxy error" }, { status: 500 });
   }
 }
