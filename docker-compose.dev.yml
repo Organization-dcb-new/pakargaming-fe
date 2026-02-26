@@ -6,7 +6,7 @@ services:
     build:
       context: .
       args:
-        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+        NEXT_PUBLIC_API_BASE_URL: "http://topup-be:4001"
         NEXT_PUBLIC_ENCRYPT_KEY: ${NEXT_PUBLIC_ENCRYPT_KEY}
         ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY}
         NEXT_SITE_BASE_URL: ${NEXT_SITE_BASE_URL}
@@ -15,7 +15,7 @@ services:
       - '3000:3000'
 
     restart: unless-stopped
-    
+
 networks:
   pakargaming-dev-network:
     external: true
