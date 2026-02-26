@@ -11,19 +11,26 @@ const pages = [
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_SITE_BASE_URL
-  const { data: games } = await serverApi.get<GetGamesResponse>('/v1/games')
 
-  const gameUrls =
-    games.data?.flatMap((game) => {
-      return routing.locales.map((locale) => ({
-        url: `${baseUrl}/${locale}/games/${game.slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'daily' as const,
-        priority: 0.8,
-      }))
-    }) ?? []
+  let gameUrls: MetadataRoute.Sitemap = []
 
-  const staticUrls = routing.locales.flatMap((locale) =>
+  try {
+    const { data: games } = await serverApi.get<GetGamesResponse>('/v1/games')
+
+    gameUrls =
+      games.data?.flatMap((game) => {
+        return routing.locales.map((locale) => ({
+          url: `${baseUrl}/${locale}/games/${game.slug}`,
+          lastModified: new Date(),
+          changeFrequency: 'daily' as const,
+          priority: 0.8,
+        }))
+      }) ?? []
+  } catch (error) {
+    console.error('Sitemap Fetch Error:', error)
+  }
+
+  const staticUrls: MetadataRoute.Sitemap = routing.locales.flatMap((locale) =>
     pages.map((page) => ({
       url: `${baseUrl}/${locale}${page ? `/${page}` : ''}`,
       lastModified: new Date(),
