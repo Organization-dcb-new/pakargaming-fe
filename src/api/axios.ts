@@ -10,19 +10,18 @@ export const api = axios.create({
   },
 })
 
-
 api.interceptors.request.use((config) => {
   const mutateMethods = ['post', 'put', 'patch']
   if (config.method && mutateMethods.includes(config.method) && config.data) {
     config.data = { payload: encryptPayload(config.data) }
   }
-  return config;
-});
+  return config
+})
 
 export const serverApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
-});
+})
