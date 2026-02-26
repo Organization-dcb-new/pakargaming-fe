@@ -27,6 +27,7 @@ jobs:
           export NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_PROD }}
           export NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY }}
           export ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY }}
+          export NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL }}
 
 
           echo "🔨 Building image..."

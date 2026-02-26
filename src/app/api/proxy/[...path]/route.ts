@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { decryptPayload } from "@/lib/crypto";
 
 const BACKEND_URL =
-  process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
+  process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function GET(
   req: NextRequest,
