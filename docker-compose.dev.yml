@@ -16,6 +16,9 @@ services:
 
     restart: unless-stopped
 
+    networks:
+      - pakargaming-dev-network
+
 networks:
   pakargaming-dev-network:
     external: true
