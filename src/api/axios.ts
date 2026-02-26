@@ -11,6 +11,10 @@ export const api = axios.create({
   },
 })
 
+export const apiSiteMap = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+})
+
 // Encrypt POST / PUT / PATCH payloads before sending
 api.interceptors.request.use((config) => {
   const mutateMethods = ['post', 'put', 'patch']
