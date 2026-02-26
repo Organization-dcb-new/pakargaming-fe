@@ -9,8 +9,8 @@ services:
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
         NEXT_PUBLIC_ENCRYPT_KEY: ${NEXT_PUBLIC_ENCRYPT_KEY}
         ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY}
-      extra_hosts:
-      - "api.pakargaming.id:host-gateway"
+    extra_hosts:
+      - "api.pakargaming.id:172.21.0.2"
     ports:
       - '3000:3000'
 
