@@ -1,7 +1,7 @@
-import { MetadataRoute } from "next";
-import { routing } from "../i18n/routing";
-import { serverApi } from "../api/axios";
-import { GetGamesResponse } from "../types/Game";
+import { MetadataRoute } from 'next'
+import { routing } from '../i18n/routing'
+import { serverApi } from '../api/axios'
+import { GetGamesResponse } from '../types/Game'
 
 const pages = [
   '', // homepage
@@ -10,8 +10,8 @@ const pages = [
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://pakargaming.id";
-  const { data: games } = await serverApi.get<GetGamesResponse>("/v1/games");
+  const baseUrl = process.env.NEXT_SITE_BASE_URL
+  const { data: games } = await serverApi.get<GetGamesResponse>('/v1/games')
 
   const gameUrls =
     games.data?.flatMap((game) => {
