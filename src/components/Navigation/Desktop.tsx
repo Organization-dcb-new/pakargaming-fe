@@ -27,7 +27,6 @@ export default function DesktopNavigation({
   setOpenProfile,
 }: DesktopNavProps) {
   const t = useTranslations('Navigation')
-  // const [open, setOpen] = useState(false)
 
   return (
     <div className="hidden md:flex items-center gap-8">
@@ -57,10 +56,6 @@ export default function DesktopNavigation({
       <div className="flex items-center gap-4 border-l border-purple-500/20 dark:border-purple-500/20 pl-8">
         {/* <LanguageSwitcher /> */}
         <ThemeToggle />
-
-        {/* <button onClick={() => setOpen(true)}>Login</button>
-
-        <AuthModal isOpen={open} onClose={() => setOpen(false)} /> */}
 
         {!user ? (
           <button
