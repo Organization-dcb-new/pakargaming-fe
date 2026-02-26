@@ -15,7 +15,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let gameUrls: MetadataRoute.Sitemap = []
 
   try {
-    const { data: games } = await serverApi.get<GetGamesResponse>('/v1/games')
+    const { data: games } = await serverApi.get<GetGamesResponse>('/v1/games', {
+      timeout: 5000,
+    })
 
     gameUrls =
       games.data?.flatMap((game) => {
