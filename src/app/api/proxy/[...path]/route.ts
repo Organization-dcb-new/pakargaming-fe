@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decryptPayload } from "@/lib/crypto";
 
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
+// URL backend diset oleh GitHub Actions workflow:
+// - dev.yml  → NEXT_PUBLIC_API_BASE_URL = secrets.NEXT_PUBLIC_API_BASE_URL_DEV
+// - main.yml → NEXT_PUBLIC_API_BASE_URL = secrets.NEXT_PUBLIC_API_BASE_URL_PROD
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function GET(
   req: NextRequest,
