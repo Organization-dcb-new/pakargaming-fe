@@ -10,9 +10,14 @@ services:
         NEXT_PUBLIC_ENCRYPT_KEY: ${NEXT_PUBLIC_ENCRYPT_KEY}
         ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY}
         NEXT_SITE_BASE_URL: ${NEXT_SITE_BASE_URL}
-    extra_hosts:
-      - "api.pakargaming.id:172.21.0.2"
+    networks:
+      - pakargaming_network
+
     ports:
-      - '3000:3000'
+      - "3000:3000"
 
     restart: unless-stopped
+
+networks:
+  pakargaming_network:
+    external: true
