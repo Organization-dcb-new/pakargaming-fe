@@ -114,8 +114,7 @@ export function ProductComponent({
                     ? "border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]"
                     : "border border-purple-500/30 bg-white/80 dark:bg-white/20 hover:border-purple-500 hover:bg-white dark:hover:bg-white/30 hover:scale-[1.01]"
                 }
-              `}
-                      >
+              `}>
                         {isSelected && (
                           <div className="absolute -top-2 -right-2 bg-purple-500 rounded-full p-1 shadow-md">
                             <CheckCircle2 className="w-5 h-5 text-white" />
@@ -142,6 +141,7 @@ export function ProductComponent({
                               alt="img-product"
                               width={40}
                               height={40}
+                              unoptimized={true}
                               className="object-contain"
                             />
                           </div>
@@ -182,8 +182,7 @@ export function ProductComponent({
                     ? "border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]"
                     : "border border-purple-500/30 bg-white/80 dark:bg-white/20 hover:border-purple-500 hover:bg-white dark:hover:bg-white/30 hover:scale-[1.01]"
                 }
-              `}
-                    >
+              `}>
                       {isSelected && (
                         <div className="absolute -top-2 -right-2 bg-purple-500 rounded-full p-1 shadow-md">
                           <CheckCircle2 className="w-5 h-5 text-white" />
@@ -204,6 +203,7 @@ export function ProductComponent({
                             alt="img-product"
                             width={40}
                             height={40}
+                            unoptimized={true}
                             className="object-contain"
                           />
                         </div>

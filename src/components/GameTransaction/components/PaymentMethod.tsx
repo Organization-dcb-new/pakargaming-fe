@@ -59,7 +59,9 @@ export default function PaymentMethodTransactionComponent({
   }
 
   return (
-    <div id="payment-method-section" className="relative w-full sm:w-150 scroll-mt-28">
+    <div
+      id="payment-method-section"
+      className="relative w-full sm:w-150 scroll-mt-28">
       {/* Step Badge */}
       <div className="absolute -top-2 -left-2 sm:-top-3 sm:-left-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-md border-2 border-white dark:border-zinc-900 z-10">
         {step}
@@ -74,13 +76,11 @@ export default function PaymentMethodTransactionComponent({
           {categories.map((category, index) => (
             <div
               key={category.id}
-              className="border border-purple-500/20 rounded-xl overflow-hidden transition-all"
-            >
+              className="border border-purple-500/20 rounded-xl overflow-hidden transition-all">
               {/* HEADER */}
               <button
                 onClick={() => toggle(index)}
-                className="w-full px-4 py-3 flex justify-between items-center hover:bg-purple-500/5 transition-all"
-              >
+                className="w-full px-4 py-3 flex justify-between items-center hover:bg-purple-500/5 transition-all">
                 {/* LEFT SIDE */}
                 <div className="flex justify-between w-full gap-3">
                   <span className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
@@ -92,13 +92,13 @@ export default function PaymentMethodTransactionComponent({
                     {category.payment_method?.map((payment) => (
                       <div
                         key={payment.id}
-                        className="w-8 h-8 justify-center flex gap-10 items-center"
-                      >
+                        className="w-8 h-8 justify-center flex gap-10 items-center">
                         <Image
                           src={payment.icon_url}
                           alt={payment.name}
                           width={48}
                           height={48}
+                          unoptimized={true}
                           className="object-contain"
                         />
                       </div>
@@ -109,34 +109,41 @@ export default function PaymentMethodTransactionComponent({
                 {/* ARROW */}
                 <svg
                   className={`w-4 h-4 text-purple-500 transition-all duration-300 ${
-                    activeIndexes.includes(index) ? 'rotate-180' : 'opacity-70'
+                    activeIndexes.includes(index) ? "rotate-180" : "opacity-70"
                   }`}
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.8"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
 
               {/* COLLAPSE CONTENT */}
               <div
                 className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                  activeIndexes.includes(index) ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
-                }`}
-              >
+                  activeIndexes.includes(index)
+                    ? "max-h-[800px] opacity-100"
+                    : "max-h-0 opacity-0"
+                }`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 pt-0 mt-4">
                   {category.payment_method?.map((payment) => {
-                    const isSelected = activePayment?.id === payment.id
-                    const isDisabled = !payment.is_active
-                    const totalPrice = calculateTotalPrice(payment, ActiveProduct)
+                    const isSelected = activePayment?.id === payment.id;
+                    const isDisabled = !payment.is_active;
+                    const totalPrice = calculateTotalPrice(
+                      payment,
+                      ActiveProduct,
+                    );
 
                     return (
                       <div
                         key={payment.id}
                         onClick={() => {
-                          if (!isDisabled) setSelectedPaymentMethod(payment)
+                          if (!isDisabled) setSelectedPaymentMethod(payment);
                         }}
                         className={`
         relative rounded-2xl p-3
@@ -144,13 +151,12 @@ export default function PaymentMethodTransactionComponent({
         flex flex-row items-center gap-3 min-h-[60px]
         ${
           isDisabled
-            ? 'opacity-50 cursor-not-allowed border border-gray-300 bg-gray-100 dark:bg-white/10'
+            ? "opacity-50 cursor-not-allowed border border-gray-300 bg-gray-100 dark:bg-white/10"
             : isSelected
-              ? 'cursor-pointer border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]'
-              : 'cursor-pointer border border-purple-500/30 bg-white/80 dark:bg-white/20 dark:hover:bg-white/30 hover:scale-[1.01]'
+              ? "cursor-pointer border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]"
+              : "cursor-pointer border border-purple-500/30 bg-white/80 dark:bg-white/20 dark:hover:bg-white/30 hover:scale-[1.01]"
         }
-      `}
-                      >
+      `}>
                         {/* Badge Selected */}
                         {isSelected && !isDisabled && (
                           <div className="absolute -top-2 -right-2 bg-purple-500 rounded-full p-1 shadow-md">
@@ -160,14 +166,16 @@ export default function PaymentMethodTransactionComponent({
 
                         <div
                           className={`flex items-center justify-center h-12 w-12 rounded-xl transition-all ${
-                            isSelected && !isDisabled ? 'bg-white shadow-md' : 'bg-transparent'
-                          }`}
-                        >
+                            isSelected && !isDisabled
+                              ? "bg-white shadow-md"
+                              : "bg-transparent"
+                          }`}>
                           <Image
                             src={payment.icon_url}
                             alt={payment.name}
                             width={40}
                             height={40}
+                            unoptimized={true}
                             className="object-contain"
                           />
                         </div>
@@ -184,7 +192,7 @@ export default function PaymentMethodTransactionComponent({
                           )}
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -193,5 +201,5 @@ export default function PaymentMethodTransactionComponent({
         </div>
       </div>
     </div>
-  )
+  );
 }

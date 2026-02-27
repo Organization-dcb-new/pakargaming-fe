@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import { GetGameResponse } from '../../types/Game'
+import Image from "next/image";
+import { GetGameResponse } from "../../types/Game";
 
 interface HeaderProps {
-  GameDetail: GetGameResponse
+  GameDetail: GetGameResponse;
 }
 
 export default function HeaderGameDetail({ GameDetail }: HeaderProps) {
@@ -20,8 +20,7 @@ export default function HeaderGameDetail({ GameDetail }: HeaderProps) {
         border border-white/20
         shadow-lg sm:shadow-xl
         min-h-[96px] sm:min-h-[120px]
-      "
-    >
+      ">
       <div className="flex items-center gap-3 sm:gap-5 w-full">
         {/* Icon / Thumbnail */}
         <div
@@ -31,14 +30,14 @@ export default function HeaderGameDetail({ GameDetail }: HeaderProps) {
             bg-gradient-to-br from-pink-500 to-purple-600
             rounded-xl sm:rounded-2xl
             shadow-md overflow-hidden
-          "
-        >
+          ">
           {GameDetail?.data?.thumbnail_url && (
             <Image
               src={GameDetail.data.thumbnail_url}
-              alt={GameDetail.data.name ?? 'Game Thumbnail'}
+              alt={GameDetail.data.name ?? "Game Thumbnail"}
               fill
               className="object-cover"
+              unoptimized={true}
               priority
             />
           )}
@@ -53,8 +52,7 @@ export default function HeaderGameDetail({ GameDetail }: HeaderProps) {
               text-gray-900 dark:text-white
               leading-tight
               truncate
-            "
-          >
+            ">
             {GameDetail?.data?.name}
           </h1>
 
@@ -65,8 +63,7 @@ export default function HeaderGameDetail({ GameDetail }: HeaderProps) {
               line-clamp-2
               mt-0.5 sm:mt-1
               text-gray-600 dark:text-purple-200
-            "
-          >
+            ">
             Top up items {GameDetail?.data?.name} hanya dalam hitungan detik!
           </p>
 
@@ -82,8 +79,7 @@ export default function HeaderGameDetail({ GameDetail }: HeaderProps) {
                 text-[10px] sm:text-xs
                 font-medium
                 border border-green-500/30
-              "
-            >
+              ">
               ✓ Aman
             </span>
 
@@ -98,13 +94,12 @@ export default function HeaderGameDetail({ GameDetail }: HeaderProps) {
                 text-[10px] sm:text-xs
                 font-medium
                 border border-blue-500/30
-              "
-            >
+              ">
               ✓ Instan
             </span>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

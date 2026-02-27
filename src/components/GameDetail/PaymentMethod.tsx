@@ -1,14 +1,17 @@
-'use client'
+"use client";
 
-import { AlertCircle, CheckCircle2 } from 'lucide-react'
-import { GetPaymentMethodResponse, PaymentMethod } from '../../types/PaymentMethod'
-import Image from 'next/image'
+import { AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  GetPaymentMethodResponse,
+  PaymentMethod,
+} from "../../types/PaymentMethod";
+import Image from "next/image";
 
 interface PaymentMethodProps {
-  PaymentMethod: GetPaymentMethodResponse
-  activePayment: PaymentMethod | null
-  setSelectedPayment: (pay: PaymentMethod) => void
-  paymentError: string
+  PaymentMethod: GetPaymentMethodResponse;
+  activePayment: PaymentMethod | null;
+  setSelectedPayment: (pay: PaymentMethod) => void;
+  paymentError: string;
 }
 
 export default function PaymentMethodComponent({
@@ -33,8 +36,7 @@ export default function PaymentMethodComponent({
       shadow-md
       border-2 border-white dark:border-zinc-900
       z-10
-    "
-      >
+    ">
         3
       </div>
 
@@ -47,8 +49,7 @@ export default function PaymentMethodComponent({
       p-5 mb-6
       border border-white/20 dark:border-white/20
       shadow-xl
-    "
-      >
+    ">
         {/* Header */}
         <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
           Pilih Pembayaran
@@ -56,56 +57,57 @@ export default function PaymentMethodComponent({
 
         {/* Payment Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {PaymentMethod?.data?.map((payment) => {
-            const isSelected = activePayment?.id === payment.id
+          {PaymentMethod?.data
+            ?.flatMap((c) => c.payment_method ?? [])
+            ?.map((payment) => {
+              const isSelected = activePayment?.id === payment.id;
 
-            return (
-              <div
-                key={payment.id}
-                onClick={() => setSelectedPayment(payment)}
-                className={`
+              return (
+                <div
+                  key={payment.id}
+                  onClick={() => setSelectedPayment(payment)}
+                  className={`
               relative cursor-pointer rounded-2xl p-3
               transition-all duration-300
               flex flex-col items-center justify-between gap-2
               min-h-[100px] sm:min-h-[110px]
               ${
                 isSelected
-                  ? 'bg-gradient-to-br from-blue-500 to-cyan-500 border border-white shadow-md scale-[1.02]'
-                  : 'bg-white/80 dark:bg-white/20 border border-gray-300 dark:border-white/30 hover:bg-white dark:hover:bg-white/30 hover:scale-[1.01]'
+                  ? "bg-gradient-to-br from-blue-500 to-cyan-500 border border-white shadow-md scale-[1.02]"
+                  : "bg-white/80 dark:bg-white/20 border border-gray-300 dark:border-white/30 hover:bg-white dark:hover:bg-white/30 hover:scale-[1.01]"
               }
-            `}
-              >
-                {/* Selected Badge */}
-                {isSelected && (
-                  <div className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1 shadow-md">
-                    <CheckCircle2 className="w-4 h-4 text-white" />
-                  </div>
-                )}
+            `}>
+                  {/* Selected Badge */}
+                  {isSelected && (
+                    <div className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1 shadow-md">
+                      <CheckCircle2 className="w-4 h-4 text-white" />
+                    </div>
+                  )}
 
-                {/* Icon */}
-                <div
-                  className={`
+                  {/* Icon */}
+                  <div
+                    className={`
                 flex items-center justify-center
                 h-12 w-12 rounded-xl transition-all
-                ${isSelected ? 'bg-white shadow-md' : 'bg-transparent'}
-              `}
-                >
-                  <Image
-                    src={payment.icon_url}
-                    alt={payment.name}
-                    width={40}
-                    height={40}
-                    className="object-contain"
-                  />
-                </div>
+                ${isSelected ? "bg-white shadow-md" : "bg-transparent"}
+              `}>
+                    <Image
+                      src={payment.icon_url}
+                      alt={payment.name}
+                      width={40}
+                      height={40}
+                      unoptimized={true}
+                      className="object-contain"
+                    />
+                  </div>
 
-                {/* Name */}
-                <p className="text-gray-900 dark:text-white text-center text-xs font-medium leading-snug line-clamp-2">
-                  {payment.full_name}
-                </p>
-              </div>
-            )
-          })}
+                  {/* Name */}
+                  <p className="text-gray-900 dark:text-white text-center text-xs font-medium leading-snug line-clamp-2">
+                    {payment.full_name}
+                  </p>
+                </div>
+              );
+            })}
         </div>
         {paymentError && (
           <div className="mt-2 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 px-3 py-2 text-xs text-red-600 dark:text-red-400">
@@ -115,5 +117,5 @@ export default function PaymentMethodComponent({
         )}
       </div>
     </div>
-  )
+  );
 }

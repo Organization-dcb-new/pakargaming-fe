@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from "next/image";
 
 export default function AboutPage() {
   return (
@@ -11,24 +11,26 @@ export default function AboutPage() {
               Tentang Kami
             </div>
             <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
-              Pakargaming <span className="text-purple-600">:</span> Platform Top Up Game
+              Pakargaming <span className="text-purple-600">:</span> Platform
+              Top Up Game
             </h1>
             <p className="text-lg leading-relaxed opacity-90">
-              <span className="font-bold text-purple-600">pakargaming.id</span> adalah platform
-              digital yang ahlinya menyediakan layanan top up game, voucher, dan berbagai produk
-              hiburan digital dengan proses yang{' '}
+              <span className="font-bold text-purple-600">pakargaming.id</span>{" "}
+              adalah platform digital yang ahlinya menyediakan layanan top up
+              game, voucher, dan berbagai produk hiburan digital dengan proses
+              yang{" "}
               <span className="text-gray-900 dark:text-white font-semibold">
                 cepat, aman, dan praktis
               </span>
               .
             </p>
             <p className="text-lg leading-relaxed opacity-90">
-              Dikelola oleh{' '}
+              Dikelola oleh{" "}
               <span className="font-semibold text-gray-900 dark:text-white">
                 Aura Pakar Inovasi
               </span>
-              , kami berfokus pada pengembangan solusi digital untuk kebutuhan komunitas gaming
-              modern.
+              , kami berfokus pada pengembangan solusi digital untuk kebutuhan
+              komunitas gaming modern.
             </p>
           </div>
 
@@ -41,6 +43,7 @@ export default function AboutPage() {
                 width={400}
                 height={400}
                 priority
+                unoptimized={true}
                 className="relative rounded-2xl shadow-xl border border-gray-100 dark:border-zinc-800 object-cover"
               />
             </div>
@@ -55,14 +58,15 @@ export default function AboutPage() {
               Kenapa Memilih Kami?
             </h2>
             <p className="leading-relaxed text-center">
-              Kami hadir untuk mempermudah para gamer dalam melakukan transaksi tanpa proses yang
-              rumit. Dengan dukungan <span className="font-bold">10+ mitra pembayaran</span> yang
-              tersebar di berbagai wilayah Asia, pengguna dapat menikmati metode pembayaran yang
-              fleksibel.
+              Kami hadir untuk mempermudah para gamer dalam melakukan transaksi
+              tanpa proses yang rumit. Dengan dukungan{" "}
+              <span className="font-bold">10+ mitra pembayaran</span> yang
+              tersebar di berbagai wilayah Asia, pengguna dapat menikmati metode
+              pembayaran yang fleksibel.
             </p>
             <p className="leading-relaxed font-medium text-purple-600 dark:text-purple-400 text-center">
-              Berkomitmen menghadirkan layanan yang stabil, terpercaya, serta pengalaman transaksi
-              yang nyaman.
+              Berkomitmen menghadirkan layanan yang stabil, terpercaya, serta
+              pengalaman transaksi yang nyaman.
             </p>
           </div>
 
@@ -79,9 +83,12 @@ export default function AboutPage() {
         <section className="text-center space-y-8  bg-gray-50 dark:bg-zinc-900/50  p-8 md:p-12  rounded-3xl  border border-gray-100 dark:border-zinc-800">
           {/* Header Section */}
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Katalog Produk</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Katalog Produk
+            </h2>
             <p className="text-gray-500 max-w-xl mx-auto">
-              Tersedia berbagai macam game favorit dan voucher digital dengan harga bersaing.
+              Tersedia berbagai macam game favorit dan voucher digital dengan
+              harga bersaing.
             </p>
           </div>
 
@@ -96,5 +103,5 @@ export default function AboutPage() {
         </section>
       </div>
     </div>
-  )
+  );
 }
