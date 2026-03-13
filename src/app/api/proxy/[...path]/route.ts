@@ -16,12 +16,10 @@ export async function POST(
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   const { path } = await params;
-  const origin = req.headers.get("origin");
-  const referer = req.headers.get("referer");
 
   return proxyRequest(req, path, "POST", {
-    origin,
-    referer,
+    origin: "https://dev.pakargaming.id",
+    referer: "https://dev.pakargaming.id",
   });
 }
 
