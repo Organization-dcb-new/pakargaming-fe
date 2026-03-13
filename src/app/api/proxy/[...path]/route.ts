@@ -18,7 +18,13 @@ export async function POST(
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   const { path } = await params;
-  return proxyRequest(req, path, "POST");
+  const origin = req.headers.get("origin");
+  const referer = req.headers.get("referer");
+
+  return proxyRequest(req, path, "POST", {
+    origin,
+    referer,
+  });
 }
 
 export async function PUT(
@@ -49,6 +55,7 @@ async function proxyRequest(
   req: NextRequest,
   pathSegments: string[],
   method: string,
+  forwarded?: { origin: string | null; referer: string | null },
 ) {
   if (!BACKEND_URL) {
     console.error(
@@ -70,6 +77,14 @@ async function proxyRequest(
       "Content-Type": "application/json",
       Accept: "application/json",
     };
+
+    if (forwarded?.origin) {
+      headers["X-Forwarded-Origin"] = forwarded.origin;
+    }
+
+    if (forwarded?.referer) {
+      headers["X-Forwarded-Referer"] = forwarded.referer;
+    }
 
     // Forward Authorization header if present
     const auth = req.headers.get("authorization");
