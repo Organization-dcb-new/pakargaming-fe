@@ -16,7 +16,7 @@ import ContactForm from "./components/Contact";
 import OrderTransactionComponent from "./components/OrderTransaction";
 import HelpCard from "./components/Help";
 import MobileOrderBar from "./components/MobileOrderTransaction";
-import { useCreateTransactionV2 } from "./hooks/useCreateTransaction";
+import { useCreateTransaction } from "./hooks/useCreateTransaction";
 import { toast } from "sonner";
 import useAuth from "../../hooks/useAuth";
 import ConfirmModal from "./components/Confirmation";
@@ -43,7 +43,7 @@ export default function GameTransaction() {
 
   const { data: categoryProduct } = useGetCategoryProduct(gameId);
 
-  const { mutate, isPending } = useCreateTransactionV2();
+  const { mutate, isPending } = useCreateTransaction();
 
   const activeProduct = selectedPackage ?? null;
   const activePayment = selectedPayment ?? null;
@@ -95,20 +95,10 @@ export default function GameTransaction() {
 
   const handleCreateOrder = () => {
     mutate({
-      game_id: dataGameDetail.data.id,
-      package: {
-        product_id: selectedPackage.id,
-        product_name: selectedPackage.name,
-        product_sku: selectedPackage.sku,
-      },
-      payment: {
-        payment_method_id: selectedPayment.id,
-        payment_channel: selectedPayment.name,
-      },
       email: email,
+      payment_method_id: selectedPayment.id,
       game_data: account,
       product_id: selectedPackage.id,
-      provider_id: dataGameDetail.data.provider_id,
     });
   };
 

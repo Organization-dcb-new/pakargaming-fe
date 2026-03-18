@@ -1,46 +1,127 @@
-name: Deploy Dev PakarGaming Client
+name: Deploy Frontend Client Dev
 
 on:
   push:
     branches:
       - dev
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
-  deploy:
-    name: Deploy Client (Dev)
-    runs-on: [self-hosted, dev]
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.bump.outputs.new_tag }}
+      repo_lower: ${{ steps.repo_lower.outputs.repo }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Deploy FE
-        shell: bash
+      - name: Lowercase Repo
+        id: repo_lower
+        run: echo "repo=${GITHUB_REPOSITORY@L}" >> $GITHUB_OUTPUT
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Version Bump
+        id: bump
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          CLEAN_TAG=${LATEST_TAG#dev-}
+
+          IFS='.' read -r major minor patch <<< "$CLEAN_TAG"
+
+          if [ "$patch" -eq 9 ]; then
+            minor=$((minor + 1))
+            patch=0
+          else
+            patch=$((patch + 1))
+          fi
+
+          NEW_TAG="$major.$minor.$patch"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+
+      - name: Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_DEV }}
+            NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_DEV }}
+            NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_DEV }}
+            ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY_DEV }}
+          
+          tags: |
+            ghcr.io/${{ steps.repo_lower.outputs.repo }}:dev-latest
+            ghcr.io/${{ steps.repo_lower.outputs.repo }}:dev-${{ steps.bump.outputs.new_tag }}
+
+      - name: Create Git Tag
+        run: |
+          TAG="dev-${{ steps.bump.outputs.new_tag }}"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+            git tag $TAG
+            git push origin $TAG
+          fi
+
+  deploy:
+    needs: build-and-push
+    runs-on: [ self-hosted, dev ]
+
+    steps:
+      - name: Deploy 
         run: |
           set -e
 
-          echo "Workspace: $GITHUB_WORKSPACE"
-          cd "$GITHUB_WORKSPACE"
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-          echo "Listing files"
-          ls -la
+          cd /opt/dev-deploy/fe-client-dev
 
-          echo "🔨 Building image..."
+          CURRENT_IMAGE=$(docker inspect --format='{{.Config.Image}}' fe-client 2>/dev/null || echo "")
+          CURRENT_TAG=$(echo $CURRENT_IMAGE | awk -F: '{print $2}')
+
+          NEW_TAG="dev-${{ needs.build-and-push.outputs.new_tag }}"
+
+          echo "Current: ${CURRENT_TAG:-none}"
+          echo "New: $NEW_TAG"
+
+          export IMAGE_TAG=$NEW_TAG
+
+          export ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY_DEV }}
           export NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_DEV }}
-          export NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY }}
-          export ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY }}
-          export NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL }}
+          export NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_DEV }}
+          export NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_DEV }}
 
+          docker compose pull
+          docker compose up -d --remove-orphans
 
-          if docker compose -f docker-compose.dev.yml build; then
-            echo "✅ Build success"
+          # Jika gagal langsung rollback
+          if [ $? -ne 0 ]; then
+            echo "Deploy failed ❌"
 
-            echo "🚀 Restarting container..."
-            docker compose -f docker-compose.dev.yml up -d
+            if [ -n "$CURRENT_TAG" ]; then
+              echo "Rolling back..."
+              export IMAGE_TAG=$CURRENT_TAG
+              docker compose up -d --remove-orphans
+              echo "Rollback done 🔄"
+            fi
 
-            echo "🎉 Deploy success"
-          else
-            echo "❌ Build failed!"
-            echo "⚠️ Keeping previous container running"
             exit 1
           fi
+
+          docker image prune -f
+
+          echo "Deploy Success 🚀"

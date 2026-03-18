@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decryptPayload } from "@/lib/crypto";
 
-// - dev.yml  → NEXT_PUBLIC_API_BASE_URL = secrets.NEXT_PUBLIC_API_BASE_URL_DEV
-// - main.yml → NEXT_PUBLIC_API_BASE_URL = secrets.NEXT_PUBLIC_API_BASE_URL_PROD
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const SITE_URL = process.env.NEXT_SITE_BASE_URL
 
 export async function GET(
   req: NextRequest,
@@ -18,12 +17,10 @@ export async function POST(
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   const { path } = await params;
-  const origin = req.headers.get("origin");
-  const referer = req.headers.get("referer");
 
   return proxyRequest(req, path, "POST", {
-    origin,
-    referer,
+    origin: SITE_URL,
+    referer: SITE_URL,
   });
 }
 
