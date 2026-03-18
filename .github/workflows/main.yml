@@ -36,20 +36,31 @@ jobs:
       - name: Version Bump
         id: bump
         run: |
+         
           LATEST_TAG=$(git describe --tags --match "prod-*" --abbrev=0 2>/dev/null || echo "prod-1.0.0")
+          
+          
           CLEAN_TAG=${LATEST_TAG#prod-}
 
+          
           IFS='.' read -r major minor patch <<< "$CLEAN_TAG"
 
-          if [ "$patch" -eq 9 ]; then
-            minor=$((minor + 1))
-            patch=0
+         
+          if [ "$LATEST_TAG" == "prod-1.0.0" ] && ! git rev-parse "prod-1.0.0" >/dev/null 2>&1; then
+            NEW_TAG="1.0.0"
           else
-            patch=$((patch + 1))
+           
+            if [ "$patch" -eq 9 ]; then
+              minor=$((minor + 1))
+              patch=0
+            else
+              patch=$((patch + 1))
+            fi
+            NEW_TAG="$major.$minor.$patch"
           fi
 
-          NEW_TAG="$major.$minor.$patch"
           echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "🚀 Versi Produksi Baru: $NEW_TAG"
 
       - name: Build & Push
         uses: docker/build-push-action@v5
