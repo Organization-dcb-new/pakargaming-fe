@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { decryptPayload } from "@/lib/crypto";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const SITE_URL = process.env.NEXT_SITE_BASE_URL
 
 export async function GET(
   req: NextRequest,
@@ -18,8 +19,8 @@ export async function POST(
   const { path } = await params;
 
   return proxyRequest(req, path, "POST", {
-    origin: "https://dev.pakargaming.id",
-    referer: "https://dev.pakargaming.id",
+    origin: SITE_URL,
+    referer: SITE_URL,
   });
 }
 
