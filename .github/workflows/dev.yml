@@ -85,7 +85,7 @@ jobs:
 
           cd /opt/dev-deploy/fe-client-dev
 
-          CURRENT_IMAGE=$(docker inspect --format='{{.Config.Image}}' fe-blog 2>/dev/null || echo "")
+          CURRENT_IMAGE=$(docker inspect --format='{{.Config.Image}}' fe-client 2>/dev/null || echo "")
           CURRENT_TAG=$(echo $CURRENT_IMAGE | awk -F: '{print $2}')
 
           NEW_TAG="dev-${{ needs.build-and-push.outputs.new_tag }}"
