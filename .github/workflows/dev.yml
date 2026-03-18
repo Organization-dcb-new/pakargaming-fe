@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Lowercase Repo
+      - name: Lowercase Repo 
         id: repo_lower
         run: echo "repo=${GITHUB_REPOSITORY@L}" >> $GITHUB_OUTPUT
 
@@ -36,10 +36,15 @@ jobs:
       - name: Version Bump
         id: bump
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+         
+          LATEST_TAG=$(git describe --tags --match "dev-*" --abbrev=0 2>/dev/null || echo "dev-0.0.0")
+          
+          
           CLEAN_TAG=${LATEST_TAG#dev-}
 
+          
           IFS='.' read -r major minor patch <<< "$CLEAN_TAG"
+
 
           if [ "$patch" -eq 9 ]; then
             minor=$((minor + 1))
@@ -50,6 +55,7 @@ jobs:
 
           NEW_TAG="$major.$minor.$patch"
           echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "🚀 New Dev Version: $NEW_TAG"
 
       - name: Build & Push
         uses: docker/build-push-action@v5

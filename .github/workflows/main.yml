@@ -36,20 +36,31 @@ jobs:
       - name: Version Bump
         id: bump
         run: |
+         
           LATEST_TAG=$(git describe --tags --match "prod-*" --abbrev=0 2>/dev/null || echo "prod-1.0.0")
+          
+          
           CLEAN_TAG=${LATEST_TAG#prod-}
 
+          
           IFS='.' read -r major minor patch <<< "$CLEAN_TAG"
 
-          if [ "$patch" -eq 9 ]; then
-            minor=$((minor + 1))
-            patch=0
+         
+          if [ "$LATEST_TAG" == "prod-1.0.0" ] && ! git rev-parse "prod-1.0.0" >/dev/null 2>&1; then
+            NEW_TAG="1.0.0"
           else
-            patch=$((patch + 1))
+           
+            if [ "$patch" -eq 9 ]; then
+              minor=$((minor + 1))
+              patch=0
+            else
+              patch=$((patch + 1))
+            fi
+            NEW_TAG="$major.$minor.$patch"
           fi
 
-          NEW_TAG="$major.$minor.$patch"
           echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "🚀 Versi Produksi Baru: $NEW_TAG"
 
       - name: Build & Push
         uses: docker/build-push-action@v5
@@ -57,10 +68,10 @@ jobs:
           context: .
           push: true
           build-args: |
-            NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_DEV }}
-            NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_DEV }}
-            NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_DEV }}
-            ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY_DEV }}
+            NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_PROD }}
+            NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_PROD }}
+            NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_PROD }}
+            ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY_PROD }}
           
           tags: |
             ghcr.io/${{ steps.repo_lower.outputs.repo }}:prod-latest
@@ -100,10 +111,10 @@ jobs:
 
           export IMAGE_TAG=$NEW_TAG
 
-          export ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY_DEV }}
-          export NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_DEV }}
-          export NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_DEV }}
-          export NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_DEV }}
+          export ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY_PROD }}
+          export NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_PROD }}
+          export NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_PROD }}
+          export NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_PROD }}
 
           docker compose pull
           docker compose up -d --remove-orphans
