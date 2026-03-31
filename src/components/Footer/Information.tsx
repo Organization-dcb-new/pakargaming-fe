@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 export default function Information() {
   return (
@@ -35,7 +35,13 @@ export default function Information() {
         >
           Cek Transaksi
         </Link>
+        <Link
+          href="https://blog.pakargaming.id"
+          className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
+        >
+          Blog
+        </Link>
       </div>
     </div>
-  )
+  );
 }
