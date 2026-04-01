@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { PaymentDataWithDetailProduct } from "../../types/Transaction";
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
 type ProductDetailCardProps = {
@@ -9,14 +9,8 @@ type ProductDetailCardProps = {
 };
 
 export default function ProductDetailCard({ data }: ProductDetailCardProps) {
+  const [showVoucher, setShowVoucher] = useState(false);
   const [copied, setCopied] = useState(false);
-  const isVoucherPurchase = [
-    data?.detail_product?.category,
-    data?.detail_product?.item_name,
-    data?.detail_product?.item_product,
-  ]
-    .filter(Boolean)
-    .some((value) => value.toLowerCase().includes("voucher"));
 
   const handleCopy = async () => {
     if (!data?.payment_number) return;
@@ -113,13 +107,24 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
             </span>
           </div>
 
-          {isVoucherPurchase && (
+          {data?.detail_product?.voucher_code?.trim() && (
             <div className="grid grid-cols-3 items-center gap-2 rounded-lg bg-green-50 dark:bg-green-900/20 px-3 py-2">
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
                 Voucher
               </span>
-              <span className="col-span-2 font-semibold text-green-700 dark:text-green-400">
-                Cek email untuk menerima voucher code kamu.
+              <span className="col-span-2 flex items-center justify-between gap-2 font-semibold text-green-700 dark:text-green-400">
+                <span className="break-all">
+                  🎟️{" "}
+                  {showVoucher
+                    ? data.detail_product.voucher_code
+                    : "••••••••••••••"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowVoucher(!showVoucher)}
+                  className="text-green-600 dark:text-green-300 cursor-pointer hover:text-green-800 dark:hover:text-green-500">
+                  {showVoucher ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </span>
             </div>
           )}
