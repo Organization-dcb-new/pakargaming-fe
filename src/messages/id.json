@@ -3,7 +3,52 @@
     "home": "Beranda",
     "games": "Jelajahi Game",
     "login": "Masuk",
-    "transaction": "Transaksi"
+    "register": "Daftar",
+    "transaction": "Transaksi",
+    "dashboard": "Dashboard",
+    "logout": "Keluar",
+    "userFallback": "Pengguna",
+    "searchPlaceholder": "Cari game…",
+    "searchLoading": "Mencari…",
+    "searchNotFound": "Game tidak ditemukan",
+    "switchToIndonesian": "Ganti ke Bahasa Indonesia",
+    "switchToEnglish": "Ganti ke Bahasa Inggris"
+  },
+  "Auth": {
+    "close": "Tutup",
+    "loginTitle": "Masuk ke akun",
+    "loginSubtitle": "Isi email dan kata sandi untuk melanjutkan.",
+    "registerTitle": "Daftar akun baru",
+    "registerSubtitle": "Buat akun untuk transaksi lebih cepat dan riwayat pesanan tersimpan.",
+    "tabLogin": "Masuk",
+    "tabRegister": "Daftar",
+    "fullName": "Nama lengkap",
+    "fullNamePlaceholder": "Contoh: Budi Santoso",
+    "phone": "Nomor HP",
+    "phonePlaceholder": "Contoh: 081234567890",
+    "email": "Email",
+    "emailPlaceholder": "nama@email.com",
+    "emailOrPhone": "Email atau Nomor HP",
+    "emailOrPhonePlaceholder": "Masukkan email atau nomor HP",
+    "emailOrPhoneRequired": "Email atau nomor HP wajib diisi.",
+    "emailOrPhoneInvalid": "Format email atau nomor HP tidak valid.",
+    "emailDomainNotAllowed": "Domain email harus outlook.com, gmail.com, atau yahoo.com.",
+    "gender": "Jenis kelamin",
+    "genderMale": "Laki-laki",
+    "genderFemale": "Perempuan",
+    "password": "Kata sandi",
+    "confirmPassword": "Ulangi kata sandi",
+    "submitLogin": "Masuk",
+    "submitRegister": "Daftar sekarang",
+    "submitting": "Memproses…",
+    "passwordMin": "Kata sandi minimal 6 karakter.",
+    "passwordMismatch": "Kata sandi tidak cocok.",
+    "loginFailed": "Email atau kata sandi salah.",
+    "registerFailed": "Pendaftaran gagal. Coba lagi.",
+    "loginSuccess": "Berhasil masuk.",
+    "registerSuccessSwitch": "Pendaftaran berhasil. Silakan masuk.",
+    "registerSuccess": "Pendaftaran berhasil.",
+    "genericError": "Terjadi kesalahan. Silakan coba lagi."
   },
   "Home": {
     "heroTitle": "Tingkatkan Skill Gaming Anda",
@@ -22,7 +67,28 @@
     "about": "Platform terpercaya untuk membeli game digital dengan harga terbaik dan pengiriman instan.",
     "links": "Tautan Cepat",
     "contact": "Hubungi Kami",
-    "rights": "Hak cipta dilindungi."
+    "rights": "Hak cipta dilindungi.",
+    "companyName": "PT Aura Pakar Inovasi",
+    "tagline": "Ahlinya Top Up Game Favoritmu",
+    "address": "Kota Jakarta Selatan, Jakarta, Daerah Khusus Ibukota Jakarta 12150",
+    "paymentSectionAria": "Pembayaran",
+    "contactInfoAria": "Kontak dan informasi",
+    "complaintSecurityAria": "Pengaduan dan keamanan",
+    "contactTitle": "Hubungi Kami",
+    "informationTitle": "Informasi",
+    "aboutUs": "Tentang Kami",
+    "terms": "Syarat & Ketentuan",
+    "privacy": "Kebijakan dan Privasi",
+    "checkTransaction": "Cek Transaksi",
+    "blog": "Blog",
+    "followUs": "Ikuti Kami",
+    "complaintService": "Layanan Pengaduan Konsumen",
+    "securityPrivacy": "Keamanan & Privasi",
+    "securePaymentTitle": "Pembayaran Aman",
+    "securePaymentSubtitle": "Transaksi dilindungi, pilih metode yang Anda nyaman gunakan.",
+    "loadingPaymentMethods": "Memuat metode pembayaran",
+    "paymentUnavailable": "Metode pembayaran tidak tersedia saat ini.",
+    "others": "lainnya"
   },
   "Cart": {
     "title": "Keranjang Belanja",
@@ -68,6 +134,314 @@
   },
   "Common": {
     "loading": "Memuat...",
-    "error": "Terjadi kesalahan"
+    "error": "Terjadi kesalahan",
+    "cancel": "Batal",
+    "logout": "Keluar",
+    "logoutConfirmTitle": "Konfirmasi Keluar",
+    "logoutConfirmDescription": "Apakah Anda yakin ingin keluar dari akun ini?"
+  },
+  "Dashboard": {
+    "loading": "Sedang memuat data dashboard..."
+  },
+  "ClientLayout": {
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "transactionHistory": "Riwayat Transaksi",
+    "logout": "Keluar"
+  },
+  "DashboardProfile": {
+    "activeAccount": "Akun Aktif"
+  },
+  "TransactionHistory": {
+    "title": "Riwayat Transaksi",
+    "subtitle": "Cari transaksi berdasarkan nomor pembayaran dan rentang tanggal.",
+    "search": "Search",
+    "searchPlaceholder": "Payment number",
+    "fromDate": "Dari tanggal",
+    "toDate": "Sampai tanggal",
+    "paymentNumber": "Payment Number",
+    "orderId": "Order ID",
+    "date": "Tanggal",
+    "game": "Game",
+    "amount": "Amount",
+    "status": "Status",
+    "loading": "Memuat transaksi...",
+    "error": "Gagal memuat data transaksi.",
+    "empty": "Data transaksi belum ada / tidak ditemukan.",
+    "of": "dari",
+    "total": "Total",
+    "data": "data",
+    "page": "Page",
+    "jump": "Jump",
+    "prev": "Prev",
+    "next": "Next",
+    "jumpMin": "Halaman minimal",
+    "jumpMax": "Maksimal halaman",
+    "invalidDateRange": "Tanggal akhir tidak boleh kurang dari tanggal awal."
+  },
+  "HomeShows": {
+    "checkTransaction": "Cek Transaksi",
+    "showMore": "Tampilkan lebih banyak ↓",
+    "showLess": "Tampilkan lebih sedikit ↑"
+  },
+  "CheckTransaction": {
+    "badge": "Cek Invoice",
+    "titlePrefix": "Cek Status Pembelian",
+    "titleHighlight": "Tanpa Login",
+    "description": "Masukkan nomor invoice untuk melihat detail transaksi kamu secara langsung. Cepat, aman, dan tidak butuh akun.",
+    "featureNoLogin": "Tanpa perlu login",
+    "featureInstant": "Hasil instan & real-time",
+    "featureSecure": "Data aman & terenkripsi",
+    "cardTitle": "Cari Transaksi",
+    "cardSubtitle": "Masukkan nomor invoice kamu",
+    "invoiceLabel": "Nomor Invoice",
+    "invoicePlaceholder": "PAY-XXXXXXXXXXXX",
+    "invalidFormat": "Format harus PAY- diikuti angka (min. 10 digit)",
+    "example": "Contoh:",
+    "exampleValue": "PAY-1770XXXXXXXXXXX",
+    "searching": "Mencari...",
+    "searchButton": "Cari Invoice"
+  },
+  "AboutPage": {
+    "hero": {
+      "badge": "Platform Top Up Game #1",
+      "title": "Pakargaming",
+      "titleHighlight": "Platform Top Up Game",
+      "descriptionPrefix": "adalah platform digital yang ahlinya menyediakan layanan top up game, voucher, dan berbagai produk hiburan digital dengan proses yang",
+      "descriptionHighlight": "cepat, aman, dan praktis",
+      "companyPrefix": "Dikelola oleh",
+      "companySuffix": "kami berfokus pada pengembangan solusi digital untuk kebutuhan komunitas gaming modern."
+    },
+    "stats": {
+      "activeCustomers": "Customer Aktif",
+      "uptime": "Uptime Layanan",
+      "paymentPartners": "Mitra Pembayaran",
+      "since": "Berdiri Sejak"
+    },
+    "whyUs": {
+      "badge": "Keunggulan Kami",
+      "title": "Kenapa Memilih Kami?",
+      "subtitle": "Kami hadir untuk mempermudah para gamer dalam melakukan transaksi tanpa proses yang rumit."
+    },
+    "features": {
+      "instant": {
+        "title": "Proses Instan",
+        "desc": "Top up diproses otomatis dalam hitungan detik, kapan pun dan di mana pun."
+      },
+      "secure": {
+        "title": "Aman & Terpercaya",
+        "desc": "Sistem keamanan berlapis dengan enkripsi data untuk setiap transaksi."
+      },
+      "payment": {
+        "title": "Banyak Metode Bayar",
+        "desc": "Transfer bank, e-wallet, QRIS, virtual account, dan minimarket tersedia."
+      },
+      "support": {
+        "title": "CS Responsif",
+        "desc": "Tim customer service siap membantu menyelesaikan kendala transaksi Anda."
+      }
+    },
+    "payment": {
+      "title": "Metode Pembayaran",
+      "supportedPrefix": "Didukung oleh",
+      "supportedHighlight": "10+ mitra pembayaran",
+      "supportedSuffix": "di Asia",
+      "allActive": "Semua Aktif",
+      "imageAlt": "Metode Pembayaran"
+    },
+    "catalog": {
+      "title": "Katalog Produk",
+      "subtitle": "Berbagai game favorit dan voucher digital dengan harga bersaing",
+      "updateBadge": "Update Rutin",
+      "imageAlt": "Katalog Produk"
+    }
+  },
+  "DetailTransaction": {
+    "loadingTransaction": "Memuat transaksi..."
+  },
+  "DetailTransactionComponents": {
+    "paymentDetail": {
+      "title": "Detail Pembayaran",
+      "paymentStatus": "Status pembayaran",
+      "paymentMethod": "Metode pembayaran",
+      "paymentLogoAlt": "Logo Payment",
+      "transactionTotal": "Total transaksi",
+      "paymentTotal": "Total pembayaran",
+      "statusPaid": "Berhasil",
+      "statusFailed": "Gagal",
+      "statusPending": "Pending"
+    },
+    "productDetail": {
+      "title": "Detail Produk",
+      "copySuccess": "Nomor transaksi berhasil disalin",
+      "productLogoAlt": "Logo Produk",
+      "transactionNumber": "No. Transaksi",
+      "product": "Produk",
+      "nominal": "Nominal",
+      "quantity": "Jumlah",
+      "email": "Email",
+      "voucher": "Voucher"
+    },
+    "status": {
+      "success": "Berhasil",
+      "failed": "Gagal",
+      "pending": "Pending",
+      "statusPaidDesc": "Transaksi berhasil diproses.",
+      "statusFailedDesc": "Transaksi gagal diproses.",
+      "statusPendingDesc": "Menunggu pembayaran dari Anda.",
+      "payViaOvo": "Bayar lewat aplikasi OVO",
+      "payUsing": "Bayar menggunakan {channel}",
+      "continuePayment": "Lanjutkan Pembayaran",
+      "qrCodeAlt": "QR Code",
+      "qrHint": "Klik QR untuk memperbesar · Scan menggunakan aplikasi {channel}",
+      "downloadQr": "Download QR",
+      "scanQrDesc": "Scan QR ini untuk menyelesaikan pembayaran",
+      "retryTransaction": "Ulangi Transaksi",
+      "buyAgain": "Beli Lagi"
+    },
+    "faq": {
+      "title": "FAQ Pembayaran",
+      "q1": "Metode pembayaran apa saja yang tersedia?",
+      "q1a1": "E-Wallet (OVO, DANA, GoPay, ShopeePay)",
+      "q1a2": "QRIS (Semua aplikasi yang mendukung QRIS)",
+      "q1a3": "Transfer Bank",
+      "q1a4": "Virtual Account (BCA, BRI, BNI, Mandiri, dll)",
+      "q2": "Apakah pembayaran di Pakargaming aman?",
+      "q2a": "Ya, semua transaksi pembayaran diproses melalui sistem payment gateway yang aman dan terenkripsi. Data pembayaran kamu tidak disimpan oleh sistem kami.",
+      "q3": "Berapa lama pembayaran terverifikasi?",
+      "q3a": "Pembayaran menggunakan E-Wallet dan QRIS biasanya terverifikasi otomatis dalam hitungan detik. Untuk transfer bank, proses bisa memakan waktu 1–5 menit tergantung sistem bank.",
+      "q4": "Kenapa pembayaran saya gagal?",
+      "q4aIntro": "Beberapa penyebab umum pembayaran gagal:",
+      "q4a1": "Saldo tidak mencukupi",
+      "q4a2": "Waktu pembayaran sudah melewati batas",
+      "q4a3": "Koneksi internet terputus saat proses pembayaran",
+      "q4a4": "Kesalahan saat memasukkan nominal transfer",
+      "q5": "Apakah bisa membatalkan transaksi?",
+      "q5a": "Transaksi yang belum dibayar akan otomatis dibatalkan oleh sistem setelah melewati batas waktu pembayaran. Jika sudah dibayar, transaksi tidak bisa dibatalkan.",
+      "q6": "Bagaimana jika saldo sudah terpotong tapi status belum berhasil?",
+      "q6aIntro": "Jika saldo sudah terpotong tetapi status transaksi belum berhasil:",
+      "q6a1": "Tunggu 5–15 menit untuk proses sinkronisasi otomatis",
+      "q6a2": "Cek kembali status transaksi di halaman riwayat",
+      "q6aOutro": "Jika masih bermasalah, segera hubungi Customer Service dengan menyertakan bukti pembayaran."
+    }
+  },
+  "GameTransaction": {
+    "inactiveBanner": "Game sedang dalam gangguan silahakan hubungi cs atau admin",
+    "inactiveModalTitle": "Transaksi Tidak Tersedia",
+    "inactiveModalDescription": "Transaksi sedang terjadi gangguan hubungii admin atau cs",
+    "inactiveModalBack": "Kembali",
+    "inactiveModalUnderstood": "Mengerti",
+    "validationEnterAccount": "Masukkan akun",
+    "validationAccountNotFound": "Akun tidak ditemukan",
+    "validationSelectProduct": "Pilih Produk",
+    "validationSelectPayment": "Pilih metode pembayaran",
+    "validationEmailRequired": "Email belum diisi",
+    "validationEmailDomain": "Email harus menggunakan domain gmail.com, outlook.com, atau yahoo.com",
+    "inactiveServiceLabel": "Layanan game terganggu",
+    "banner": {
+      "coverAlt": "Gambar cover",
+      "featureFast": "Proses Cepat",
+      "feature247": "Layanan 24/7",
+      "featureSecure": "Pembayaran Aman"
+    },
+    "account": {
+      "title": "Masukkan Data Akun",
+      "checkingId": "Mengecek ID akun..."
+    },
+    "product": {
+      "title": "Pilih Nominal Top Up",
+      "otherProducts": "Produk Lainnya",
+      "showLess": "Tampilkan lebih sedikit ↑",
+      "showMore": "Tampilkan produk lainnya ↓",
+      "imageAlt": "Gambar produk"
+    },
+    "payment": {
+      "title": "Pilih Pembayaran"
+    },
+    "contact": {
+      "emailHeading": "Email",
+      "hint": "Email digunakan untuk mengirim kode voucher & bukti transaksi",
+      "placeholder": "contoh@email.com"
+    },
+    "help": {
+      "title": "Butuh Bantuan?",
+      "subtitle": "Hubungi admin via WhatsApp"
+    },
+    "order": {
+      "summaryTitle": "Ringkasan Pesanan",
+      "package": "Paket",
+      "payment": "Pembayaran",
+      "total": "Total",
+      "notSelected": "Belum dipilih",
+      "buyNow": "Beli Sekarang",
+      "buy": "Beli"
+    },
+    "confirm": {
+      "title": "Konfirmasi Pembayaran",
+      "subtitle": "Periksa kembali pesanan sebelum melanjutkan.",
+      "product": "Produk",
+      "payment": "Pembayaran",
+      "total": "Total",
+      "back": "Kembali",
+      "processing": "Memproses...",
+      "payNow": "Bayar Sekarang"
+    },
+    "description": {
+      "title": "Deskripsi Game",
+      "howToTopUp": "Cara Top Up {game}",
+      "howToRedeem": "Cara Redeem Voucher di {game}",
+      "voucher": {
+        "s1": "Pilih Nominal",
+        "s2": "Masukan jumlah pembelian",
+        "s3": "Pilih Metode Pembayaran",
+        "s4": "Masukan Email (Wajib)",
+        "s5": "Masukan Kode Promo (Jika ada)",
+        "s6": "Klik Beli dan Lakukan Pembayaran",
+        "s7": "Cek Email atau Menu Transaksi untuk melihat Kode Voucher",
+        "s8": "Redeem Kode Voucher di websitenya",
+        "s9": "Selesai"
+      },
+      "game": {
+        "s1": "Masukan Data Akun",
+        "s2": "Pilih Server (Jika ada)",
+        "s3": "Pilih Nominal",
+        "s4": "Masukan jumlah pembelian",
+        "s5": "Pilih Metode Pembayaran",
+        "s6": "Masukan Email",
+        "s7": "Masukan Kode Promo (Jika ada)",
+        "s8": "Klik Beli dan Lakukan Pembayaran",
+        "s9": "Selesai"
+      }
+    },
+    "faq": {
+      "title": "FAQ",
+      "q1": "Apakah aman melakukan top up di Pakargaming?",
+      "a1": "Ya, 100% aman. Kamu tidak perlu login ke akun game. Cukup masukkan User ID / Server ID dan lakukan pembayaran. Item akan langsung terkirim otomatis ke akunmu dengan data tetap terlindungi.",
+      "q2": "Berapa lama item masuk ke akun saya?",
+      "a2": "Proses sangat cepat, hanya beberapa detik setelah pembayaran berhasil.",
+      "q3": "Metode pembayaran apa saja yang tersedia di Pakargaming?",
+      "q3m1": "E-Wallet",
+      "q3m2": "QRIS",
+      "q3m3": "Transfer Bank",
+      "q3m4": "Virtual Account & metode lainnya",
+      "q4": "Bagaimana cara mengetahui ID saya?",
+      "q4s1": "Buka aplikasi game",
+      "q4s2": "Tekan ikon profil di layar utama",
+      "q4s3": "Lihat nomor ID di bawah nama karakter",
+      "q4s4": "Salin dan gunakan saat top up di Pakargaming",
+      "q5": "Mengapa item saya belum masuk setelah bayar?",
+      "q5intro": "Jika lebih dari 15 menit item belum masuk, cek kembali:",
+      "q5b1": "User ID sudah benar atau belum",
+      "q5b2": "Status pembayaran berhasil atau tidak",
+      "q5outro": "Jika masih bermasalah, hubungi CS Pakargaming melalui Chat Support / WhatsApp untuk bantuan.",
+      "q6": "Apakah ada promo di Pakargaming?",
+      "q6intro": "Tentu! Ada diskon dan event menarik. Ikuti sosial media resmi Pakargaming agar selalu update.",
+      "q6link": "Instagram Pakargaming ↗"
+    }
+  },
+  "CSButton": {
+    "whatsAppMessage": "Halo, saya ingin bertanya mengenai layanan Pakargaming.",
+    "tooltip": "Ada yang bisa kami bantu?",
+    "label": "Hubungi CS"
   }
 }
