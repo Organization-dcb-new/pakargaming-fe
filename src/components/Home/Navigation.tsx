@@ -35,12 +35,12 @@ export default function NavigationShowGame({
         `}
     >
       {shows.map((show) => {
-        const isSelected = selectedId === `show-${show.ID}`
+        const isSelected = selectedId === `show-${show.id}`
 
         return (
           <button
-            key={show.ID}
-            onClick={() => scrollToSection(`show-${show.ID}`)}
+            key={show.id}
+            onClick={() => scrollToSection(`show-${show.id}`)}
             className={`
           flex-shrink-0
     
@@ -75,7 +75,7 @@ export default function NavigationShowGame({
           ${!isSelected && 'hover:scale-[1.05]'}
         `}
           >
-            {show.Name}
+            {show.name}
           </button>
         )
       })}
