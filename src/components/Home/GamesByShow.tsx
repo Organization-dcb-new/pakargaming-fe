@@ -18,7 +18,7 @@ export default function GamesByShow() {
       setSelectedId(id)
     }
   }
-  const shows = (data?.data ?? []).filter((show) => show.IsShow)
+  const shows = (data?.data ?? []).filter((show) => show.is_show)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,11 +33,11 @@ export default function GamesByShow() {
       // Update selected show based on scroll position
       let currentId: string | null = null
       shows.forEach((show) => {
-        const el = document.getElementById(`show-${show.ID}`)
+        const el = document.getElementById(`show-${show.id}`)
         if (el) {
           const top = el.getBoundingClientRect().top
           if (top <= 120) {
-            currentId = show.ID
+            currentId = `show-${show.id}`
           }
         }
       })
