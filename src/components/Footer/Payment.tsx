@@ -22,6 +22,7 @@ export default function SecurePayment() {
             alt={payment.name}
             width={48}
             height={47}
+            unoptimized={true}
             className="object-contain transition-transform duration-200 hover:scale-105"
           />
         ))}
@@ -31,5 +32,5 @@ export default function SecurePayment() {
         </p>
       </div>
     </div>
-  )
+  );
 }

@@ -3,7 +3,52 @@
     "home": "Home",
     "games": "Browse Games",
     "login": "Login",
-    "transaction": "Transaksi"
+    "register": "Register",
+    "transaction": "Transaksi",
+    "dashboard": "Dashboard",
+    "logout": "Log out",
+    "userFallback": "User",
+    "searchPlaceholder": "Search games…",
+    "searchLoading": "Searching…",
+    "searchNotFound": "Game not found",
+    "switchToIndonesian": "Switch to Indonesian",
+    "switchToEnglish": "Switch to English"
+  },
+  "Auth": {
+    "close": "Close",
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Enter your email and password to continue.",
+    "registerTitle": "Create account",
+    "registerSubtitle": "Register to save orders and manage your profile.",
+    "tabLogin": "Login",
+    "tabRegister": "Register",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your name",
+    "phone": "Phone number",
+    "phonePlaceholder": "e.g. 081234567890",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "emailOrPhone": "Email or Phone Number",
+    "emailOrPhonePlaceholder": "Enter email or phone number",
+    "emailOrPhoneRequired": "Email or phone number is required.",
+    "emailOrPhoneInvalid": "Invalid email or phone number format.",
+    "emailDomainNotAllowed": "Email domain must be outlook.com, gmail.com, or yahoo.com.",
+    "gender": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "submitLogin": "Sign in",
+    "submitRegister": "Create account",
+    "submitting": "Please wait…",
+    "passwordMin": "Password must be at least 6 characters.",
+    "passwordMismatch": "Passwords do not match.",
+    "loginFailed": "Invalid email or password.",
+    "registerFailed": "Could not create account.",
+    "loginSuccess": "Welcome back.",
+    "registerSuccessSwitch": "Account created. Please sign in.",
+    "registerSuccess": "Account created.",
+    "genericError": "Something went wrong. Try again."
   },
 
   "Home": {
@@ -21,7 +66,28 @@
     "about": "Trusted platform to buy digital games with best prices and instant delivery.",
     "links": "Quick Links",
     "contact": "Contact Us",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "companyName": "PT Aura Pakar Inovasi",
+    "tagline": "Top Up Expert for Your Favorite Games",
+    "address": "South Jakarta, Jakarta Special Capital Region 12150",
+    "paymentSectionAria": "Payments",
+    "contactInfoAria": "Contact and information",
+    "complaintSecurityAria": "Complaints and security",
+    "contactTitle": "Contact Us",
+    "informationTitle": "Information",
+    "aboutUs": "About Us",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "checkTransaction": "Check Transaction",
+    "blog": "Blog",
+    "followUs": "Follow Us",
+    "complaintService": "Consumer Complaint Service",
+    "securityPrivacy": "Security & Privacy",
+    "securePaymentTitle": "Secure Payment",
+    "securePaymentSubtitle": "Transactions are protected, choose the payment method you are comfortable with.",
+    "loadingPaymentMethods": "Loading payment methods",
+    "paymentUnavailable": "Payment methods are currently unavailable.",
+    "others": "others"
   },
   "Cart": {
     "title": "Shopping Cart",
@@ -69,6 +135,314 @@
   },
   "Common": {
     "loading": "Loading...",
-    "error": "Something went wrong"
+    "error": "Something went wrong",
+    "cancel": "Cancel",
+    "logout": "Log out",
+    "logoutConfirmTitle": "Confirm Log Out",
+    "logoutConfirmDescription": "Are you sure you want to log out from this account?"
+  },
+  "Dashboard": {
+    "loading": "Loading dashboard data..."
+  },
+  "ClientLayout": {
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "transactionHistory": "Transaction History",
+    "logout": "Logout"
+  },
+  "DashboardProfile": {
+    "activeAccount": "Active Account"
+  },
+  "TransactionHistory": {
+    "title": "Transaction History",
+    "subtitle": "Search transactions by payment number and date range.",
+    "search": "Search",
+    "searchPlaceholder": "Payment number",
+    "fromDate": "From date",
+    "toDate": "To date",
+    "paymentNumber": "Payment Number",
+    "orderId": "Order ID",
+    "date": "Date",
+    "game": "Game",
+    "amount": "Amount",
+    "status": "Status",
+    "loading": "Loading transactions...",
+    "error": "Failed to load transactions.",
+    "empty": "No transactions found.",
+    "of": "of",
+    "total": "Total",
+    "data": "data",
+    "page": "Page",
+    "jump": "Jump",
+    "prev": "Prev",
+    "next": "Next",
+    "jumpMin": "Minimum page is",
+    "jumpMax": "Maximum page is",
+    "invalidDateRange": "End date cannot be earlier than start date."
+  },
+  "HomeShows": {
+    "checkTransaction": "Check Transaction",
+    "showMore": "Show more ↓",
+    "showLess": "Show less ↑"
+  },
+  "CheckTransaction": {
+    "badge": "Check Invoice",
+    "titlePrefix": "Check Purchase Status",
+    "titleHighlight": "Without Login",
+    "description": "Enter your invoice number to instantly see your transaction details. Fast, secure, and no account required.",
+    "featureNoLogin": "No login required",
+    "featureInstant": "Instant & real-time result",
+    "featureSecure": "Secure & encrypted data",
+    "cardTitle": "Find Transaction",
+    "cardSubtitle": "Enter your invoice number",
+    "invoiceLabel": "Invoice Number",
+    "invoicePlaceholder": "PAY-XXXXXXXXXXXX",
+    "invalidFormat": "Format must be PAY- followed by numbers (min. 10 digits)",
+    "example": "Example:",
+    "exampleValue": "PAY-1770XXXXXXXXXXX",
+    "searching": "Searching...",
+    "searchButton": "Search Invoice"
+  },
+  "AboutPage": {
+    "hero": {
+      "badge": "Top Up Game Platform #1",
+      "title": "Pakargaming",
+      "titleHighlight": "Top Up Game Platform",
+      "descriptionPrefix": "is a digital platform specializing in game top-ups, vouchers, and various digital entertainment products with a process that is",
+      "descriptionHighlight": "fast, secure, and practical",
+      "companyPrefix": "Managed by",
+      "companySuffix": "we focus on developing digital solutions for modern gaming communities."
+    },
+    "stats": {
+      "activeCustomers": "Active Customers",
+      "uptime": "Service Uptime",
+      "paymentPartners": "Payment Partners",
+      "since": "Established Since"
+    },
+    "whyUs": {
+      "badge": "Why Us",
+      "title": "Why Choose Us?",
+      "subtitle": "We are here to make transactions easier for gamers without complicated steps."
+    },
+    "features": {
+      "instant": {
+        "title": "Instant Process",
+        "desc": "Top-ups are processed automatically in seconds, anytime and anywhere."
+      },
+      "secure": {
+        "title": "Secure & Trusted",
+        "desc": "Layered security system with encrypted data for every transaction."
+      },
+      "payment": {
+        "title": "Many Payment Methods",
+        "desc": "Bank transfer, e-wallet, QRIS, virtual account, and minimarket are available."
+      },
+      "support": {
+        "title": "Responsive Support",
+        "desc": "Our customer service team is ready to help resolve your transaction issues."
+      }
+    },
+    "payment": {
+      "title": "Payment Methods",
+      "supportedPrefix": "Supported by",
+      "supportedHighlight": "10+ payment partners",
+      "supportedSuffix": "across Asia",
+      "allActive": "All Active",
+      "imageAlt": "Payment Methods"
+    },
+    "catalog": {
+      "title": "Product Catalog",
+      "subtitle": "Various favorite games and digital vouchers at competitive prices",
+      "updateBadge": "Regular Updates",
+      "imageAlt": "Product Catalog"
+    }
+  },
+  "DetailTransaction": {
+    "loadingTransaction": "Loading transaction..."
+  },
+  "DetailTransactionComponents": {
+    "paymentDetail": {
+      "title": "Payment Details",
+      "paymentStatus": "Payment status",
+      "paymentMethod": "Payment method",
+      "paymentLogoAlt": "Payment Logo",
+      "transactionTotal": "Transaction total",
+      "paymentTotal": "Total payment",
+      "statusPaid": "Paid",
+      "statusFailed": "Failed",
+      "statusPending": "Pending"
+    },
+    "productDetail": {
+      "title": "Product Details",
+      "copySuccess": "Transaction number copied",
+      "productLogoAlt": "Product Logo",
+      "transactionNumber": "Transaction No.",
+      "product": "Product",
+      "nominal": "Nominal",
+      "quantity": "Quantity",
+      "email": "Email",
+      "voucher": "Voucher"
+    },
+    "status": {
+      "success": "Success",
+      "failed": "Failed",
+      "pending": "Pending",
+      "statusPaidDesc": "Transaction processed successfully.",
+      "statusFailedDesc": "Transaction failed to process.",
+      "statusPendingDesc": "Waiting for your payment.",
+      "payViaOvo": "Pay via OVO app",
+      "payUsing": "Pay using {channel}",
+      "continuePayment": "Continue Payment",
+      "qrCodeAlt": "QR Code",
+      "qrHint": "Click QR to enlarge · Scan using {channel} app",
+      "downloadQr": "Download QR",
+      "scanQrDesc": "Scan this QR to complete your payment",
+      "retryTransaction": "Retry Transaction",
+      "buyAgain": "Buy Again"
+    },
+    "faq": {
+      "title": "Payment FAQ",
+      "q1": "What payment methods are available?",
+      "q1a1": "E-Wallet (OVO, DANA, GoPay, ShopeePay)",
+      "q1a2": "QRIS (All apps that support QRIS)",
+      "q1a3": "Bank Transfer",
+      "q1a4": "Virtual Account (BCA, BRI, BNI, Mandiri, etc.)",
+      "q2": "Is payment on Pakargaming secure?",
+      "q2a": "Yes, all payment transactions are processed through a secure and encrypted payment gateway system. Your payment data is not stored by our system.",
+      "q3": "How long does payment verification take?",
+      "q3a": "Payments using E-Wallet and QRIS are usually verified automatically within seconds. For bank transfers, the process may take 1-5 minutes depending on the bank system.",
+      "q4": "Why did my payment fail?",
+      "q4aIntro": "Some common causes of failed payments:",
+      "q4a1": "Insufficient balance",
+      "q4a2": "Payment time limit has expired",
+      "q4a3": "Internet connection was interrupted during payment",
+      "q4a4": "Error when entering transfer amount",
+      "q5": "Can I cancel a transaction?",
+      "q5a": "Unpaid transactions will be automatically canceled by the system after the payment deadline. If already paid, the transaction cannot be canceled.",
+      "q6": "What if my balance is deducted but status is not successful yet?",
+      "q6aIntro": "If your balance has been deducted but transaction status is not successful yet:",
+      "q6a1": "Wait 5-15 minutes for automatic synchronization",
+      "q6a2": "Check transaction status again on history page",
+      "q6aOutro": "If the issue persists, contact Customer Service immediately and include payment proof."
+    }
+  },
+  "GameTransaction": {
+    "inactiveBanner": "This game is temporarily unavailable. Please contact support or admin.",
+    "inactiveModalTitle": "Transaction Unavailable",
+    "inactiveModalDescription": "Transactions are temporarily disrupted. Please contact admin or support.",
+    "inactiveModalBack": "Back",
+    "inactiveModalUnderstood": "Got it",
+    "validationEnterAccount": "Enter your account",
+    "validationAccountNotFound": "Account not found",
+    "validationSelectProduct": "Select a product",
+    "validationSelectPayment": "Select a payment method",
+    "validationEmailRequired": "Email is required",
+    "validationEmailDomain": "Email must use gmail.com, outlook.com, or yahoo.com",
+    "inactiveServiceLabel": "Game service disrupted",
+    "banner": {
+      "coverAlt": "Cover image",
+      "featureFast": "Fast Process",
+      "feature247": "24/7 Support",
+      "featureSecure": "Secure Payment"
+    },
+    "account": {
+      "title": "Enter Account Details",
+      "checkingId": "Verifying account ID..."
+    },
+    "product": {
+      "title": "Choose Top-Up Amount",
+      "otherProducts": "Other Products",
+      "showLess": "Show less ↑",
+      "showMore": "Show more products ↓",
+      "imageAlt": "Product image"
+    },
+    "payment": {
+      "title": "Choose Payment"
+    },
+    "contact": {
+      "emailHeading": "Email",
+      "hint": "Email is used to send voucher codes & transaction proof",
+      "placeholder": "you@example.com"
+    },
+    "help": {
+      "title": "Need Help?",
+      "subtitle": "Contact admin via WhatsApp"
+    },
+    "order": {
+      "summaryTitle": "Order Summary",
+      "package": "Package",
+      "payment": "Payment",
+      "total": "Total",
+      "notSelected": "Not selected",
+      "buyNow": "Buy Now",
+      "buy": "Buy"
+    },
+    "confirm": {
+      "title": "Payment Confirmation",
+      "subtitle": "Please review your order before continuing.",
+      "product": "Product",
+      "payment": "Payment",
+      "total": "Total",
+      "back": "Back",
+      "processing": "Processing...",
+      "payNow": "Pay Now"
+    },
+    "description": {
+      "title": "Game Description",
+      "howToTopUp": "How to top up {game}",
+      "howToRedeem": "How to redeem voucher on {game}",
+      "voucher": {
+        "s1": "Choose amount",
+        "s2": "Enter purchase quantity",
+        "s3": "Choose payment method",
+        "s4": "Enter email (required)",
+        "s5": "Enter promo code (if any)",
+        "s6": "Click Buy and complete payment",
+        "s7": "Check email or Transaction menu for your voucher code",
+        "s8": "Redeem the voucher code on the official website",
+        "s9": "Done"
+      },
+      "game": {
+        "s1": "Enter account details",
+        "s2": "Select server (if any)",
+        "s3": "Choose amount",
+        "s4": "Enter purchase quantity",
+        "s5": "Choose payment method",
+        "s6": "Enter email",
+        "s7": "Enter promo code (if any)",
+        "s8": "Click Buy and complete payment",
+        "s9": "Done"
+      }
+    },
+    "faq": {
+      "title": "FAQ",
+      "q1": "Is it safe to top up on Pakargaming?",
+      "a1": "Yes, 100% safe. You don't need to log in to your game account. Just enter your User ID / Server ID and pay. Items are delivered automatically while your data stays protected.",
+      "q2": "How long until items reach my account?",
+      "a2": "Usually within seconds after payment succeeds.",
+      "q3": "What payment methods are available on Pakargaming?",
+      "q3m1": "E-Wallets",
+      "q3m2": "QRIS",
+      "q3m3": "Bank Transfer",
+      "q3m4": "Virtual Account & more",
+      "q4": "How do I find my ID?",
+      "q4s1": "Open the game app",
+      "q4s2": "Tap the profile icon on the home screen",
+      "q4s3": "Find your ID number under your character name",
+      "q4s4": "Copy it and use it when topping up on Pakargaming",
+      "q5": "Why hasn't my item arrived after paying?",
+      "q5intro": "If it still hasn't arrived after 15 minutes, check:",
+      "q5b1": "Whether your User ID is correct",
+      "q5b2": "Whether payment status is successful",
+      "q5outro": "If issues remain, contact Pakargaming support via Chat / WhatsApp.",
+      "q6": "Are there promotions on Pakargaming?",
+      "q6intro": "Yes! Discounts and events—follow Pakargaming official social media for updates.",
+      "q6link": "Pakargaming Instagram ↗"
+    }
+  },
+  "CSButton": {
+    "whatsAppMessage": "Hello, I'd like to ask about Pakargaming services.",
+    "tooltip": "How can we help you?",
+    "label": "Contact support"
   }
 }
