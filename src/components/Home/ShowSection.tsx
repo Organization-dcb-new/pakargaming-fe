@@ -25,23 +25,22 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
     <>
       {/* ===== SHOW SECTIONS ===== */}
       {shows.map((show) => {
-        const isExpanded = expanded[show.ID] ?? false;
-        const hasManyGames = show.Games.length > limit;
+        const isExpanded = expanded[show.id] ?? false;
+        const hasManyGames = show.games.length > limit;
 
-        const games = isExpanded ? show.Games : show.Games.slice(0, limit);
+        const games = isExpanded ? show.games : show.games.slice(0, limit);
 
         const ribbon = getRibbon(show);
 
         return (
           <div
-            key={show.ID}
-            id={`show-${show.ID}`}
-            className="scroll-mt-36 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-10 space-y-12"
-          >
+            key={show.id}
+            id={`show-${show.id}`}
+            className="scroll-mt-36 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-10 space-y-12">
             {/* HEADER */}
             <div className="mb-6">
               <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
-                {show.Name}
+                {show.name}
               </h2>
             </div>
 
@@ -55,12 +54,11 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
     lg:grid-cols-6
     gap-3 
     justify-items-center
-  "
-            >
+  ">
               {games.map((game) => (
                 <Link
-                  key={game.ID}
-                  href={`/${locale}/games/${game.Slug}`}
+                  key={game.id}
+                  href={`/${locale}/games/${game.slug}`}
                   className="
   group relative
   w-[120px] h-[120px]
@@ -79,8 +77,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
   hover:scale-[1.03]
 
   active:scale-[0.98]
-"
-                >
+">
                   <div className="relative w-full h-full overflow-hidden">
                     {/* RIBBON */}
                     {ribbon && (
@@ -96,8 +93,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
           font-extrabold text-white
           uppercase tracking-wider
           text-center shadow-md
-        `}
-                      >
+        `}>
                         {ribbon.label}
                       </div>
                     )}
@@ -105,12 +101,13 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                     {/* IMAGE */}
                     <Image
                       src={
-                        game.ThumbnailURL ||
+                        game.thumbnail_url ||
                         "https://api.dicebear.com/9.x/pixel-art/svg"
                       }
-                      alt={game.Name}
+                      alt={game.name}
                       fill
                       priority
+                      unoptimized={true}
                       className="
         object-cover
         transition-transform duration-500
@@ -124,8 +121,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
       absolute bottom-0 left-0 w-full
       bg-gradient-to-t from-black/80 via-black/40 to-transparent
       px-2 py-1
-    "
-                    >
+    ">
                       <p
                         className="
         text-[15px]
@@ -133,9 +129,8 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
         text-white
         text-center
         line-clamp-2
-      "
-                      >
-                        {game.Name}
+      ">
+                        {game.name}
                       </p>
                     </div>
                   </div>
@@ -150,11 +145,10 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                   onClick={() =>
                     setExpanded((prev) => ({
                       ...prev,
-                      [show.ID]: !isExpanded,
+                      [show.id]: !isExpanded,
                     }))
                   }
-                  className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline"
-                >
+                  className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline">
                   {isExpanded
                     ? "Tampilkan lebih sedikit"
                     : "Tampilkan lebih banyak"}

@@ -54,13 +54,11 @@ export default function BannerCarousel() {
       <div
         className="group relative overflow-hidden "
         onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-      >
+        onMouseLeave={() => setIsHovering(false)}>
         {/* SLIDES */}
         <div
           className="flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
-          style={{ transform: `translateX(-${index * 100}%)` }}
-        >
+          style={{ transform: `translateX(-${index * 100}%)` }}>
           {banners.map((banner, i) => (
             <div
               key={banner.id}
@@ -69,20 +67,19 @@ export default function BannerCarousel() {
     h-[140px]
     sm:h-[220px]
     md:h-[340px]
-  "
-            >
+  ">
               <a
                 href={banner.redirect_link}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`Banner ${i + 1}`}
-              >
+                aria-label={`Banner ${i + 1}`}>
                 <Image
-                  src={banner.image || '/placeholder.png'}
+                  src={banner.image || "/placeholder.png"}
                   alt="Banner"
                   fill
                   priority={i === 0}
                   className="object-cover"
+                  unoptimized={true}
                   sizes="(max-width: 768px) 100vw, 1200px"
                 />
               </a>
@@ -100,8 +97,7 @@ export default function BannerCarousel() {
   transition
   opacity-100
   sm:opacity-0 sm:group-hover:opacity-100
-"
-        >
+">
           <ChevronLeft className="h-6 w-6" />
         </button>
 
@@ -114,8 +110,7 @@ export default function BannerCarousel() {
   transition
   opacity-100
   sm:opacity-0 sm:group-hover:opacity-100
-"
-        >
+">
           <ChevronRight className="h-6 w-6" />
         </button>
 
@@ -127,12 +122,12 @@ export default function BannerCarousel() {
               onClick={() => setIndex(i)}
               aria-label={`Go to slide ${i + 1}`}
               className={`h-2 rounded-full transition-all ${
-                index === i ? 'w-8 bg-white' : 'w-2 bg-white/50'
+                index === i ? "w-8 bg-white" : "w-2 bg-white/50"
               }`}
             />
           ))}
         </div>
       </div>
     </LayoutBanner>
-  )
+  );
 }
