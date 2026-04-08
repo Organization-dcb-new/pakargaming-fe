@@ -126,7 +126,6 @@ export default function TransactionStatusCard({
 
   const paymentChannel = data?.payment_channel?.toLowerCase() ?? "";
   const vaNumber = data?.va_number?.trim() ?? "";
-  const paymentNumber = data?.payment_number?.trim() ?? "";
 
   const qrImageSrc =
     (data?.qr_code_url && isImageLikeUrl(data.qr_code_url)
@@ -150,37 +149,24 @@ export default function TransactionStatusCard({
 
   const amountLabel = `Transfer tepat Rp ${data?.amount?.toLocaleString("id-ID")}`;
 
-  /** Tampilkan semua yang relevan sekaligus: QR (jika ada), VA/nomor lain, lalu payment_url (jika ada). */
-  const showVaSection = !!vaNumber || isVaChannel;
-  const vaCopyValue =
-    vaNumber || (isVaChannel ? paymentNumber : "");
+  /** Tampilkan semua yang relevan sekaligus: QR (jika ada), VA, lalu payment_url (jika ada). */
+  const hasVaCopy = !!vaNumber;
   const paymentDisplayName =
     data.detail_product?.payment_name?.trim() || data.payment_channel;
 
   const renderPendingActions = () => {
     const carrierOnly =
-      isCarrier &&
-      !isVaChannel &&
-      !!(paymentNumber || vaNumber);
+      isCarrier && !isVaChannel && !!vaNumber;
 
     const hasQrVisual = !!qrImageSrc;
     const hasQrRaw = !!rawQrString;
-    const hasVaCopy = showVaSection && !!vaCopyValue;
     const hasPaymentLink = !!data.payment_url?.trim();
-
-    const showFallbackNumber =
-      !hasQrVisual &&
-      !hasQrRaw &&
-      !hasVaCopy &&
-      !carrierOnly &&
-      !!(paymentNumber || vaNumber);
 
     const nothingShown =
       !hasQrVisual &&
       !hasQrRaw &&
       !hasVaCopy &&
       !carrierOnly &&
-      !showFallbackNumber &&
       !hasPaymentLink;
 
     if (nothingShown) {
@@ -223,10 +209,10 @@ export default function TransactionStatusCard({
           />
         ) : null}
 
-        {hasVaCopy ? (
+        {hasVaCopy && isVaChannel ? (
           <PendingCopyBlock
             label="Nomor virtual account"
-            value={vaCopyValue}
+            value={vaNumber}
             hint={amountLabel}
           />
         ) : null}
@@ -234,7 +220,7 @@ export default function TransactionStatusCard({
         {carrierOnly ? (
           <PendingCopyBlock
             label="Nomor tujuan / transaksi"
-            value={paymentNumber || vaNumber}
+            value={vaNumber}
             hint="Gunakan nomor ini sesuai instruksi operator (pulsa, paket data, dll.)."
           />
         ) : null}
@@ -247,10 +233,10 @@ export default function TransactionStatusCard({
           </p>
         ) : null}
 
-        {showFallbackNumber ? (
+        {hasVaCopy && !isVaChannel && !carrierOnly ? (
           <PendingCopyBlock
             label="Nomor pembayaran"
-            value={paymentNumber || vaNumber}
+            value={vaNumber}
             hint={amountLabel}
           />
         ) : null}
