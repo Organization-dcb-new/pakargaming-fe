@@ -12,6 +12,7 @@ export default function SecurityCard() {
             alt="Garansi Aman"
             width={48}
             height={48}
+            unoptimized={true}
             className="object-contain"
           />
         </div>
@@ -25,11 +26,10 @@ export default function SecurityCard() {
         {/* Button */}
         <button
           className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
-          aria-label="Info"
-        >
+          aria-label="Info">
           <Info size={14} />
         </button>
       </div>
     </div>
-  )
+  );
 }
