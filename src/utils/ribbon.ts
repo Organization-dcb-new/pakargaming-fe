@@ -1,21 +1,21 @@
-import { Show } from "../../types/Show"
+import type { Show } from '@/types/Show'
 
 export function getRibbon(show: Show) {
-  if (show.IsPopular) {
+  if (show.is_popular) {
     return {
       label: 'POPULAR',
       className: 'from-pink-500 to-purple-600',
     }
   }
 
-  if (show.IsNew) {
+  if (show.is_new) {
     return {
       label: 'NEW',
       className: 'from-emerald-500 to-green-600',
     }
   }
 
-  if (show.IsHot) {
+  if (show.is_hot) {
     return {
       label: 'HOT',
       className: 'from-orange-500 to-red-600',
