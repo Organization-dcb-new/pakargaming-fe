@@ -29,7 +29,7 @@ export default function BrandComponent() {
 
         {/* Address */}
         <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-          Jl. Damai 1 No.11, RT.11/RW.01, Cipete Utara, Kec. Kby. Baru, Kota Jakarta Selatan,
+          Kota Jakarta Selatan,
           Jakarta, Daerah Khusus Ibukota Jakarta 12150
         </p>
       </div>
