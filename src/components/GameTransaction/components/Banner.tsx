@@ -1,5 +1,8 @@
 import { GameDetail } from "../../../types/Game";
 
+const COVER_BANNER_WIDTH = 1600
+const COVER_BANNER_HEIGHT = 400
+
 const features = [
   {
     icon: "/icons/speedometer.gif",
@@ -23,14 +26,24 @@ export default function BannerGameTransaction({ game }: GameTransactionProps) {
   return (
     <div className="w-full flex flex-col justify-center items-center border-b border-purple-500/30 dark:border-purple-500/20 ">
       {/* COVER */}
-      <div className="relative w-full aspect-[2560/720] overflow-hidden">
+      <div
+        className="relative w-full overflow-hidden"
+        style={{
+          aspectRatio: `${COVER_BANNER_WIDTH} / ${COVER_BANNER_HEIGHT}`,
+        }}>
         <img
           src={
             game.banner_url ||
             "https://images.unsplash.com/photo-1542751371-adc38448a05e"
           }
-          alt="cover"
+          alt={`Banner ${game.name}`}
           className="h-full w-full object-cover"
+          decoding="async"
+          fetchPriority="high"
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent dark:from-black/45"
+          aria-hidden
         />
       </div>
 
@@ -59,27 +72,40 @@ lg:w-[180px] lg:h-[180px]
 xl:w-[200px] xl:h-[200px]
 2xl:w-[220px] 2xl:h-[220px]
     rounded-lg overflow-hidden
-    shadow-xl 
+    shadow-xl ring-1 ring-black/10 dark:ring-white/15
     transition-all duration-300 ease-out
     hover:-translate-y-2 hover:scale-105
+    motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100
     hover:shadow-[0_25px_60px_rgba(124,58,237,0.45)]
   "
           >
-            <img
-              src={game.thumbnail_url}
-              alt="game"
-              className="
-      w-full h-full object-cover
+            {game.thumbnail_url ? (
+              <img
+                src={game.thumbnail_url}
+                alt={`Miniatur ${game.name}`}
+                className="
+      h-full w-full object-cover
       transition-transform duration-500 ease-out
       group-hover:scale-110 group-hover:rotate-1
+      motion-reduce:transition-none motion-reduce:group-hover:scale-100 motion-reduce:group-hover:rotate-0
     "
-            />
+                decoding="async"
+              />
+            ) : (
+              <div
+                className="flex h-full w-full items-center justify-center bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                role="img"
+                aria-label={`Miniatur ${game.name} belum tersedia`}
+              />
+            )}
           </div>
         </div>
 
         {/* TITLE */}
         <div className="pt-5 pl-35 sm:pl-40 sm:mb-5 md:pl-71 xl:pl-75">
-          <h1 className="text-sm sm:text-xl font-bold">{game.name}</h1>
+          <h1 className="text-balance text-base font-bold tracking-tight text-gray-900 sm:text-xl dark:text-white">
+            {game.name}
+          </h1>
         </div>
 
         {/* FEATURES */}
@@ -90,7 +116,12 @@ xl:w-[200px] xl:h-[200px]
                 key={i}
                 className="flex items-center gap-1 sm:mb-2 text-gray-700 dark:text-gray-200 "
               >
-                <img src={item.icon} alt={item.label} className="w-5 h-5" />
+                <img
+                  src={item.icon}
+                  alt=""
+                  aria-hidden
+                  className="h-5 w-5 shrink-0"
+                />
                 <p>{item.label}</p>
               </div>
             ))}
