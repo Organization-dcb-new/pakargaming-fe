@@ -11,6 +11,7 @@ import QueryProvider from '../../providers/query-provider'
 import { Toaster } from 'sonner'
 import ProgressBar from '../../components/ProgressBar'
 import GlobalWhatsAppButton from '../../components/CSButton'
+import { GoogleAnalytics } from '../../components/GoogleAnalytics'
 
 export const metadata = {
   title: 'Pakar Gaming - Ahlinya Top Up Game Murah, Instan & Terpercaya',
@@ -63,6 +64,7 @@ export default async function RootLayout({
                 <Footer />
 
                 <GlobalWhatsAppButton />
+                <GoogleAnalytics />
               </div>
             </NextIntlClientProvider>
           </ThemeProvider>
