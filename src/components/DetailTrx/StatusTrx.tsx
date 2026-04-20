@@ -28,18 +28,7 @@ function isHttpUrl(s: string | undefined): boolean {
 
 function isCarrierOrAirtimeChannel(ch: string | undefined): boolean {
   if (!ch) return false;
-  return (
-    ch.includes("airtime") ||
-    ch.includes("pulsa") ||
-    ch.includes("indosat") ||
-    ch.includes("telkomsel") ||
-    ch.includes("smartfren") ||
-    ch.includes("tri") ||
-    ch.includes("xl") ||
-    ch.includes("axis") ||
-    ch.includes("esim") ||
-    ch.includes("three")
-  );
+  return ch.includes("smartfren_airtime");
 }
 
 const EWALLET_CHANNELS = new Set([
@@ -144,7 +133,9 @@ export default function TransactionStatusCard({
 
   const isVaChannel = paymentChannel.startsWith("va_");
   const isEwallet = EWALLET_CHANNELS.has(paymentChannel);
+  const isOvoChannel = paymentChannel === "ovo";
   const isCarrier = isCarrierOrAirtimeChannel(paymentChannel);
+  console.log(paymentChannel);
   const isQrisChannel = paymentChannel === "qris";
 
   const amountLabel = `Transfer tepat Rp ${data?.amount?.toLocaleString("id-ID")}`;
@@ -155,8 +146,7 @@ export default function TransactionStatusCard({
     data.detail_product?.payment_name?.trim() || data.payment_channel;
 
   const renderPendingActions = () => {
-    const carrierOnly =
-      isCarrier && !isVaChannel && !!vaNumber;
+    const carrierOnly = isCarrier && !isVaChannel;
 
     const hasQrVisual = !!qrImageSrc;
     const hasQrRaw = !!rawQrString;
@@ -171,6 +161,14 @@ export default function TransactionStatusCard({
 
     if (nothingShown) {
       return null;
+    }
+
+    if (carrierOnly) {
+      return (
+        <div className="flex w-full flex-col items-center gap-4">
+          <div className={btnPrimary}>Cek OTP nomor hp anda</div>
+        </div>
+      );
     }
 
     return (
@@ -217,18 +215,10 @@ export default function TransactionStatusCard({
           />
         ) : null}
 
-        {carrierOnly ? (
-          <PendingCopyBlock
-            label="Nomor tujuan / transaksi"
-            value={vaNumber}
-            hint="Gunakan nomor ini sesuai instruksi operator (pulsa, paket data, dll.)."
-          />
-        ) : null}
-
         {isEwallet && hasPaymentLink ? (
           <p className="text-center text-sm font-semibold text-gray-700 dark:text-gray-200">
-            {paymentChannel === "ovo"
-              ? "Bayar lewat aplikasi OVO"
+            {isOvoChannel
+              ? "Silahkan buka aplikasi OVO untuk melanjutkan pembayaran."
               : `Bayar menggunakan ${paymentDisplayName}`}
           </p>
         ) : null}
@@ -241,7 +231,7 @@ export default function TransactionStatusCard({
           />
         ) : null}
 
-        {hasPaymentLink ? (
+        {hasPaymentLink && !isOvoChannel ? (
           <a
             href={data.payment_url}
             target="_blank"

@@ -13,6 +13,8 @@ interface ProductComponentProps {
   activeProduct: Price | null;
   step?: number;
   setSelectedPackage: React.Dispatch<React.SetStateAction<Price | null>>;
+  isLocked?: boolean;
+  onLockedAction?: () => void;
 }
 
 export function ProductComponent({
@@ -21,6 +23,8 @@ export function ProductComponent({
   activeProduct,
   step = 2,
   setSelectedPackage,
+  isLocked = false,
+  onLockedAction,
 }: ProductComponentProps) {
   const hasCategoryProduct = product?.data?.length > 0;
 
@@ -50,7 +54,7 @@ export function ProductComponent({
     : remainingProducts.slice(0, remainingLimit);
 
   return (
-    <div className="relative w-full sm:w-150">
+    <div id="product-section" className="relative w-full sm:w-150">
       {/* Step Badge */}
       <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-md border-2 border-white dark:border-zinc-900 z-10">
         {step}
@@ -67,7 +71,13 @@ export function ProductComponent({
             product.data.map((category) => (
               <button
                 key={category.id}
-                onClick={() => scrollToCategory(`category-${category.id}`)}
+                onClick={() => {
+                  if (isLocked) {
+                    onLockedAction?.();
+                    return;
+                  }
+                  scrollToCategory(`category-${category.id}`);
+                }}
                 className="
         px-3 py-1.5
         cursor-pointer
@@ -105,7 +115,13 @@ export function ProductComponent({
                     return (
                       <div
                         key={pkg.id}
-                        onClick={() => setSelectedPackage(pkg)}
+                        onClick={() => {
+                          if (isLocked) {
+                            onLockedAction?.();
+                            return;
+                          }
+                          setSelectedPackage(pkg);
+                        }}
                         className={`
                 relative cursor-pointer rounded-xl p-2
                 transition-all duration-300
@@ -173,7 +189,13 @@ export function ProductComponent({
                   return (
                     <div
                       key={pkg.id}
-                      onClick={() => setSelectedPackage(pkg)}
+                      onClick={() => {
+                        if (isLocked) {
+                          onLockedAction?.();
+                          return;
+                        }
+                        setSelectedPackage(pkg);
+                      }}
                       className={`
                 relative cursor-pointer rounded-xl p-2
                 transition-all duration-300
@@ -221,7 +243,13 @@ export function ProductComponent({
           {hasManyRemaining && (
             <div className="mt-2 flex justify-center">
               <button
-                onClick={() => setShowAllRemaining(!showAllRemaining)}
+                onClick={() => {
+                  if (isLocked) {
+                    onLockedAction?.();
+                    return;
+                  }
+                  setShowAllRemaining(!showAllRemaining);
+                }}
                 className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline"
               >
                 {showAllRemaining
