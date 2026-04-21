@@ -3,4 +3,6 @@ export interface CreateOrderRequest {
   game_data: Record<string, any>;
   payment_method_id: string;
   product_id: string;
+  /** Wajib untuk channel seperti OVO dan Smartfren Airtime */
+  user_mdn?: string;
 }
