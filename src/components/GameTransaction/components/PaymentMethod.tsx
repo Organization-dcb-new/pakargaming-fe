@@ -22,8 +22,14 @@ export const calculateTotalPrice = (payment: PaymentMethod, ActiveProduct: Price
   if (!ActiveProduct) return null
 
   const base = ActiveProduct?.selling_price || 0
-  const feePercent = base * (payment?.fee_percentage / 100) || 0
-  const total = base + feePercent
+  const code = payment?.code || ''
+  const useFixedFee =
+    code.startsWith('va') ||
+    ['alfamart_otc', 'indomaret_otc'].includes(code)
+  const fee = useFixedFee
+    ? payment?.fee_fixed || 0
+    : base * (payment?.fee_percentage / 100) || 0
+  const total = base + fee
   return formatPrice(Math.round(total))
 }
 
