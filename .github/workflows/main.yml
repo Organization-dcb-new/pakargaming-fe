@@ -72,6 +72,7 @@ jobs:
             NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_PROD }}
             NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_PROD }}
             ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY_PROD }}
+            NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID_PROD }}
           
           tags: |
             ghcr.io/${{ steps.repo_lower.outputs.repo }}:prod-latest
@@ -115,7 +116,7 @@ jobs:
           export NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_PROD }}
           export NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_PROD }}
           export NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_PROD }}
-
+          export NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID_PROD }}
           docker compose pull
           docker compose up -d --remove-orphans
 

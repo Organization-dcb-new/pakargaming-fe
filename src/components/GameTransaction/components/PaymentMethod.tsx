@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle2, ChevronDown } from 'lucide-react'
+import { CheckCircle2,  } from 'lucide-react'
 import { GetPaymentMethodResponse, PaymentMethod } from '../../../types/PaymentMethod'
 import Image from 'next/image'
 import { Price } from '../../../types/Game'
@@ -14,6 +14,8 @@ interface PaymentMethodProps {
   setSelectedPaymentMethod: React.Dispatch<React.SetStateAction<PaymentMethod | null>>
   ActiveProduct: Price
   selectedPackage: Price | null
+  isLocked?: boolean
+  onLockedAction?: () => void
 }
 
 export const calculateTotalPrice = (payment: PaymentMethod, ActiveProduct: Price) => {
@@ -24,6 +26,12 @@ export const calculateTotalPrice = (payment: PaymentMethod, ActiveProduct: Price
   const total = base + feePercent
   return formatPrice(Math.round(total))
 }
+
+function getValidImageSrc(src?: string | null) {
+  const normalized = src?.trim()
+  return normalized ? normalized : null
+}
+
 export default function PaymentMethodTransactionComponent({
   PaymentMethod,
   activePayment,
@@ -31,6 +39,8 @@ export default function PaymentMethodTransactionComponent({
   ActiveProduct,
   setSelectedPaymentMethod,
   selectedPackage,
+  isLocked = false,
+  onLockedAction,
 }: PaymentMethodProps) {
   const [activeIndexes, setActiveIndexes] = useState<number[]>([0])
 
@@ -79,7 +89,13 @@ export default function PaymentMethodTransactionComponent({
               className="border border-purple-500/20 rounded-xl overflow-hidden transition-all">
               {/* HEADER */}
               <button
-                onClick={() => toggle(index)}
+                onClick={() => {
+                  if (isLocked) {
+                    onLockedAction?.()
+                    return
+                  }
+                  toggle(index)
+                }}
                 className="w-full px-4 py-3 flex justify-between items-center hover:bg-purple-500/5 transition-all">
                 {/* LEFT SIDE */}
                 <div className="flex justify-between w-full gap-3">
@@ -89,20 +105,25 @@ export default function PaymentMethodTransactionComponent({
 
                   {/* ICON LIST */}
                   <div className="flex justify-center gap-3 mr-1">
-                    {category.payment_method?.map((payment) => (
-                      <div
-                        key={payment.id}
-                        className="w-8 h-8 justify-center flex gap-10 items-center">
-                        <Image
-                          src={payment.icon_url}
-                          alt={payment.name}
-                          width={48}
-                          height={48}
-                          unoptimized={true}
-                          className="object-contain"
-                        />
-                      </div>
-                    ))}
+                    {category.payment_method?.map((payment) => {
+                      const iconSrc = getValidImageSrc(payment.icon_url)
+                      return (
+                        <div
+                          key={payment.id}
+                          className="w-8 h-8 justify-center flex gap-10 items-center">
+                          {iconSrc ? (
+                            <Image
+                              src={iconSrc}
+                              alt={payment.name}
+                              width={48}
+                              height={48}
+                              unoptimized={true}
+                              className="object-contain"
+                            />
+                          ) : null}
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -137,12 +158,17 @@ export default function PaymentMethodTransactionComponent({
                     const totalPrice = calculateTotalPrice(
                       payment,
                       ActiveProduct,
-                    );
+                    )
+                    const iconSrc = getValidImageSrc(payment.icon_url)
 
                     return (
                       <div
                         key={payment.id}
                         onClick={() => {
+                          if (isLocked) {
+                            onLockedAction?.()
+                            return
+                          }
                           if (!isDisabled) setSelectedPaymentMethod(payment);
                         }}
                         className={`
@@ -170,14 +196,16 @@ export default function PaymentMethodTransactionComponent({
                               ? "bg-white shadow-md"
                               : "bg-transparent"
                           }`}>
-                          <Image
-                            src={payment.icon_url}
-                            alt={payment.name}
-                            width={40}
-                            height={40}
-                            unoptimized={true}
-                            className="object-contain"
-                          />
+                          {iconSrc ? (
+                            <Image
+                              src={iconSrc}
+                              alt={payment.name}
+                              width={40}
+                              height={40}
+                              unoptimized={true}
+                              className="object-contain"
+                            />
+                          ) : null}
                         </div>
 
                         <p className="text-gray-900 dark:text-white text-sm xl:text-sm font-medium leading-snug line-clamp-2 flex-1">

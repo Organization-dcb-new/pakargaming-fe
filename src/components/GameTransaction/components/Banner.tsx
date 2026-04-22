@@ -1,19 +1,20 @@
 import { GameDetail } from "../../../types/Game";
+import { Gauge, Headset, ShieldCheck } from "lucide-react";
 
 const COVER_BANNER_WIDTH = 1600
 const COVER_BANNER_HEIGHT = 400
 
 const features = [
   {
-    icon: "/icons/speedometer.gif",
+    icon: Gauge,
     label: "Proses Cepat",
   },
   {
-    icon: "/icons/support.gif",
+    icon: Headset,
     label: "Layanan 24/7",
   },
   {
-    icon: "/icons/shield.gif",
+    icon: ShieldCheck,
     label: "Pembayaran Aman",
   },
 ];
@@ -49,46 +50,15 @@ export default function BannerGameTransaction({ game }: GameTransactionProps) {
 
       <div className="relative px-4 sm:px-6 pb-8 xl:max-w-[1500px] mx-auto w-full">
         {/* Thumbnail */}
-        <div
-          className="
-  absolute
-  -top-14
-  sm:-top-16
-  md:-top-20
-  lg:-top-24
-  xl:-top-28
-  2xl:-top-32
-  left-4 sm:left-6 md:left-10 lg:left-16 xl:left-20
-  z-30
-"
-        >
+        <div className="absolute left-4 z-30 -top-14 sm:left-6 sm:-top-16 md:left-10 md:-top-20 lg:left-16 lg:-top-24 xl:left-20 xl:-top-28 2xl:-top-32">
           <div
-            className="
- group
-w-[120px] h-[120px]
-sm:w-[140px] sm:h-[140px]
-md:w-[160px] md:h-[160px]
-lg:w-[180px] lg:h-[180px]
-xl:w-[200px] xl:h-[200px]
-2xl:w-[220px] 2xl:h-[220px]
-    rounded-lg overflow-hidden
-    shadow-xl ring-1 ring-black/10 dark:ring-white/15
-    transition-all duration-300 ease-out
-    hover:-translate-y-2 hover:scale-105
-    motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100
-    hover:shadow-[0_25px_60px_rgba(124,58,237,0.45)]
-  "
+            className="group relative h-[120px] w-[120px] overflow-hidden rounded-xl shadow-xl ring-1 ring-black/10 transition-all duration-500 ease-out hover:-translate-y-2 hover:scale-[1.03] hover:shadow-[0_25px_60px_rgba(124,58,237,0.45)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100 dark:ring-white/15 sm:h-[140px] sm:w-[140px] md:h-[160px] md:w-[160px] lg:h-[180px] lg:w-[180px] xl:h-[200px] xl:w-[200px] 2xl:h-[220px] 2xl:w-[220px]"
           >
             {game.thumbnail_url ? (
               <img
                 src={game.thumbnail_url}
                 alt={`Miniatur ${game.name}`}
-                className="
-      h-full w-full object-cover
-      transition-transform duration-500 ease-out
-      group-hover:scale-110 group-hover:rotate-1
-      motion-reduce:transition-none motion-reduce:group-hover:scale-100 motion-reduce:group-hover:rotate-0
-    "
+                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 group-hover:rotate-1 motion-reduce:transition-none motion-reduce:group-hover:scale-100 motion-reduce:group-hover:rotate-0"
                 decoding="async"
               />
             ) : (
@@ -98,6 +68,14 @@ xl:w-[200px] xl:h-[200px]
                 aria-label={`Miniatur ${game.name} belum tersedia`}
               />
             )}
+            <div
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-white/10 opacity-80 transition-opacity duration-500 group-hover:opacity-100 dark:from-black/35"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-white/25 opacity-0 blur-md transition-all duration-700 group-hover:left-[130%] group-hover:opacity-70 dark:bg-white/20"
+              aria-hidden
+            />
           </div>
         </div>
 
@@ -116,11 +94,10 @@ xl:w-[200px] xl:h-[200px]
                 key={i}
                 className="flex items-center gap-1 sm:mb-2 text-gray-700 dark:text-gray-200 "
               >
-                <img
-                  src={item.icon}
-                  alt=""
+                <item.icon
                   aria-hidden
-                  className="h-5 w-5 shrink-0"
+                  className="h-4 w-4 shrink-0 text-purple-600 dark:text-purple-300 sm:h-5 sm:w-5"
+                  strokeWidth={2}
                 />
                 <p>{item.label}</p>
               </div>

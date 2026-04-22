@@ -23,6 +23,44 @@ import ConfirmModal from "./components/Confirmation";
 import { useGetCategoryProduct } from "./hooks/useGetCategoryProduct";
 import DescriptionGame from "./components/Description";
 import FAQSection from "./components/FAQ";
+import GameMaintenance from "./components/GameMaintenance";
+
+const PAYMENT_CODES_NEEDING_USER_MDN = new Set(["ovo", "smartfren_airtime"]);
+const MIN_PRODUCT_PRICE_FOR_VA = 10000;
+
+function paymentRequiresUserMdn(payment: PaymentMethod | null): boolean {
+  const code = payment?.code?.toLowerCase();
+  return !!code && PAYMENT_CODES_NEEDING_USER_MDN.has(code);
+}
+
+function isVirtualAccountPayment(payment: PaymentMethod | null): boolean {
+  if (!payment) return false;
+  const haystack = [
+    payment.type,
+    payment.provider,
+    payment.code,
+    payment.name,
+    payment.full_name,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return /(^|[\s_-])va($|[\s_-])/.test(haystack) || haystack.includes("virtual");
+}
+
+function normalizeUserMdn(raw: string): string {
+  const d = raw.replace(/\D/g, "");
+  if (d.startsWith("62")) return d;
+  if (d.startsWith("0")) return `62${d.slice(1)}`;
+  if (d.startsWith("8")) return `62${d}`;
+  return d;
+}
+
+function isValidUserMdn(raw: string): boolean {
+  const n = normalizeUserMdn(raw);
+  return n.length >= 11 && n.length <= 15 && n.startsWith("62");
+}
 
 export default function GameTransaction() {
   const { slug } = useParams<{ slug: string }>();
@@ -34,6 +72,7 @@ export default function GameTransaction() {
     null,
   );
   const [openModalConfirm, setOpenModalConfirm] = useState<boolean>(false);
+  const [userMdn, setUserMdn] = useState("");
 
   const { data: dataPaymentMethods } = useGetPaymentMethod();
   const { data: dataGameDetail, isLoading: isLoadingGameDetail } =
@@ -47,6 +86,7 @@ export default function GameTransaction() {
 
   const activeProduct = selectedPackage ?? null;
   const activePayment = selectedPayment ?? null;
+  const allowVaPayment = (activeProduct?.selling_price ?? 0) > MIN_PRODUCT_PRICE_FOR_VA;
 
   const inputs = dataGameDetail?.data?.input || [];
 
@@ -59,6 +99,10 @@ export default function GameTransaction() {
 
   const hasEmail = !!email;
   const isEmailValid = hasEmail && emailRegex.test(email);
+  const requiresAccountInput = inputs.length > 0;
+  const isAccountStepCompleted = !requiresAccountInput || (hasInputAccount && isAccountValid);
+  const isProductStepCompleted = !!activeProduct;
+  const isPaymentStepCompleted = !!activePayment;
 
   useEffect(() => {
     if (user?.email) {
@@ -66,9 +110,105 @@ export default function GameTransaction() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!paymentRequiresUserMdn(selectedPayment)) {
+      setUserMdn("");
+    }
+  }, [selectedPayment]);
+
+  useEffect(() => {
+    if (selectedPayment && !allowVaPayment && isVirtualAccountPayment(selectedPayment)) {
+      setSelectedPayment(null);
+      toast.error("Metode VA hanya untuk produk di atas 10.000");
+    }
+  }, [allowVaPayment, selectedPayment]);
+
+  useEffect(() => {
+    if (!isAccountStepCompleted && selectedPackage) {
+      setSelectedPackage(null);
+    }
+  }, [isAccountStepCompleted, selectedPackage]);
+
+  useEffect(() => {
+    if ((!isAccountStepCompleted || !selectedPackage) && selectedPayment) {
+      setSelectedPayment(null);
+    }
+  }, [isAccountStepCompleted, selectedPackage, selectedPayment]);
+
   if (isLoadingGameDetail) {
     return <SpinnerGameTransaction />;
   }
+
+  if (dataGameDetail?.data && !dataGameDetail.data.is_active) {
+    return (
+      <LayoutGamesTransaction>
+        <GameMaintenance gameName={dataGameDetail.data.name} />
+      </LayoutGamesTransaction>
+    );
+  }
+
+  const needsUserMdn = paymentRequiresUserMdn(selectedPayment);
+  const hasUserMdn = userMdn.trim().length > 0;
+  const isVaAllowedForSelection = !(
+    selectedPayment &&
+    isVirtualAccountPayment(selectedPayment) &&
+    !allowVaPayment
+  );
+
+  const lockProductStep = !isAccountStepCompleted;
+  const lockPaymentStep = !isAccountStepCompleted || !isProductStepCompleted;
+  const lockContactStep =
+    !isAccountStepCompleted || !isProductStepCompleted || !isPaymentStepCompleted;
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const handleBlockedProductAction = () => {
+    toast.error("Isi dan validasi data akun dulu");
+    scrollToSection("account-section");
+  };
+
+  const handleBlockedPaymentAction = () => {
+    if (!isAccountStepCompleted) {
+      toast.error("Isi dan validasi data akun dulu");
+      scrollToSection("account-section");
+      return;
+    }
+    toast.error("Pilih produk dulu");
+    scrollToSection("product-section");
+  };
+
+  const handleBlockedContactAction = () => {
+    if (!isAccountStepCompleted) {
+      toast.error("Isi dan validasi data akun dulu");
+      scrollToSection("account-section");
+      return;
+    }
+    if (!isProductStepCompleted) {
+      toast.error("Pilih produk dulu");
+      scrollToSection("product-section");
+      return;
+    }
+    toast.error("Pilih metode pembayaran dulu");
+    scrollToSection("payment-method-section");
+  };
+
+  const paymentMethodsWithVaRules = dataPaymentMethods
+    ? {
+        ...dataPaymentMethods,
+        data: (dataPaymentMethods.data ?? []).map((category) => ({
+          ...category,
+          payment_method: (category.payment_method ?? []).map((payment) => ({
+            ...payment,
+            is_active: payment.is_active && (allowVaPayment || !isVirtualAccountPayment(payment)),
+          })),
+        })),
+      }
+    : dataPaymentMethods;
 
   const validations = [
     ...(inputs.length > 0
@@ -79,8 +219,18 @@ export default function GameTransaction() {
       : []),
     { value: selectedPackage, message: "Pilih Produk" },
     { value: selectedPayment, message: "Pilih metode pembayaran" },
+    {
+      value: isVaAllowedForSelection,
+      message: "Metode VA hanya untuk produk di atas 10.000",
+    },
     { value: hasEmail, message: "Email belum diisi" },
     { value: isEmailValid, message: "Format email tidak valid" },
+    ...(needsUserMdn
+      ? [
+          { value: hasUserMdn, message: "Nomor telepon belum diisi" },
+          { value: isValidUserMdn(userMdn), message: "Format nomor tidak valid" },
+        ]
+      : []),
   ];
 
   const handleOpenConfirm = () => {
@@ -99,6 +249,7 @@ export default function GameTransaction() {
       payment_method_id: selectedPayment.id,
       game_data: account,
       product_id: selectedPackage.id,
+      ...(needsUserMdn ? { user_mdn: normalizeUserMdn(userMdn) } : {}),
     });
   };
 
@@ -121,17 +272,29 @@ export default function GameTransaction() {
       key="product"
       product={categoryProduct}
       activeProduct={activeProduct}
+      isLocked={lockProductStep}
+      onLockedAction={handleBlockedProductAction}
     />,
 
     <PaymentMethodTransactionComponent
       ActiveProduct={activeProduct}
       setSelectedPaymentMethod={setSelectedPayment}
-      PaymentMethod={dataPaymentMethods}
+      PaymentMethod={paymentMethodsWithVaRules}
       activePayment={activePayment}
       selectedPackage={selectedPackage}
+      isLocked={lockPaymentStep}
+      onLockedAction={handleBlockedPaymentAction}
     />,
 
-    <ContactForm setSelectedEmail={setSelectedEmail} email={email} />,
+    <ContactForm
+      setSelectedEmail={setSelectedEmail}
+      email={email}
+      requiresPhone={needsUserMdn}
+      userMdn={userMdn}
+      setUserMdn={setUserMdn}
+      isLocked={lockContactStep}
+      onLockedAction={handleBlockedContactAction}
+    />,
   ];
 
   return (
