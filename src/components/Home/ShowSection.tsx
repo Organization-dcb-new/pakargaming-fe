@@ -1,50 +1,50 @@
-import { useEffect, useState } from "react";
-import { Show } from "../../types/Show";
-import { useLocale } from "next-intl";
-import { getRibbon } from "../../utils/ribbon";
-import Image from "next/image";
-import Link from "next/link";
-import { useBreakpoint } from "../../hooks/useBreakpoint";
+'use client'
+
+import { useState } from 'react'
+import { Show } from '../../types/Show'
+import { getRibbon } from '../../utils/ribbon'
+import Image from 'next/image'
+import { Link } from '../../i18n/routing'
+import { useBreakpoint } from '../../hooks/useBreakpoint'
+import { useTranslations } from 'next-intl'
 
 interface ShowSectionProps {
-  shows: Show[];
+  shows: Show[]
 }
 export default function ShowSectionGames({ shows }: ShowSectionProps) {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const locale = useLocale();
+  const t = useTranslations('Home')
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
-  const breakpoint = useBreakpoint();
+  const breakpoint = useBreakpoint()
   const LIMIT_MAP = {
     mobile: 3,
     tablet: 5,
     desktop: 6,
-  } as const;
-  const limit = LIMIT_MAP[breakpoint] ?? 6;
+  } as const
+  const limit = LIMIT_MAP[breakpoint] ?? 6
 
   return (
     <>
-      {/* ===== SHOW SECTIONS ===== */}
       {shows.map((show) => {
-        const isExpanded = expanded[show.id] ?? false;
-        const hasManyGames = show.games.length > limit;
+        const isExpanded = expanded[show.id] ?? false
+        const hasManyGames = show.games.length > limit
 
-        const games = isExpanded ? show.games : show.games.slice(0, limit);
+        const games = isExpanded ? show.games : show.games.slice(0, limit)
 
-        const ribbon = getRibbon(show);
+        const ribbon = getRibbon(show)
 
         return (
           <div
             key={show.id}
             id={`show-${show.id}`}
-            className="scroll-mt-36 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-10 space-y-12">
-            {/* HEADER */}
+            className="scroll-mt-36 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-10 space-y-12"
+          >
             <div className="mb-6">
               <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
                 {show.name}
               </h2>
             </div>
 
-            {/* GAMES GRID */}
             <div
               className="
     grid
@@ -54,11 +54,12 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
     lg:grid-cols-6
     gap-3 
     justify-items-center
-  ">
+  "
+            >
               {games.map((game) => (
                 <Link
                   key={game.id}
-                  href={`/${locale}/games/${game.slug}`}
+                  href={`/games/${game.slug}`}
                   className="
   group relative
   w-[120px] h-[120px]
@@ -77,9 +78,9 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
   hover:scale-[1.03]
 
   active:scale-[0.98]
-">
+"
+                >
                   <div className="relative w-full h-full overflow-hidden">
-                    {/* RIBBON */}
                     {ribbon && (
                       <div
                         className={`
@@ -93,16 +94,16 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
           font-extrabold text-white
           uppercase tracking-wider
           text-center shadow-md
-        `}>
+        `}
+                      >
                         {ribbon.label}
                       </div>
                     )}
 
-                    {/* IMAGE */}
                     <Image
                       src={
                         game.thumbnail_url ||
-                        "https://api.dicebear.com/9.x/pixel-art/svg"
+                        'https://api.dicebear.com/9.x/pixel-art/svg'
                       }
                       alt={game.name}
                       fill
@@ -115,13 +116,13 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
       "
                     />
 
-                    {/* TITLE OVERLAY */}
                     <div
                       className="
       absolute bottom-0 left-0 w-full
       bg-gradient-to-t from-black/80 via-black/40 to-transparent
       px-2 py-1
-    ">
+    "
+                    >
                       <p
                         className="
         text-[15px]
@@ -129,7 +130,8 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
         text-white
         text-center
         line-clamp-2
-      ">
+      "
+                      >
                         {game.name}
                       </p>
                     </div>
@@ -138,26 +140,25 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
               ))}
             </div>
 
-            {/* TOMBOL TAMPILKAN LEBIH BANYAK */}
             {hasManyGames && (
               <div className="mt-1 flex justify-center">
                 <button
+                  type="button"
                   onClick={() =>
                     setExpanded((prev) => ({
                       ...prev,
                       [show.id]: !isExpanded,
                     }))
                   }
-                  className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline">
-                  {isExpanded
-                    ? "Tampilkan lebih sedikit"
-                    : "Tampilkan lebih banyak"}
+                  className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline"
+                >
+                  {isExpanded ? t('showLessGames') : t('showMoreGames')}
                 </button>
               </div>
             )}
           </div>
-        );
+        )
       })}
     </>
-  );
+  )
 }

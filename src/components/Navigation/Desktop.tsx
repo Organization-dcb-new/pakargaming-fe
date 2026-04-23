@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '../../i18n/routing'
 import SearchComponent from './Search'
 import { ThemeToggle } from '../ThemeToggle'
 import { LanguageSwitcher } from '../LanguageSwitcher'
@@ -116,7 +116,7 @@ export default function DesktopNavigation({
                 {/* Menu */}
                 <div className="py-2">
                   <Link
-                    href="/en/dashboard"
+                    href="/dashboard"
                     className="group w-full flex items-center gap-3 px-4 py-3 text-sm 
              text-gray-800 dark:text-white
              hover:bg-purple-500/10 
@@ -136,7 +136,7 @@ export default function DesktopNavigation({
                dark:group-hover:text-purple-400 
                transition-colors duration-200"
                     >
-                      Dashboard
+                      {t('dashboard')}
                     </span>
                   </Link>
 
@@ -162,7 +162,7 @@ export default function DesktopNavigation({
                dark:group-hover:text-purple-400 
                transition-colors duration-200"
                     >
-                      Logout
+                      {t('logout')}
                     </span>
                   </button>
                 </div>

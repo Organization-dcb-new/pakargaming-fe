@@ -1,5 +1,6 @@
 'use client'
 import { useForm } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { useEffect, useRef } from 'react'
 import { GameDetail, GameInput } from '../../../types/Game'
 import { useCheckIDV2 } from '../hooks/useCheckID'
@@ -21,6 +22,7 @@ export default function AccountCard({
   setAccount,
   account,
 }: AccountCardProps) {
+  const t = useTranslations('GameCheckout')
   const { mutate, isPending, data } = useCheckIDV2()
 
   const { register, watch } = useForm<Record<string, string>>({
@@ -83,7 +85,7 @@ export default function AccountCard({
 
       <div className="bg-black/5 dark:bg-white/10 backdrop-blur-lg rounded-3xl p-4 sm:p-6 border border-purple-500/30 hover:border-purple-500 transition-all duration-300 shadow-xl">
         <h2 className="text-sm sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
-          Masukkan Data Akun
+          {t('accountEnterTitle')}
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">

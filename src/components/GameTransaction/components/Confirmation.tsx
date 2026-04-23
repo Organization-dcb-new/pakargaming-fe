@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Price } from '../../../types/Game'
 import { PaymentMethod } from '../../../types/PaymentMethod'
 import { formatPrice } from '../../../utils/format_price'
@@ -22,6 +23,7 @@ export default function ConfirmModal({
   Product,
   Payment,
 }: ConfirmModalProps) {
+  const t = useTranslations('GameCheckout')
   const [visible, setVisible] = useState(false)
   const finalPrice = calculateTotalPrice(Payment, Product)
 
@@ -58,26 +60,26 @@ export default function ConfirmModal({
       >
         {/* Header */}
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-gray-900">Konfirmasi Pembayaran</h2>
-          <p className="mt-1 text-sm text-gray-500">Periksa kembali pesanan sebelum melanjutkan.</p>
+          <h2 className="text-lg font-semibold text-gray-900">{t('confirmTitle')}</h2>
+          <p className="mt-1 text-sm text-gray-500">{t('confirmSubtitle')}</p>
         </div>
 
         {/* Detail */}
         <div className="mt-5 rounded-2xl border border-purple-100 bg-purple-50/50 p-4 space-y-3 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-500">Produk</span>
+            <span className="text-gray-500">{t('confirmProduct')}</span>
             <span className="font-medium text-gray-900 text-right">{Product?.name || '-'}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-gray-500">Pembayaran</span>
+            <span className="text-gray-500">{t('confirmPayment')}</span>
             <span className="font-medium text-gray-900 text-right">
               {Payment?.full_name || '-'}
             </span>
           </div>
 
           <div className="flex justify-between border-t border-purple-200 pt-2">
-            <span className="font-medium text-gray-700">Total</span>
+            <span className="font-medium text-gray-700">{t('confirmTotal')}</span>
             <span className="font-bold text-green-600">Rp {finalPrice}</span>
           </div>
         </div>
@@ -97,7 +99,7 @@ export default function ConfirmModal({
             cursor-pointer
           "
         >
-          {loading ? 'Memproses...' : 'Lanjutkan Pembayaran'}
+          {loading ? t('confirmProcessing') : t('confirmContinue')}
         </button>
       </div>
     </div>

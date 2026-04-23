@@ -3,8 +3,9 @@
 import { useCallback, useState } from "react";
 import { Check, X, Clock, Copy } from "lucide-react";
 import { PaymentDataWithDetailProduct } from "../../types/Transaction";
-import Link from "next/link";
+import { Link } from "../../i18n/routing";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface TransactionStatusCardProps {
   data?: PaymentDataWithDetailProduct;
@@ -12,18 +13,18 @@ interface TransactionStatusCardProps {
 
 function isImageLikeUrl(s: string | undefined): boolean {
   if (!s?.trim()) return false;
-  const t = s.trim().toLowerCase();
+  const u = s.trim().toLowerCase();
   return (
-    t.startsWith("http://") ||
-    t.startsWith("https://") ||
-    t.startsWith("data:image/")
+    u.startsWith("http://") ||
+    u.startsWith("https://") ||
+    u.startsWith("data:image/")
   );
 }
 
 function isHttpUrl(s: string | undefined): boolean {
   if (!s?.trim()) return false;
-  const t = s.trim().toLowerCase();
-  return t.startsWith("http://") || t.startsWith("https://");
+  const u = s.trim().toLowerCase();
+  return u.startsWith("http://") || u.startsWith("https://");
 }
 
 function isCarrierOrAirtimeChannel(ch: string | undefined): boolean {
@@ -31,29 +32,26 @@ function isCarrierOrAirtimeChannel(ch: string | undefined): boolean {
   return ch.includes("smartfren_airtime");
 }
 
-const EWALLET_CHANNELS = new Set([
-  "shopeepay",
-  "gopay",
-  "dana",
-  "ovo",
-]);
+const EWALLET_CHANNELS = new Set(["shopeepay", "gopay", "dana", "ovo"]);
 
 function PendingCopyBlock({
   label,
   value,
   hint,
+  copySuccess,
 }: {
   label: string;
   value: string;
   hint?: string;
+  copySuccess: string;
 }) {
   const [copied, setCopied] = useState(false);
   const onCopy = useCallback(async () => {
     await navigator.clipboard.writeText(value);
     setCopied(true);
-    toast.success("Berhasil disalin");
+    toast.success(copySuccess);
     setTimeout(() => setCopied(false), 1500);
-  }, [value]);
+  }, [value, copySuccess]);
 
   return (
     <div className="w-full space-y-2">
@@ -68,7 +66,8 @@ function PendingCopyBlock({
       <button
         type="button"
         onClick={onCopy}
-        className="flex w-full items-center justify-between gap-2 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-mono text-sm font-semibold text-gray-900 shadow-sm transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/10 dark:text-white dark:hover:bg-white/15">
+        className="flex w-full items-center justify-between gap-2 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-mono text-sm font-semibold text-gray-900 shadow-sm transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+      >
         <span className="break-all text-left">{value}</span>
         {copied ? (
           <Check className="h-5 w-5 shrink-0 text-green-500" />
@@ -86,25 +85,27 @@ const btnPrimary =
 export default function TransactionStatusCard({
   data,
 }: TransactionStatusCardProps) {
+  const t = useTranslations("TransactionStatus");
+
   if (!data) {
     return null;
   }
 
   const statusConfig = {
     PAID: {
-      label: "Berhasil",
+      label: t("statusSuccess"),
       icon: <Check size={24} />,
       bg: "bg-green-100 dark:bg-green-900",
       text: "text-green-700 dark:text-green-400",
     },
     FAILED: {
-      label: "Gagal",
+      label: t("statusFailed"),
       icon: <X size={24} />,
       bg: "bg-red-100 dark:bg-red-900",
       text: "text-red-700 dark:text-red-400",
     },
     PENDING: {
-      label: "Pending",
+      label: t("statusPending"),
       icon: <Clock size={24} />,
       bg: "bg-yellow-100 dark:bg-yellow-900",
       text: "text-yellow-700 dark:text-yellow-400",
@@ -135,12 +136,12 @@ export default function TransactionStatusCard({
   const isEwallet = EWALLET_CHANNELS.has(paymentChannel);
   const isOvoChannel = paymentChannel === "ovo";
   const isCarrier = isCarrierOrAirtimeChannel(paymentChannel);
-  console.log(paymentChannel);
   const isQrisChannel = paymentChannel === "qris";
 
-  const amountLabel = `Transfer tepat Rp ${data?.amount?.toLocaleString("id-ID")}`;
+  const amountLabel = t("transferExact", {
+    amount: data?.amount?.toLocaleString("id-ID") ?? "",
+  });
 
-  /** Tampilkan semua yang relevan sekaligus: QR (jika ada), VA, lalu payment_url (jika ada). */
   const hasVaCopy = !!vaNumber;
   const paymentDisplayName =
     data.detail_product?.payment_name?.trim() || data.payment_channel;
@@ -166,7 +167,7 @@ export default function TransactionStatusCard({
     if (carrierOnly) {
       return (
         <div className="flex w-full flex-col items-center gap-4">
-          <div className={btnPrimary}>Cek OTP nomor hp anda</div>
+          <div className={btnPrimary}>{t("checkOtp")}</div>
         </div>
       );
     }
@@ -177,23 +178,24 @@ export default function TransactionStatusCard({
           <div className="flex w-full flex-col items-center gap-2">
             <p className="text-center text-sm font-semibold text-gray-700 dark:text-gray-200">
               {isQrisChannel || paymentChannel.includes("qris")
-                ? "Bayar dengan QRIS"
-                : `Bayar menggunakan ${data.payment_channel}`}
+                ? t("payWithQris")
+                : t("payWithChannel", { channel: data.payment_channel })}
             </p>
             <img
               src={qrImageSrc}
-              alt="QR pembayaran"
+              alt={t("qrAlt")}
               className="h-40 w-40 rounded-lg border border-gray-300 object-contain shadow-sm dark:border-gray-600"
             />
             <p className="text-center text-xs text-gray-500 dark:text-gray-400">
-              Scan QR ini dengan aplikasi e-wallet atau mobile banking kamu
+              {t("scanQrHint")}
             </p>
             {isHttpUrl(qrImageSrc) ? (
               <a
                 href={qrImageSrc}
                 download={`QR-${data.payment_channel}.png`}
-                className="w-full inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 py-2 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:from-purple-600 hover:to-pink-600 hover:shadow-lg active:scale-95">
-                Download QR
+                className="w-full inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 py-2 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:from-purple-600 hover:to-pink-600 hover:shadow-lg active:scale-95"
+              >
+                {t("downloadQr")}
               </a>
             ) : null}
           </div>
@@ -201,33 +203,36 @@ export default function TransactionStatusCard({
 
         {hasQrRaw ? (
           <PendingCopyBlock
-            label="Kode QR pembayaran"
+            label={t("qrCodePaymentLabel")}
             value={rawQrString}
-            hint="Salin kode ini, lalu gunakan fitur bayar dengan QR / paste kode di aplikasi e-wallet atau mobile banking yang mendukung."
+            hint={t("qrCodeHint")}
+            copySuccess={t("copySuccess")}
           />
         ) : null}
 
         {hasVaCopy && isVaChannel ? (
           <PendingCopyBlock
-            label="Nomor virtual account"
+            label={t("vaNumberLabel")}
             value={vaNumber}
             hint={amountLabel}
+            copySuccess={t("copySuccess")}
           />
         ) : null}
 
         {isEwallet && hasPaymentLink ? (
           <p className="text-center text-sm font-semibold text-gray-700 dark:text-gray-200">
             {isOvoChannel
-              ? "Silahkan buka aplikasi OVO untuk melanjutkan pembayaran."
-              : `Bayar menggunakan ${paymentDisplayName}`}
+              ? t("ovoHint")
+              : t("payUsing", { name: paymentDisplayName })}
           </p>
         ) : null}
 
         {hasVaCopy && !isVaChannel && !carrierOnly ? (
           <PendingCopyBlock
-            label="Nomor pembayaran"
+            label={t("paymentNumberLabel")}
             value={vaNumber}
             hint={amountLabel}
+            copySuccess={t("copySuccess")}
           />
         ) : null}
 
@@ -236,8 +241,9 @@ export default function TransactionStatusCard({
             href={data.payment_url}
             target="_blank"
             rel="noopener noreferrer"
-            className={btnPrimary}>
-            Lanjutkan Pembayaran
+            className={btnPrimary}
+          >
+            {t("continuePayment")}
           </a>
         ) : null}
       </div>
@@ -247,29 +253,27 @@ export default function TransactionStatusCard({
   return (
     <div className="w-full max-w-sm">
       <div className="flex flex-col items-center space-y-4 rounded-2xl border border-gray-200 bg-white px-6 py-8 shadow-sm dark:border-purple-500/30 dark:bg-white/5">
-        {/* Status Icon */}
         <div
-          className={`flex h-16 w-16 items-center justify-center rounded-full ${cfg.bg} ${cfg.text}`}>
+          className={`flex h-16 w-16 items-center justify-center rounded-full ${cfg.bg} ${cfg.text}`}
+        >
           {cfg.icon}
         </div>
 
-        {/* Status Label */}
         <h2 className={`text-lg font-semibold ${cfg.text}`}>{cfg.label}</h2>
 
-        {/* Status Message */}
         <p className="text-center text-sm text-gray-600 dark:text-gray-300">
           {data.status === "PAID"
-            ? "Transaksi berhasil."
+            ? t("msgPaid")
             : data.status === "FAILED"
-              ? "Transaksi gagal."
-              : "Transaksi sedang menunggu pembayaran."}
+              ? t("msgFailed")
+              : t("msgPending")}
         </p>
 
         {data.status === "PENDING" ? renderPendingActions() : null}
 
         {data.status === "FAILED" && (
           <Link
-            href={`/en/games/${data.detail_product?.game_slug}`}
+            href={`/games/${data.detail_product?.game_slug}`}
             className="
               mt-4 w-full inline-flex justify-center items-center
               rounded-2xl
@@ -279,14 +283,15 @@ export default function TransactionStatusCard({
               hover:from-red-600 hover:to-red-800
               active:scale-95
               transition-all duration-200
-            ">
-            Ulangi Transaksi
+            "
+          >
+            {t("retryTransaction")}
           </Link>
         )}
 
         {data.status === "PAID" && (
           <Link
-            href={`/en/games/${data.detail_product?.game_slug}`}
+            href={`/games/${data.detail_product?.game_slug}`}
             className="
               mt-4 w-full inline-flex justify-center items-center
               rounded-2xl
@@ -296,8 +301,9 @@ export default function TransactionStatusCard({
               hover:from-blue-600 hover:to-blue-800
               active:scale-95
               transition-all duration-200
-            ">
-            Beli lagi
+            "
+          >
+            {t("buyAgain")}
           </Link>
         )}
       </div>

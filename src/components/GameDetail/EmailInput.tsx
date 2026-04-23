@@ -1,5 +1,6 @@
 'use client'
 import { AlertCircle, Mail } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { OrderFormValues } from '../../schemas/order_schema'
 import { UseFormRegister } from 'react-hook-form'
 
@@ -9,6 +10,7 @@ interface EmailProps {
 }
 
 export default function EmailInput({ register, error }: EmailProps) {
+  const t = useTranslations('GameDetail')
   return (
     <div className="relative">
       {/* Step Badge */}
@@ -43,19 +45,19 @@ export default function EmailInput({ register, error }: EmailProps) {
       >
         {/* Header */}
         <div className="flex items-center gap-2 mb-2">
-          <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Email</h2>
+          <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{t('emailHeading')}</h2>
           <Mail className="w-4 h-4 text-purple-400 dark:text-purple-300" />
         </div>
         {/* Description */}
         <p className="text-gray-600 dark:text-purple-200 mb-4 text-xs leading-snug">
-          Email digunakan untuk mengirimkan bukti pembayaran & status transaksi.
+          {t('emailStepDesc')}
         </p>
         {/* Input */}
         <input
           type="email"
           required
           {...register('email')}
-          placeholder="contoh@email.com"
+          placeholder={t('emailPlaceholder')}
           className="
         w-full px-4 py-3 rounded-2xl
         bg-white/80 dark:bg-white/20

@@ -1,5 +1,6 @@
 'use client'
 import { Mail, Smartphone } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface ContactFormProps {
   step?: number
@@ -22,6 +23,7 @@ export default function ContactForm({
   isLocked = false,
   onLockedAction,
 }: ContactFormProps) {
+  const t = useTranslations('GameCheckout')
   return (
     <div id="contact-section" className="relative w-full sm:w-150 ">
       {/* Step Badge */}
@@ -46,14 +48,14 @@ export default function ContactForm({
       <div className="bg-black/5 dark:bg-white/10  rounded-3xl p-4 sm:p-6 border border-purple-500/30 hover:border-purple-500 transition-all duration-300 shadow-xl">
         <div className="flex items-center gap-2 mb-2">
           <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
-            Email <span className="text-red-500">*</span>
+            {t('contactEmailTitle')} <span className="text-red-500">*</span>
           </h2>
           <Mail className="w-4 h-4 text-purple-400 dark:text-purple-300" />
         </div>
 
         {/* Description */}
         <p className="text-gray-600 dark:text-purple-200 mb-4 text-xs leading-snug">
-          Email digunakan untuk mengirim kode voucher & bukti transaksi
+          {t('contactEmailHint')}
         </p>
         {/* Input */}
         <input
@@ -65,7 +67,7 @@ export default function ContactForm({
           onFocus={() => {
             if (isLocked) onLockedAction?.()
           }}
-          placeholder="contoh@email.com"
+          placeholder={t('placeholderEmail')}
           className="
     w-full px-4 py-3 rounded-2xl
     bg-white/80 dark:bg-white/20
@@ -85,12 +87,12 @@ export default function ContactForm({
           <>
             <div className="flex items-center gap-2 mb-2 mt-5">
               <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
-                Nomor telepon <span className="text-red-500">*</span>
+                {t('contactPhoneTitle')} <span className="text-red-500">*</span>
               </h2>
               <Smartphone className="w-4 h-4 text-purple-400 dark:text-purple-300" />
             </div>
             <p className="text-gray-600 dark:text-purple-200 mb-4 text-xs leading-snug">
-              Nomor ini dipakai untuk pembayaran OVO / Smartfren
+              {t('contactPhoneHint')}
             </p>
             <input
               type="tel"
@@ -102,7 +104,7 @@ export default function ContactForm({
               onFocus={() => {
                 if (isLocked) onLockedAction?.()
               }}
-              placeholder="08xxxxxxxxxx"
+              placeholder={t('placeholderPhone')}
               className="
     w-full px-4 py-3 rounded-2xl
     bg-white/80 dark:bg-white/20
