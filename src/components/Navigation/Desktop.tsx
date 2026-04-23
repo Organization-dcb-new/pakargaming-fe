@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import SearchComponent from './Search'
 import { ThemeToggle } from '../ThemeToggle'
+import { LanguageSwitcher } from '../LanguageSwitcher'
 import { LogOut, LayoutDashboard } from 'lucide-react'
 import { logout } from '../../hooks/useAuth'
 import { useTranslations } from 'next-intl'
@@ -54,7 +55,7 @@ export default function DesktopNavigation({
       </div>
 
       <div className="flex items-center gap-4 border-l border-purple-500/20 dark:border-purple-500/20 pl-8">
-        {/* <LanguageSwitcher /> */}
+        <LanguageSwitcher />
         <ThemeToggle />
 
         {!user ? (

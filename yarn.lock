@@ -1796,6 +1796,11 @@
     "@types/prop-types" "*"
     csstype "^3.2.2"
 
+"@wrksz/themes@^0.8.3":
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/@wrksz/themes/-/themes-0.8.3.tgz#210961e61e02b29830cbbcc18bddebc78ea262f1"
+  integrity sha512-SPbd+/vwbPYhGCya89OKKDWaJsArSIvwLtJNWlV+AlUA3rtRmpM/eJNudrhgy+WBzgf5Vo4XbqrN6Dd31FXYYw==
+
 aria-hidden@^1.2.4:
   version "1.2.6"
   resolved "https://registry.npmjs.org/aria-hidden/-/aria-hidden-1.2.6.tgz"

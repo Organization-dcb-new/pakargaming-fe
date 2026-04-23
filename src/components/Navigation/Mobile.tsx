@@ -1,5 +1,6 @@
 import { LogOut } from 'lucide-react'
 import { ThemeToggle } from '../ThemeToggle'
+import { LanguageSwitcher } from '../LanguageSwitcher'
 import SearchComponent from './Search'
 import { logout } from '../../hooks/useAuth'
 import { useTranslations } from 'next-intl'
@@ -22,7 +23,7 @@ export default function MobileNavigation({
   return (
     <div className="md:hidden flex items-center gap-2 sm:gap-3">
       <SearchComponent />
-      {/* <LanguageSwitcher /> */}
+      <LanguageSwitcher />
       <ThemeToggle />
 
       {/* Tombol login Google untuk mobile */}

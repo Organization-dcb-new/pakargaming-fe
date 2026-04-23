@@ -2,74 +2,50 @@
 
 import { useLocale } from 'next-intl'
 import { usePathname, useRouter } from '../i18n/routing'
-import { Globe } from 'lucide-react'
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
+
+const locales = [
+  { code: 'en', label: 'EN' },
+  { code: 'id', label: 'ID' },
+] as const
 
 export function LanguageSwitcher() {
   const locale = useLocale()
   const router = useRouter()
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
-  const [isOpen, setIsOpen] = useState(false)
 
-  const handleLocaleChange = (newLocale: string) => {
+  const handleLocaleChange = (newLocale: (typeof locales)[number]['code']) => {
+    if (newLocale === locale) return
     startTransition(() => {
       router.replace(pathname, { locale: newLocale })
-      setIsOpen(false)
     })
   }
 
   return (
-    <div className="relative mr-2">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center cursor-pointer gap-2 dark:text-white text-gray-900 dark:hover:text-white   transition-colors"
-      >
-        <Globe className="w-5 h-5" />
-        <span className="uppercase">{locale}</span>
-      </button>
-
-      {isOpen && (
-        <div
-          className="absolute right-0 mt-2 w-32
-  bg-white dark:bg-slate-800
-  border border-purple-500/30 dark:border-purple-500/20
-  rounded-lg shadow-xl overflow-hidden z-50
-"
-        >
+    <div
+      className="mr-2 flex items-center rounded-lg border border-purple-500/30 dark:border-purple-500/20 bg-white/80 dark:bg-slate-800/80 p-0.5"
+      role="group"
+      aria-label="Language"
+    >
+      {locales.map(({ code, label }) => {
+        const active = locale === code
+        return (
           <button
-            onClick={() => handleLocaleChange('en')}
+            key={code}
+            type="button"
+            onClick={() => handleLocaleChange(code)}
             disabled={isPending}
-            className={`w-full text-left cursor-pointer px-4 py-2
-      hover:bg-purple-100 dark:hover:bg-purple-500/20
-      transition-colors
-      ${
-        locale === 'en'
-          ? 'text-purple-700 dark:text-purple-400 font-medium'
-          : 'text-gray-800 dark:text-gray-300'
-      }
-    `}
+            className={`min-w-[2.25rem] rounded-md px-2 py-1 text-xs font-semibold uppercase transition-colors disabled:opacity-50 ${
+              active
+                ? 'bg-purple-600 text-white shadow-sm dark:bg-purple-500'
+                : 'text-gray-700 hover:bg-purple-100 dark:text-gray-300 dark:hover:bg-purple-500/20'
+            }`}
           >
-            English
+            {label}
           </button>
-
-          <button
-            onClick={() => handleLocaleChange('id')}
-            disabled={isPending}
-            className={`w-full text-left cursor-pointer px-4 py-2
-      hover:bg-purple-100 dark:hover:bg-purple-500/20
-      transition-colors
-      ${
-        locale === 'id'
-          ? 'text-purple-700 dark:text-purple-400 font-medium'
-          : 'text-gray-800 dark:text-gray-300'
-      }
-    `}
-          >
-            Indonesia
-          </button>
-        </div>
-      )}
+        )
+      })}
     </div>
   )
 }
