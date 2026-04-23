@@ -244,10 +244,6 @@ export function ProductComponent({
             <div className="mt-2 flex justify-center">
               <button
                 onClick={() => {
-                  if (isLocked) {
-                    onLockedAction?.();
-                    return;
-                  }
                   setShowAllRemaining(!showAllRemaining);
                 }}
                 className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline"
