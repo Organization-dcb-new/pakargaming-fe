@@ -1,14 +1,18 @@
+"use client";
+
 import Image from "next/image";
 import { PaymentDataWithDetailProduct } from "../../types/Transaction";
 import { useState } from "react";
 import { Check, Copy, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 type ProductDetailCardProps = {
   data: PaymentDataWithDetailProduct;
 };
 
 export default function ProductDetailCard({ data }: ProductDetailCardProps) {
+  const t = useTranslations("DetailTrx");
   const [showVoucher, setShowVoucher] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -17,27 +21,24 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
     await navigator.clipboard.writeText(data?.payment_number);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
-    toast.success("Nomor transaksi berhasil disalin");
+    toast.success(t("copyPaymentNumber"));
   };
 
   return (
     <div className="w-full max-w-3xl">
       <div className="rounded-2xl border border-gray-200 bg-white dark:border-purple-500/30 dark:bg-white/5 px-4 py-4 shadow-sm">
-        {/* Title */}
         <h2 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
-          Detail Produk
+          {t("detailProductTitle")}
         </h2>
 
-        {/* Header product */}
         <div className="mb-4 flex items-start gap-3">
-          {/* Icon */}
           <div className="flex-shrink-0 items-center flex justify-center">
             <Image
               src={
                 data?.detail_product?.item_image ||
                 "https://api.dicebear.com/9.x/pixel-art/svg"
               }
-              alt="Logo Product"
+              alt={t("logoProductAlt")}
               width={128}
               height={128}
               unoptimized={true}
@@ -45,7 +46,6 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
             />
           </div>
 
-          {/* Info */}
           <div className="flex-1">
             <span className="inline-block rounded-full bg-red-500 px-2 py-0.5 text-[11px] font-semibold text-white">
               {data?.detail_product?.category}
@@ -61,15 +61,15 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
           </div>
         </div>
 
-        {/* Detail list */}
         <div className="space-y-2 text-xs sm:text-sm">
           <div className="grid grid-cols-3 gap-2 items-center">
             <span className="text-gray-500 dark:text-gray-400">
-              Nomor Transaksi
+              {t("labelTransactionNumber")}
             </span>
             <div
               onClick={handleCopy}
-              className="col-span-2 flex items-center gap-2 font-medium text-gray-900 dark:text-white cursor-pointer group">
+              className="col-span-2 flex items-center gap-2 font-medium text-gray-900 dark:text-white cursor-pointer group"
+            >
               <span className="truncate">{data?.payment_number}</span>
               {copied ? (
                 <Check className="w-4 h-4 text-green-500" />
@@ -80,28 +80,28 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
           </div>
 
           <div className="grid grid-cols-3 gap-2">
-            <span className="text-gray-500 dark:text-gray-400">Produk</span>
+            <span className="text-gray-500 dark:text-gray-400">{t("labelProduct")}</span>
             <span className="col-span-2 font-medium text-gray-900 dark:text-white">
               {data?.detail_product?.item_name}
             </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
-            <span className="text-gray-500 dark:text-gray-400">Nominal</span>
+            <span className="text-gray-500 dark:text-gray-400">{t("labelNominal")}</span>
             <span className="col-span-2 font-medium text-gray-900 dark:text-white">
               {data?.detail_product?.item_product}
             </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
-            <span className="text-gray-500 dark:text-gray-400">Jumlah</span>
+            <span className="text-gray-500 dark:text-gray-400">{t("labelQuantity")}</span>
             <span className="col-span-2 font-medium text-gray-900 dark:text-white">
               {data?.detail_product?.item_quantity}
             </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
-            <span className="text-gray-500 dark:text-gray-400">Email</span>
+            <span className="text-gray-500 dark:text-gray-400">{t("labelEmail")}</span>
             <span className="col-span-2 font-medium text-gray-900 dark:text-white break-all">
               {data?.detail_product?.email}
             </span>
@@ -110,7 +110,7 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
           {data?.detail_product?.voucher_code?.trim() && (
             <div className="grid grid-cols-3 items-center gap-2 rounded-lg bg-green-50 dark:bg-green-900/20 px-3 py-2">
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                Voucher
+                {t("labelVoucher")}
               </span>
               <span className="col-span-2 flex items-center justify-between gap-2 font-semibold text-green-700 dark:text-green-400">
                 <span className="break-all">
@@ -122,7 +122,8 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
                 <button
                   type="button"
                   onClick={() => setShowVoucher(!showVoucher)}
-                  className="text-green-600 dark:text-green-300 cursor-pointer hover:text-green-800 dark:hover:text-green-500">
+                  className="text-green-600 dark:text-green-300 cursor-pointer hover:text-green-800 dark:hover:text-green-500"
+                >
                   {showVoucher ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </span>

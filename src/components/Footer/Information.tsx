@@ -1,47 +1,50 @@
-import Link from "next/link";
+'use client'
+
+import { Link } from '../../i18n/routing'
+import { useTranslations } from 'next-intl'
 
 export default function Information() {
+  const t = useTranslations('FooterInformation')
+
   return (
     <div className="max-w-sm flex flex-col gap-3">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wide">
-        Informasi
-      </h3>
+      <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wide">{t('title')}</h3>
 
       <div className="flex flex-col gap-2">
         <Link
-          href="/en/about"
+          href="/about"
           className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
         >
-          Tentang Kami
+          {t('about')}
         </Link>
 
         <Link
-          href="/en/term-and-condition"
+          href="/term-and-condition"
           className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
         >
-          Syarat & Ketentuan
+          {t('terms')}
         </Link>
 
         <Link
-          href="/en/policy-and-privacy"
+          href="/policy-and-privacy"
           className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
         >
-          Kebijakan dan Privasi
+          {t('privacy')}
         </Link>
 
         <Link
-          href="/en/check-transaction"
+          href="/check-transaction"
           className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
         >
-          Cek Transaksi
+          {t('checkTransaction')}
         </Link>
         <Link
           href="https://blog.pakargaming.id"
           className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
         >
-          Blog
+          {t('blog')}
         </Link>
       </div>
     </div>
-  );
+  )
 }

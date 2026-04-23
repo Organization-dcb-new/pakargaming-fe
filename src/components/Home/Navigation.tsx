@@ -1,5 +1,8 @@
+'use client'
+
 import { Show } from '../../types/Show'
-import Link from 'next/link'
+import { Link } from '../../i18n/routing'
+import { useTranslations } from 'next-intl'
 
 interface NavigationShowProps {
   isNavSticky: boolean
@@ -14,6 +17,8 @@ export default function NavigationShowGame({
   selectedId,
   shows,
 }: NavigationShowProps) {
+  const t = useTranslations('CheckTransaction')
+
   return (
     <div
       id="show-navigation"
@@ -82,7 +87,7 @@ export default function NavigationShowGame({
 
       {shows.length > 0 && (
         <Link
-          href="/en/check-transaction"
+          href="/check-transaction"
           className={`
     flex-shrink-0
     px-3 md:px-4
@@ -107,7 +112,7 @@ export default function NavigationShowGame({
   `}
         >
           <span className="text-base">🔍</span>
-          Cek Transaksi
+          {t('checkTrxLink')}
         </Link>
       )}
     </div>

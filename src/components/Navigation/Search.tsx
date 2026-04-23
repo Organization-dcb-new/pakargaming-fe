@@ -5,8 +5,10 @@ import { Search } from 'lucide-react'
 import { useDebounce } from 'use-debounce'
 import { useGetGameBySearch } from '../../hooks/useGame'
 import { Link } from '../../i18n/routing'
+import { useTranslations } from 'next-intl'
 
 export default function SearchComponent() {
+  const t = useTranslations('Navigation')
   const [keyword, setKeyword] = useState('')
   const [debouncedKeyword] = useDebounce(keyword, 400)
   const [open, setOpen] = useState(false)
@@ -37,7 +39,7 @@ export default function SearchComponent() {
           onBlur={() => {
             if (!keyword) setOpen(false)
           }}
-          placeholder="Search Game..."
+          placeholder={t('searchPlaceholder')}
           className={`
     ml-2 w-full bg-transparent text-sm outline-none
     transition-all duration-300
@@ -53,7 +55,7 @@ export default function SearchComponent() {
           {isLoading && (
             <div className="p-4 flex items-center gap-3 text-sm text-gray-500">
               <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-              <span>Searching...</span>
+              <span>{t('searching')}</span>
             </div>
           )}
 
@@ -74,7 +76,7 @@ export default function SearchComponent() {
                   />
                 </svg>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Game not found</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('gameNotFound')}</p>
             </div>
           )}
 

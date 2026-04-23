@@ -1,5 +1,6 @@
 import { LogOut } from 'lucide-react'
 import { ThemeToggle } from '../ThemeToggle'
+import { LanguageSwitcher } from '../LanguageSwitcher'
 import SearchComponent from './Search'
 import { logout } from '../../hooks/useAuth'
 import { useTranslations } from 'next-intl'
@@ -22,7 +23,7 @@ export default function MobileNavigation({
   return (
     <div className="md:hidden flex items-center gap-2 sm:gap-3">
       <SearchComponent />
-      {/* <LanguageSwitcher /> */}
+      <LanguageSwitcher />
       <ThemeToggle />
 
       {/* Tombol login Google untuk mobile */}
@@ -88,7 +89,9 @@ export default function MobileNavigation({
                   className="group cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-900 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-500/10 transition"
                 >
                   <LogOut className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
-                  <span className="text-red-600 dark:text-red-400 font-medium">Logout</span>
+                  <span className="text-red-600 dark:text-red-400 font-medium">
+                    {t('logout')}
+                  </span>
                 </button>
               </div>
             </div>

@@ -1,13 +1,18 @@
-import Link from 'next/link'
+'use client'
+
+import { Link } from '../../i18n/routing'
+import { useTranslations } from 'next-intl'
 
 export default function LogoNavigation() {
+  const t = useTranslations('Navigation')
+
   return (
     <Link href="/">
       <div className="w-full lg:mr-2 flex justify-center lg:justify-start">
         <div className="animate-fadeInUp">
           <img
             src="https://s3.nevaobjects.id/image-dev/uploads/20260121141804.png"
-            alt="Logo"
+            alt={t('logoAlt')}
             className="
     object-contain
     w-32 sm:w-36 md:w-40

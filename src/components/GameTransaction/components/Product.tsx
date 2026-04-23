@@ -6,6 +6,7 @@ import { GetGameResponse, Price } from "../../../types/Game";
 import { formatPrice } from "../../../utils/format_price";
 import { CategoryProductListResponse } from "../types/CategoryProduct";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface ProductComponentProps {
   productGame: GetGameResponse;
@@ -26,6 +27,7 @@ export function ProductComponent({
   isLocked = false,
   onLockedAction,
 }: ProductComponentProps) {
+  const t = useTranslations("GameCheckout");
   const hasCategoryProduct = product?.data?.length > 0;
 
   const categorizedProductIds = new Set(
@@ -62,7 +64,7 @@ export function ProductComponent({
 
       <div className="bg-black/5 dark:bg-white/10 rounded-3xl p-4 sm:p-6 border border-purple-500/30 hover:border-purple-500 transition-all duration-300 shadow-xl">
         <h2 className="text-sm sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
-          Pilih Nominal Top Up
+          {t("selectDenom")}
         </h2>
 
         {/* CATEGORY BUTTON */}
@@ -154,7 +156,7 @@ export function ProductComponent({
                                 pkg.image ||
                                 "https://s3.nevaobjects.id/image-dev/uploads/20260123164455.webp"
                               }
-                              alt="img-product"
+                              alt={t("productImageAlt")}
                               width={40}
                               height={40}
                               unoptimized={true}
@@ -178,7 +180,7 @@ export function ProductComponent({
             <div className="space-y-3">
               {hasCategoryProduct && (
                 <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                  Produk Lainnya
+                  {t("otherProducts")}
                 </h3>
               )}
 
@@ -222,7 +224,7 @@ export function ProductComponent({
                               pkg.image ||
                               "https://s3.nevaobjects.id/image-dev/uploads/20260123164455.webp"
                             }
-                            alt="img-product"
+                            alt={t("productImageAlt")}
                             width={40}
                             height={40}
                             unoptimized={true}
@@ -248,9 +250,7 @@ export function ProductComponent({
                 }}
                 className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline"
               >
-                {showAllRemaining
-                  ? "Tampilkan lebih sedikit"
-                  : "Tampilkan produk lainnya"}
+                {showAllRemaining ? t("showLess") : t("showMore")}
               </button>
             </div>
           )}
