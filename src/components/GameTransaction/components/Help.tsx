@@ -1,7 +1,9 @@
 'use client'
 import { Headset } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function HelpCard() {
+  const t = useTranslations('GameCheckout')
   return (
     <a
       href="https://wa.me/628131793708" 
@@ -17,9 +19,9 @@ export default function HelpCard() {
           </div>
 
           <div className="flex flex-col">
-            <p className="text-sm font-bold text-gray-900 dark:text-white">Butuh Bantuan?</p>
+            <p className="text-sm font-bold text-gray-900 dark:text-white">{t('helpTitle')}</p>
             <p className="text-xs text-gray-600 dark:text-purple-200 leading-relaxed">
-              Kamu bisa hubungi admin di sini
+              {t('helpSubtitle')}
             </p>
           </div>
         </div>

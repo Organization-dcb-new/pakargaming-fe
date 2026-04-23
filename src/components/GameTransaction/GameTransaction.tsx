@@ -1,5 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useGetGamesBySlug } from "../../hooks/useGame";
 import SpinnerGameTransaction from "./components/Spinner";
 import LayoutGamesTransaction from "./components/Layout";
@@ -63,6 +64,7 @@ function isValidUserMdn(raw: string): boolean {
 }
 
 export default function GameTransaction() {
+  const t = useTranslations("GameCheckout");
   const { slug } = useParams<{ slug: string }>();
   const [selectedPackage, setSelectedPackage] = useState<Price | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(null);
@@ -119,9 +121,9 @@ export default function GameTransaction() {
   useEffect(() => {
     if (selectedPayment && !allowVaPayment && isVirtualAccountPayment(selectedPayment)) {
       setSelectedPayment(null);
-      toast.error("Metode VA hanya untuk produk di atas 10.000");
+      toast.error(t("toastVaMinAmount"));
     }
-  }, [allowVaPayment, selectedPayment]);
+  }, [allowVaPayment, selectedPayment, t]);
 
   useEffect(() => {
     if (!isAccountStepCompleted && selectedPackage) {
@@ -168,32 +170,32 @@ export default function GameTransaction() {
   };
 
   const handleBlockedProductAction = () => {
-    toast.error("Isi dan validasi data akun dulu");
+    toast.error(t("toastFillAccount"));
     scrollToSection("account-section");
   };
 
   const handleBlockedPaymentAction = () => {
     if (!isAccountStepCompleted) {
-      toast.error("Isi dan validasi data akun dulu");
+      toast.error(t("toastFillAccount"));
       scrollToSection("account-section");
       return;
     }
-    toast.error("Pilih produk dulu");
+    toast.error(t("toastSelectProduct"));
     scrollToSection("product-section");
   };
 
   const handleBlockedContactAction = () => {
     if (!isAccountStepCompleted) {
-      toast.error("Isi dan validasi data akun dulu");
+      toast.error(t("toastFillAccount"));
       scrollToSection("account-section");
       return;
     }
     if (!isProductStepCompleted) {
-      toast.error("Pilih produk dulu");
+      toast.error(t("toastSelectProduct"));
       scrollToSection("product-section");
       return;
     }
-    toast.error("Pilih metode pembayaran dulu");
+    toast.error(t("toastSelectPayment"));
     scrollToSection("payment-method-section");
   };
 
@@ -210,30 +212,32 @@ export default function GameTransaction() {
       }
     : dataPaymentMethods;
 
-  const validations = [
-    ...(inputs.length > 0
-      ? [
-          { value: hasInputAccount, message: "Masukkan akun" },
-          { value: isAccountValid, message: "Akun tidak ditemukan" },
-        ]
-      : []),
-    { value: selectedPackage, message: "Pilih Produk" },
-    { value: selectedPayment, message: "Pilih metode pembayaran" },
-    {
-      value: isVaAllowedForSelection,
-      message: "Metode VA hanya untuk produk di atas 10.000",
-    },
-    { value: hasEmail, message: "Email belum diisi" },
-    { value: isEmailValid, message: "Format email tidak valid" },
-    ...(needsUserMdn
-      ? [
-          { value: hasUserMdn, message: "Nomor telepon belum diisi" },
-          { value: isValidUserMdn(userMdn), message: "Format nomor tidak valid" },
-        ]
-      : []),
-  ];
-
   const handleOpenConfirm = () => {
+    const validations = [
+      ...(inputs.length > 0
+        ? [
+            { value: hasInputAccount, message: t("validationEnterAccount") },
+            { value: isAccountValid, message: t("validationAccountNotFound") },
+          ]
+        : []),
+      { value: selectedPackage, message: t("validationSelectProduct") },
+      { value: selectedPayment, message: t("validationSelectPayment") },
+      {
+        value: isVaAllowedForSelection,
+        message: t("validationVaMinAmount"),
+      },
+      { value: hasEmail, message: t("validationEmailRequired") },
+      { value: isEmailValid, message: t("validationEmailInvalid") },
+      ...(needsUserMdn
+        ? [
+            { value: hasUserMdn, message: t("validationPhoneRequired") },
+            {
+              value: isValidUserMdn(userMdn),
+              message: t("validationPhoneInvalid"),
+            },
+          ]
+        : []),
+    ];
     for (const v of validations) {
       if (!v.value) {
         toast.error(v.message);

@@ -1,81 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface FAQItem {
   question: string;
   answer: string | JSX.Element;
 }
 
-const faqData: FAQItem[] = [
-  {
-    question: "Apakah aman melakukan top up di Pakargaming?",
-    answer: `Ya, 100% aman. Kamu tidak perlu login ke akun game. Cukup masukkan User ID / Server ID dan lakukan pembayaran. Item akan langsung terkirim otomatis ke akunmu dengan data tetap terlindungi.`,
-  },
-  {
-    question: "Berapa lama item masuk ke akun saya?",
-    answer: `Proses sangat cepat, hanya beberapa detik setelah pembayaran berhasil.`,
-  },
-  {
-    question: "Metode pembayaran apa saja yang tersedia di Pakargaming?",
-    answer: (
-      <ul className="list-disc list-inside space-y-1">
-        <li>E-Wallets</li>
-        <li>QRIS</li>
-        <li>Transfer Bank</li>
-        <li>Virtual Account & metode lainnya</li>
-      </ul>
-    ),
-  },
-  {
-    question: "Bagaimana cara mengetahui ID saya?",
-    answer: (
-      <ul className="list-disc list-inside space-y-1">
-        <li>Buka aplikasi game</li>
-        <li>Tekan ikon profil di layar utama</li>
-        <li>Lihat nomor ID di bawah nama karakter</li>
-        <li>Salin dan gunakan saat top up di Pakargaming</li>
-      </ul>
-    ),
-  },
-  {
-    question: "Mengapa item saya belum masuk setelah bayar?",
-    answer: (
-      <div className="space-y-2">
-        <p>Jika lebih dari 15 menit item belum masuk, cek kembali:</p>
-        <ul className="list-disc list-inside space-y-1">
-          <li>User ID sudah benar atau belum</li>
-          <li>Status pembayaran berhasil atau tidak</li>
-        </ul>
-        <p>
-          Jika masih bermasalah, hubungi CS Pakargaming melalui Chat Support /
-          WhatsApp untuk bantuan.
-        </p>
-      </div>
-    ),
-  },
-  {
-    question: "Apakah ada promo di Pakargaming?",
-    answer: (
-      <div>
-        <p>
-          Tentu! Ada diskon dan event menarik. Ikuti sosial media resmi
-          Pakargaming agar selalu update.
-        </p>
-        <a
-          href="https://www.instagram.com/pakargaming.id/"
-          target="_blank"
-          className="text-purple-600 hover:underline"
-        >
-          Instagram Pakargaming
-        </a>
-      </div>
-    ),
-  },
-];
-
 export default function FAQSection() {
+  const t = useTranslations("GameCheckout");
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
+
+  const faqData: FAQItem[] = useMemo(
+    () => [
+      { question: t("faq1q"), answer: t("faq1a") },
+      { question: t("faq2q"), answer: t("faq2a") },
+      {
+        question: t("faq3q"),
+        answer: (
+          <ul className="list-disc list-inside space-y-1">
+            <li>{t("faq3Li1")}</li>
+            <li>{t("faq3Li2")}</li>
+            <li>{t("faq3Li3")}</li>
+            <li>{t("faq3Li4")}</li>
+          </ul>
+        ),
+      },
+      {
+        question: t("faq4q"),
+        answer: (
+          <ul className="list-disc list-inside space-y-1">
+            <li>{t("faq4Li1")}</li>
+            <li>{t("faq4Li2")}</li>
+            <li>{t("faq4Li3")}</li>
+            <li>{t("faq4Li4")}</li>
+          </ul>
+        ),
+      },
+      {
+        question: t("faq5q"),
+        answer: (
+          <div className="space-y-2">
+            <p>{t("faq5P1")}</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>{t("faq5Li1")}</li>
+              <li>{t("faq5Li2")}</li>
+            </ul>
+            <p>{t("faq5P2")}</p>
+          </div>
+        ),
+      },
+      {
+        question: t("faq6q"),
+        answer: (
+          <div>
+            <p>{t("faq6P1")}</p>
+            <a
+              href="https://www.instagram.com/pakargaming.id/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-purple-600 hover:underline"
+            >
+              {t("faq6Link")}
+            </a>
+          </div>
+        ),
+      },
+    ],
+    [t],
+  );
 
   const toggle = (index: number) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -84,11 +78,10 @@ export default function FAQSection() {
   return (
     <div className="w-full max-w-[1030px] mx-auto px-4 sm:px-0 mt-12">
       <div className="bg-black/5 dark:bg-white/5 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-purple-500/30 shadow-xl">
-        {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-6 bg-purple-500 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
           <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
-            FAQ
+            {t("faqTitle")}
           </h2>
         </div>
 
@@ -98,8 +91,8 @@ export default function FAQSection() {
               key={index}
               className="border border-purple-500/20 rounded-xl overflow-hidden transition-all"
             >
-              {/* Question */}
               <button
+                type="button"
                 onClick={() => toggle(index)}
                 className="w-full text-left px-4 py-3 flex justify-between items-center hover:bg-purple-500/5 transition-all"
               >
@@ -111,7 +104,6 @@ export default function FAQSection() {
                     activeIndex === index ? "rotate-180" : ""
                   }`}
                 >
-                  {/* Arrow Icon */}
                   <svg
                     className={`w-5 h-5 text-purple-500 transition-all duration-300 ease-in-out ${
                       activeIndex === index
@@ -132,7 +124,6 @@ export default function FAQSection() {
                 </span>
               </button>
 
-              {/* Answer */}
               <div
                 className={`px-4 transition-all duration-300 ease-in-out overflow-hidden ${
                   activeIndex === index

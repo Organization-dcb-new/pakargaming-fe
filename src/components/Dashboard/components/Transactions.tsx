@@ -5,7 +5,8 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack
 import { CheckCircle, XCircle, Clock, Wallet, Activity, AlertCircle } from 'lucide-react'
 import { GetTransactionResponsesDashboard } from '../hooks/useGetTransaction'
 import { PaymentResponseDetail } from '../types/transactions'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '../../../i18n/routing'
+import { useTranslations } from 'next-intl'
 
 interface MyTransactionProps {
   DataDashboard: GetTransactionResponsesDashboard
@@ -13,6 +14,7 @@ interface MyTransactionProps {
 }
 export default function MyTransaction({ DataDashboard, isLoading }: MyTransactionProps) {
   const router = useRouter()
+  const t = useTranslations('Dashboard')
 
   const data: PaymentResponseDetail[] = React.useMemo(
     () =>
@@ -42,7 +44,7 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
     () => [
       {
         accessorKey: 'payment_number',
-        header: 'Payment Number',
+        header: t('paymentNumber'),
         cell: ({ row, getValue }) => {
           const value = getValue() as string
           const id = row.original.id
@@ -50,7 +52,7 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
           return hasData ? (
             <span
               className="text-indigo-600 dark:text-indigo-400 cursor-pointer hover:underline"
-              onClick={() => router.push(`/en/detail-trx/${id}`)}
+              onClick={() => router.push(`/detail-trx/${id}`)}
             >
               {value}
             </span>
@@ -61,7 +63,7 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
       },
       {
         accessorKey: 'created_at',
-        header: 'Tanggal',
+        header: t('date'),
         cell: ({ getValue }) => {
           const dateStr = getValue() as string
           return hasData ? <span>{dateStr.split('.')[0]}</span> : '-'
@@ -69,7 +71,7 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
       },
       {
         accessorKey: 'amount',
-        header: 'Amount',
+        header: t('amount'),
         cell: ({ getValue }) =>
           hasData ? (
             <span>
@@ -85,12 +87,12 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
       },
       {
         accessorKey: 'status',
-        header: 'Status',
+        header: t('status'),
         cell: ({ getValue }) =>
           hasData ? <StatusBadge status={getValue() as string} /> : <span>-</span>,
       },
     ],
-    [hasData]
+    [hasData, router, t]
   )
 
   const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() })
@@ -98,19 +100,18 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
   return (
     <div className="p-4 lg:p-6 space-y-6 font-sans">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Ringkasan Transaksi</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('summaryTitle')}</h1>
       </div>
 
-      {/* Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <StatCard
-          title="Total Transactions"
+          title={t('statTotalTransactions')}
           value={DataDashboard?.data?.total_transactions || 0}
           icon={Activity}
           color="indigo"
         />
         <StatCard
-          title="Total Amount"
+          title={t('statTotalAmount')}
           value={
             DataDashboard?.data?.total_amount
               ? `Rp ${DataDashboard.data.total_amount.toLocaleString('id-ID')}`
@@ -123,31 +124,28 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
-          title="PENDING"
+          title={t('statPending')}
           value={DataDashboard?.data?.transactions_pending || 0}
           icon={Clock}
           color="amber"
         />
         <StatCard
-          title="FAILED"
+          title={t('statFailed')}
           value={DataDashboard?.data?.transactions_failed || 0}
           icon={AlertCircle}
           color="rose"
         />
         <StatCard
-          title="PAID"
+          title={t('statPaid')}
           value={DataDashboard?.data?.transactions_paid || 0}
           icon={CheckCircle}
           color="blue"
         />
       </div>
 
-      {/* Table */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-            Transaksi Terbaru
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{t('recentTitle')}</h2>
         </div>
 
         <div className="overflow-hidden bg-white/70 dark:bg-gray-900/70 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
@@ -186,9 +184,7 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
               </tbody>
             </table>
           ) : (
-            <div className="text-center p-6 text-gray-500 dark:text-gray-400">
-              Transaksi tidak ditemukan
-            </div>
+            <div className="text-center p-6 text-gray-500 dark:text-gray-400">{t('emptyState')}</div>
           )}
         </div>
       </div>
@@ -196,24 +192,23 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
   )
 }
 
-// Badge component
 function StatusBadge({ status }: { status: string }) {
+  const t = useTranslations('Dashboard')
   const config: any = {
-    PAID: { color: 'bg-green-100 text-green-700', Icon: CheckCircle },
-    FAILED: { color: 'bg-red-100 text-red-700', Icon: XCircle },
-    PENDING: { color: 'bg-yellow-100 text-yellow-700', Icon: Clock },
+    PAID: { color: 'bg-green-100 text-green-700', Icon: CheckCircle, label: t('statusLabelPaid') },
+    FAILED: { color: 'bg-red-100 text-red-700', Icon: XCircle, label: t('statusLabelFailed') },
+    PENDING: { color: 'bg-yellow-100 text-yellow-700', Icon: Clock, label: t('statusLabelPending') },
   }
-  const { color, Icon } = config[status] || config['PENDING']
+  const { color, Icon, label } = config[status] || config['PENDING']
   return (
     <span
       className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-semibold ${color} gap-1`}
     >
-      <Icon className="w-3 h-3" /> {status}
+      <Icon className="w-3 h-3" /> {label}
     </span>
   )
 }
 
-// Compact StatCard
 function StatCard({ title, value, icon: Icon, color }: any) {
   const colors: any = {
     indigo: 'from-indigo-500/80 to-indigo-600/80',
@@ -235,7 +230,6 @@ function StatCard({ title, value, icon: Icon, color }: any) {
       </div>
       <p className="text-xl font-bold mt-2">{value}</p>
 
-      {/* Decorative Circle */}
       <div className="absolute -right-3 -bottom-3 w-12 h-12 bg-white/10 dark:bg-white/5 rounded-full blur-2xl" />
     </div>
   )

@@ -12,7 +12,7 @@ export default function middleware(request: NextRequest) {
   const protectedRoute = /^\/(id|en)?\/my-transaction/
 
   if (protectedRoute.test(pathname) && !token) {
-    const locale = pathname.startsWith('/id') ? 'en' : 'id'
+    const locale = pathname.startsWith('/en') ? 'en' : 'id'
 
     const redirectUrl = new URL(`/${locale}`, request.url)
     return NextResponse.redirect(redirectUrl)

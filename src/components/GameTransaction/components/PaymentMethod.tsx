@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Price } from '../../../types/Game'
 import { formatPrice } from '../../../utils/format_price'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface PaymentMethodProps {
   PaymentMethod: GetPaymentMethodResponse
@@ -42,6 +43,7 @@ export default function PaymentMethodTransactionComponent({
   isLocked = false,
   onLockedAction,
 }: PaymentMethodProps) {
+  const t = useTranslations('GameCheckout')
   const [activeIndexes, setActiveIndexes] = useState<number[]>([0])
 
   const scrollToPayment = () => {
@@ -79,7 +81,7 @@ export default function PaymentMethodTransactionComponent({
 
       <div className="bg-black/5 dark:bg-white/10 rounded-3xl p-4 sm:p-6 border border-purple-500/30 hover:border-purple-500 transition-all duration-300 shadow-xl">
         <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
-          Pilih Pembayaran
+          {t('selectPayment')}
         </h2>
 
         <div className="space-y-4">

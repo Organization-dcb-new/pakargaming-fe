@@ -20,7 +20,7 @@ export default function SecurePayment() {
 
       {/* Image only */}
       <div className="flex flex-wrap gap-3 items-center">
-        {allPayments.map((payment) => {
+        {allPayments.slice(0, 6).map((payment) => {
           const iconSrc = getValidImageSrc(payment.icon_url)
           if (!iconSrc) return null
           return (
