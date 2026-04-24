@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { PaymentDataWithDetailProduct } from "../../types/Transaction";
 import { Check, Clock, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type PaymentStatus = "PAID" | "FAILED" | "PENDING";
 
@@ -27,25 +28,45 @@ const paymentStatusStyle = {
 
 interface PaymentDetailCardProps {
   data: PaymentDataWithDetailProduct;
+  isEmbedded?: boolean;
 }
 
-export default function PaymentDetailCard({ data }: PaymentDetailCardProps) {
+export default function PaymentDetailCard({
+  data,
+  isEmbedded = false,
+}: PaymentDetailCardProps) {
+  const t = useTranslations("DetailTrx");
+  const tStatus = useTranslations("TransactionStatus");
   const status = (data?.status || "PENDING") as PaymentStatus;
-  const statusUI = paymentStatusStyle[status];
+  const statusLabelMap = {
+    PAID: tStatus("statusSuccess"),
+    FAILED: tStatus("statusFailed"),
+    PENDING: tStatus("statusPending"),
+  } as const;
+  const statusUI = {
+    ...paymentStatusStyle[status],
+    label: statusLabelMap[status],
+  };
 
   return (
-    <div className="w-full max-w-3xl">
-      <div className="rounded-2xl border border-gray-200 bg-white dark:border-purple-500/30 dark:bg-white/5 px-4 py-4 shadow-sm">
+    <div className={`w-full ${isEmbedded ? "" : "max-w-3xl"}`}>
+      <div
+        className={`px-1 py-1 sm:px-2 ${
+          isEmbedded
+            ? ""
+            : "rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm dark:border-purple-500/30 dark:bg-white/5"
+        }`}
+      >
         {/* Title */}
         <h2 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
-          Detail Pembayaran
+          {t("paymentDetailTitle")}
         </h2>
 
         {/* Status & Method */}
         <div className="mb-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              Status pembayaran
+              {t("paymentStatusLabel")}
             </span>
             <span
               className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${statusUI.className}`}>
@@ -56,7 +77,7 @@ export default function PaymentDetailCard({ data }: PaymentDetailCardProps) {
 
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              Metode pembayaran
+              {t("paymentMethodLabel")}
             </span>
             <div className="flex items-center gap-2">
               <Image
@@ -64,7 +85,7 @@ export default function PaymentDetailCard({ data }: PaymentDetailCardProps) {
                   data?.detail_product?.payment_image ||
                   "https://api.dicebear.com/9.x/pixel-art/svg"
                 }
-                alt="Logo Payment"
+                alt={t("paymentLogoAlt")}
                 width={40}
                 height={18}
                 unoptimized={true}
@@ -84,7 +105,7 @@ export default function PaymentDetailCard({ data }: PaymentDetailCardProps) {
         <div className="space-y-2 text-xs sm:text-sm">
           <div className="flex items-center justify-between">
             <span className="text-gray-500 dark:text-gray-400">
-              Total transaksi
+              {t("totalTransactionLabel")}
             </span>
             <span className="font-medium text-gray-900 dark:text-white">
               Rp {data?.amount?.toLocaleString("id-ID")}
@@ -93,7 +114,7 @@ export default function PaymentDetailCard({ data }: PaymentDetailCardProps) {
 
           <div className="flex items-center justify-between">
             <span className="text-gray-500 dark:text-gray-400">
-              Total pembayaran
+              {t("totalPaymentLabel")}
             </span>
             <span className="text-sm font-bold text-gray-900 dark:text-white">
               Rp {data?.amount?.toLocaleString("id-ID")}

@@ -9,9 +9,13 @@ import { useTranslations } from "next-intl";
 
 type ProductDetailCardProps = {
   data: PaymentDataWithDetailProduct;
+  isEmbedded?: boolean;
 };
 
-export default function ProductDetailCard({ data }: ProductDetailCardProps) {
+export default function ProductDetailCard({
+  data,
+  isEmbedded = false,
+}: ProductDetailCardProps) {
   const t = useTranslations("DetailTrx");
   const [showVoucher, setShowVoucher] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -25,8 +29,14 @@ export default function ProductDetailCard({ data }: ProductDetailCardProps) {
   };
 
   return (
-    <div className="w-full max-w-3xl">
-      <div className="rounded-2xl border border-gray-200 bg-white dark:border-purple-500/30 dark:bg-white/5 px-4 py-4 shadow-sm">
+    <div className={`w-full ${isEmbedded ? "" : "max-w-3xl"}`}>
+      <div
+        className={`px-1 py-1 sm:px-2 ${
+          isEmbedded
+            ? ""
+            : "rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm dark:border-purple-500/30 dark:bg-white/5"
+        }`}
+      >
         <h2 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
           {t("detailProductTitle")}
         </h2>
