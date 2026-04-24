@@ -7,9 +7,13 @@
     "dashboard": "Dasbor",
     "logout": "Keluar",
     "searchPlaceholder": "Cari game...",
+    "collapseSearch": "Ciutkan pencarian",
     "searching": "Mencari...",
     "gameNotFound": "Game tidak ditemukan",
-    "logoAlt": "Pakar Gaming"
+    "logoAlt": "Pakar Gaming",
+    "menu": "Menu",
+    "openMenu": "Buka menu",
+    "languageAndTheme": "Bahasa & tema"
   },
   "Home": {
     "heroTitle": "Tingkatkan Skill Gaming Anda",

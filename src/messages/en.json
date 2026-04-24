@@ -7,9 +7,13 @@
     "dashboard": "Dashboard",
     "logout": "Logout",
     "searchPlaceholder": "Search game...",
+    "collapseSearch": "Minimize search",
     "searching": "Searching...",
     "gameNotFound": "Game not found",
-    "logoAlt": "Pakar Gaming"
+    "logoAlt": "Pakar Gaming",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "languageAndTheme": "Language & theme"
   },
 
   "Home": {

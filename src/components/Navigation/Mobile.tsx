@@ -1,103 +1,153 @@
-import { LogOut } from 'lucide-react'
+'use client'
+
+import { useState } from 'react'
+import { LayoutDashboard, LogOut, Menu } from 'lucide-react'
 import { ThemeToggle } from '../ThemeToggle'
 import { LanguageSwitcher } from '../LanguageSwitcher'
 import SearchComponent from './Search'
 import { logout } from '../../hooks/useAuth'
 import { useTranslations } from 'next-intl'
+import { Link } from '../../i18n/routing'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '../ui/sheet'
 
 interface MobileNaviProps {
   user: any
   loginWithGoogle: () => void
   setOpenProfile: React.Dispatch<React.SetStateAction<boolean>>
   openProfile: boolean
+  mobileSearchOpen: boolean
+  onMobileSearchOpenChange: (open: boolean) => void
 }
 
 export default function MobileNavigation({
   user,
   loginWithGoogle,
   setOpenProfile,
-  openProfile,
+  mobileSearchOpen,
+  onMobileSearchOpenChange,
 }: MobileNaviProps) {
   const t = useTranslations('Navigation')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <div className="md:hidden flex items-center gap-2 sm:gap-3">
-      <SearchComponent />
-      <LanguageSwitcher />
-      <ThemeToggle />
-
-      {/* Tombol login Google untuk mobile */}
-      {!user && (
-        <button
-          onClick={loginWithGoogle}
-          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white px-3 py-2 rounded-full text-sm transition-all shadow-sm hover:shadow-lg hover:shadow-purple-500/25"
-        >
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            alt="Google"
-            className="w-5 h-5 bg-white rounded-full p-0.5 shadow-sm"
-          />
-          <span className="font-medium">{t('login')}</span>
-        </button>
-      )}
-
-      {/* User dropdown */}
-      {user && (
+    <div className="relative z-0 flex min-w-0 flex-1 items-center justify-end gap-2 sm:justify-start md:hidden">
+      {/* Phone: rata kanan + animasi max-width. Tablet (sm–md): penuh mendekati logo */}
+      <div className="flex min-w-0 flex-1 justify-end max-sm:ml-auto sm:min-w-0 sm:w-full sm:justify-start">
         <div
-          onClick={(e) => {
-            e.stopPropagation()
-            setOpenProfile((prev) => !prev)
-          }}
-          className="relative flex items-center gap-2 cursor-pointer"
+          className={[
+            'min-w-0 w-full overflow-hidden transition-[max-width] duration-300 ease-in-out sm:flex-1',
+            mobileSearchOpen ? 'max-w-full' : 'max-w-12 sm:max-w-full',
+          ].join(' ')}
         >
-          <img
-            src={
-              user.picture ||
-              `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(
-                user.name || 'User'
-              )}`
-            }
-            alt={user.name}
-            className="w-8 h-8 rounded-full border border-purple-500/30 bg-white"
-          />
-          <span className="text-sm font-medium text-gray-800 dark:text-white max-w-[80px] truncate hidden sm:inline">
-            {user.name}
-          </span>
+          <SearchComponent variant="mobile" onOpenChange={onMobileSearchOpenChange} />
+        </div>
+      </div>
 
-          {/* Mobile Profile Dropdown */}
-          {openProfile && (
-            <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white dark:bg-slate-900/95 backdrop-blur-xl shadow-xl border border-purple-500/20 dark:border-purple-500/30 overflow-hidden z-50">
-              {/* Header */}
-              <div className="flex items-center gap-3 px-4 py-4 border-b border-purple-500/20">
-                <img
-                  src={user.picture || '/avatar.png'}
-                  alt={user.name}
-                  className="w-10 h-10 rounded-full border border-purple-500/30"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                    {user.name}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+      <Sheet
+        open={menuOpen}
+        onOpenChange={(open) => {
+          setMenuOpen(open)
+          if (open) setOpenProfile(false)
+        }}
+      >
+        <SheetTrigger asChild>
+          <button
+            type="button"
+            aria-label={t('openMenu')}
+            aria-expanded={menuOpen}
+            className="touch-manipulation inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-purple-500/30 bg-white text-purple-700 shadow-sm transition hover:bg-purple-50 active:scale-[0.97] dark:border-purple-500/25 dark:bg-slate-800/90 dark:text-purple-200 dark:hover:bg-purple-950/50"
+          >
+            <Menu className="h-6 w-6" strokeWidth={2} />
+          </button>
+        </SheetTrigger>
+        <SheetContent
+          side="right"
+          className="z-[100] flex w-[min(100%,20rem)] flex-col gap-0 border-purple-500/20 p-0 sm:max-w-sm dark:border-purple-500/30 [&>button]:right-3.5 [&>button]:top-3.5"
+        >
+          <SheetHeader className="border-b border-purple-500/15 px-4 pb-3 pt-4 text-left dark:border-purple-500/20">
+            <SheetTitle className="text-lg text-purple-900 dark:text-white">{t('menu')}</SheetTitle>
+          </SheetHeader>
+
+          <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <div className="space-y-2">
+              <p className="text-xs font-medium uppercase tracking-wide text-purple-600/80 dark:text-purple-300/80">
+                {t('languageAndTheme')}
+              </p>
+              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-purple-500/20 bg-purple-50/50 p-3 dark:border-purple-500/25 dark:bg-slate-800/50">
+                <LanguageSwitcher />
+                <div className="ml-auto shrink-0">
+                  <ThemeToggle />
                 </div>
               </div>
+            </div>
 
-              {/* Menu */}
-              <div className="py-2">
-                <button
-                  onClick={logout}
-                  className="group cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-900 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-500/10 transition"
+            {!user && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false)
+                  loginWithGoogle()
+                }}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-purple-700 active:scale-[0.99] dark:bg-purple-500 dark:hover:bg-purple-600 touch-manipulation"
+              >
+                <img
+                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  alt=""
+                  className="h-5 w-5 shrink-0 rounded-full bg-white p-0.5"
+                  aria-hidden
+                />
+                {t('login')}
+              </button>
+            )}
+
+            {user && (
+              <div className="space-y-3 rounded-xl border border-purple-500/20 bg-white p-4 shadow-sm dark:border-purple-500/30 dark:bg-slate-900/80">
+                <div className="flex gap-3">
+                  <img
+                    src={
+                      user.picture ||
+                      `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(
+                        user.name || 'User'
+                      )}`
+                    }
+                    alt={user.name}
+                    className="h-12 w-12 shrink-0 rounded-full border border-purple-500/30 bg-white"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold text-gray-900 dark:text-white">{user.name}</p>
+                    <p className="truncate text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                  </div>
+                </div>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 transition hover:bg-purple-100 dark:text-white dark:hover:bg-purple-500/15 touch-manipulation"
                 >
-                  <LogOut className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
-                  <span className="text-red-600 dark:text-red-400 font-medium">
-                    {t('logout')}
-                  </span>
+                  <LayoutDashboard className="h-4 w-4 shrink-0 text-purple-600 dark:text-purple-400" />
+                  {t('dashboard')}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false)
+                    logout()
+                  }}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 touch-manipulation"
+                >
+                  <LogOut className="h-4 w-4 shrink-0" />
+                  {t('logout')}
                 </button>
               </div>
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

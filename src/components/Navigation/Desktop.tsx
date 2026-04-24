@@ -30,9 +30,11 @@ export default function DesktopNavigation({
   const t = useTranslations('Navigation')
 
   return (
-    <div className="hidden md:flex items-center gap-8">
-      <div className="flex items-center gap-6">
-        <SearchComponent />
+    <div className="hidden min-w-0 flex-1 shrink md:flex md:min-w-0 md:items-center md:gap-4 lg:gap-8">
+      <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-4 lg:gap-6">
+        <div className="min-w-0 flex-1">
+          <SearchComponent variant="desktop" />
+        </div>
         {visibleNavLinks.map((link) => (
           <Link
             key={link.path}
@@ -54,14 +56,15 @@ export default function DesktopNavigation({
         ))}
       </div>
 
-      <div className="flex items-center gap-4 border-l border-purple-500/20 dark:border-purple-500/20 pl-8">
+      <div className="flex shrink-0 items-center gap-2 border-l border-purple-500/20 pl-3 dark:border-purple-500/20 md:gap-3 lg:gap-4 lg:pl-8">
         <LanguageSwitcher />
         <ThemeToggle />
 
         {!user ? (
           <button
+            type="button"
             onClick={loginWithGoogle}
-            className="flex items-center gap-3 cursor-pointer bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white px-6 py-2 rounded-full transition-all shadow-sm hover:shadow-lg hover:shadow-purple-500/30"
+            className="flex cursor-pointer items-center gap-2 rounded-full bg-purple-600 px-4 py-2 text-white shadow-sm transition-all hover:bg-purple-700 hover:shadow-lg hover:shadow-purple-500/30 active:scale-[0.98] dark:bg-purple-500 dark:hover:bg-purple-600 md:gap-3 md:px-5 lg:px-6 touch-manipulation"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -97,7 +100,7 @@ export default function DesktopNavigation({
 
             {/* Dropdown */}
             {openProfile && (
-              <div className="absolute right-0 mt-3 w-56 rounded-2xl bg-white dark:bg-slate-900/90 backdrop-blur-xl shadow-xl border border-purple-500/20 dark:border-purple-500/30 overflow-hidden z-50">
+              <div className="absolute right-0 z-50 mt-3 w-[min(14rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-purple-500/20 bg-white shadow-xl backdrop-blur-xl sm:w-56 dark:border-purple-500/30 dark:bg-slate-900/90">
                 {/* Header */}
                 <div className="flex items-center gap-3 px-4 py-4 border-b border-purple-500/20">
                   <img
@@ -141,12 +144,9 @@ export default function DesktopNavigation({
                   </Link>
 
                   <button
+                    type="button"
                     onClick={logout}
-                    className="group w-full flex items-center gap-3 px-4 py-3 text-sm 
-             text-gray-800 dark:text-white
-             cursor-pointer
-             hover:bg-purple-500/10
-             transition-all duration-200"
+                    className="group flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-sm text-gray-800 transition-all duration-200 hover:bg-purple-500/10 dark:text-white touch-manipulation"
                   >
                     <LogOut
                       className="w-4 h-4 text-gray-600 dark:text-white/80 
