@@ -1,37 +1,47 @@
+'use client'
+
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { AR_One_Sans } from 'next/font/google'
 
 const geist = AR_One_Sans({
   subsets: ['latin-ext'],
 })
+
+const LOGO_SRC = 'https://s3.nevaobjects.id/image-dev/uploads/20260121141804.png'
+
 export default function BrandComponent() {
   const t = useTranslations('Footer')
 
   return (
-    <div className="">
-      <div className="flex flex-col gap-3 mb-4">
-        {/* Logo */}
-        <img
-          alt="Logo"
-          className="object-contain w-40 sm:w-48"
-          src="https://s3.nevaobjects.id/image-dev/uploads/20260121141804.png"
+    <div className="w-full max-w-sm lg:max-w-none">
+      <div className="flex flex-col items-center gap-4 lg:items-start">
+        <Image
+          alt={t('brandName')}
+          src={LOGO_SRC}
+          width={192}
+          height={64}
+          className="h-auto w-40 object-contain sm:w-44"
+          sizes="(max-width: 640px) 160px, 176px"
+          priority={false}
         />
 
-        {/* Company Name + Tagline */}
-        <h2 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white leading-snug">
-          PT Aura Pakar Inovasi
-          <span
-            className={`${geist.className} block text-xs sm:text-sm font-normal text-gray-500 dark:text-gray-400`}
+        <div>
+          <h2 className="text-base font-semibold leading-snug text-foreground sm:text-lg">
+            {t('brandName')}
+          </h2>
+          <p
+            className={`${geist.className} mt-1 text-sm font-normal leading-relaxed text-muted-foreground sm:text-[0.9375rem]`}
           >
-            Ahlinya Top Up Game Favoritmu
-          </span>
-        </h2>
+            {t('tagline')}
+          </p>
+        </div>
 
-        {/* Address */}
-        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-          Kota Jakarta Selatan,
-          Jakarta, Daerah Khusus Ibukota Jakarta 12150
-        </p>
+        <address className="not-italic">
+          <p className="max-w-xs text-sm leading-relaxed text-muted-foreground lg:max-w-none">
+            {t('address')}
+          </p>
+        </address>
       </div>
     </div>
   )

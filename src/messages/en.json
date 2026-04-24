@@ -32,8 +32,19 @@
   "Footer": {
     "about": "Trusted platform to buy digital games with best prices and instant delivery.",
     "links": "Quick Links",
-    "contact": "Contact Us",
-    "rights": "All rights reserved."
+    "contact": "Contact us",
+    "rights": "All rights reserved.",
+    "navLabel": "Footer navigation",
+    "brandName": "PT Aura Pakar Inovasi",
+    "tagline": "Your trusted game top-up partner",
+    "address": "South Jakarta, Jakarta, Special Capital Region of Jakarta 12150",
+    "followUs": "Follow us",
+    "securePayment": "Secure payments",
+    "paymentMore": "+10 more",
+    "consumerComplaints": "Consumer complaints",
+    "securityPrivacy": "Security & privacy",
+    "socialInstagramAria": "PakarGaming on Instagram",
+    "socialWhatsappAria": "PakarGaming on WhatsApp"
   },
   "Cart": {
     "title": "Shopping Cart",
