@@ -6,11 +6,29 @@ const withNextIntl = createNextIntlPlugin()
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'standalone',
+  // @ts-expect-error - eslint is not defined in NextConfig type but is a valid next.js option
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self';",
+          },
+        ],
+      },
+    ]
   },
   images: {
     remotePatterns: [
