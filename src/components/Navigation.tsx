@@ -14,6 +14,7 @@ import LayoutBottom from './Navigation/LayoutBottom'
 
 export function Navigation() {
   const [openProfile, setOpenProfile] = useState(false)
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
 
   const t = useTranslations('Navigation')
   const { loginWithGoogle } = UseLoginGoogleOauth()
@@ -38,7 +39,7 @@ export function Navigation() {
   return (
     <>
       <LayoutTop>
-        <LogoNavigation />
+        <LogoNavigation collapsedOnMobile={mobileSearchOpen} />
         <DesktopNavigation
           visibleNavLinks={visibleNavLinks}
           loginWithGoogle={loginWithGoogle}
@@ -51,6 +52,8 @@ export function Navigation() {
           openProfile={openProfile}
           user={user}
           setOpenProfile={setOpenProfile}
+          mobileSearchOpen={mobileSearchOpen}
+          onMobileSearchOpenChange={setMobileSearchOpen}
         />
       </LayoutTop>
 

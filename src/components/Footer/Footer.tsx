@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import BrandComponent from './Brand'
 import ContactComponent from './Contact'
 import CopyrightComponent from './Copyright'
@@ -10,21 +11,29 @@ import SecurePayment from './Payment'
 import SocialMediaComponent from './SocialMedia'
 
 export function Footer() {
+  const t = useTranslations('Footer')
+
   return (
     <LayoutFooter>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12  max-w-5xl mx-auto">
-        {/* Brand */}
-        <div className="flex justify-center md:justify-end">
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14 lg:pb-2">
+        <aside className="flex flex-col items-center text-center lg:col-span-4 lg:items-start lg:text-left">
           <BrandComponent />
-        </div>
+        </aside>
 
-        <div className="flex flex-col items-center md:items-start gap-4">
+        <div className="flex flex-col gap-12 lg:col-span-8">
           <SecurePayment />
-          <div className="flex flex-row gap-5">
+
+          <nav
+            className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-8"
+            aria-label={t('navLabel')}
+          >
             <ContactComponent />
             <Information />
-            <SocialMediaComponent />
-          </div>
+            <div className="flex justify-center sm:col-span-2 lg:col-span-1 lg:justify-start">
+              <SocialMediaComponent />
+            </div>
+          </nav>
+
           <EtcComponent />
         </div>
       </div>

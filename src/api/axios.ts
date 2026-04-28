@@ -1,27 +1,34 @@
-import axios from 'axios'
-import { encryptPayload } from '@/lib/crypto'
+import axios from "axios";
+import { encryptPayload } from "@/lib/crypto";
+import Cookies from 'js-cookie'
+
 
 // ─── Client-side API (via Next.js proxy) ─────────────────────────────────────
 export const api = axios.create({
-  baseURL: '/api/proxy',
+  baseURL: "/api/proxy",
   headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
-})
+});
 
 api.interceptors.request.use((config) => {
-  const mutateMethods = ['post', 'put', 'patch']
-  if (config.method && mutateMethods.includes(config.method) && config.data) {
-    config.data = { payload: encryptPayload(config.data) }
+  const token = Cookies.get("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-  return config
-})
+
+  const mutateMethods = ["post", "put", "patch"];
+  if (config.method && mutateMethods.includes(config.method) && config.data) {
+    config.data = { payload: encryptPayload(config.data) };
+  }
+  return config;
+});
 
 export const serverApi = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
-})
+});

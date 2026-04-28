@@ -3,48 +3,52 @@
 import { Link } from '../../i18n/routing'
 import { useTranslations } from 'next-intl'
 
+const linkClass =
+  'rounded-md text-sm font-medium text-muted-foreground transition-colors hover:text-purple-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500 dark:hover:text-purple-400'
+
 export default function Information() {
   const t = useTranslations('FooterInformation')
 
   return (
-    <div className="max-w-sm flex flex-col gap-3">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wide">{t('title')}</h3>
+    <div className="flex w-full max-w-sm flex-col gap-3 sm:max-w-none">
+      <h3 className="text-sm font-semibold tracking-wide text-foreground">{t('title')}</h3>
 
-      <div className="flex flex-col gap-2">
-        <Link
-          href="/about"
-          className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
-        >
-          {t('about')}
-        </Link>
+      <ul className="flex flex-col gap-2">
+        <li>
+          <Link href="/about" className={linkClass}>
+            {t('about')}
+          </Link>
+        </li>
 
-        <Link
-          href="/term-and-condition"
-          className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
-        >
-          {t('terms')}
-        </Link>
+        <li>
+          <Link href="/term-and-condition" className={linkClass}>
+            {t('terms')}
+          </Link>
+        </li>
 
-        <Link
-          href="/policy-and-privacy"
-          className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
-        >
-          {t('privacy')}
-        </Link>
+        <li>
+          <Link href="/policy-and-privacy" className={linkClass}>
+            {t('privacy')}
+          </Link>
+        </li>
 
-        <Link
-          href="/check-transaction"
-          className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
-        >
-          {t('checkTransaction')}
-        </Link>
-        <Link
-          href="https://blog.pakargaming.id"
-          className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-200 hover:translate-x-1"
-        >
-          {t('blog')}
-        </Link>
-      </div>
+        <li>
+          <Link href="/check-transaction" className={linkClass}>
+            {t('checkTransaction')}
+          </Link>
+        </li>
+
+        <li>
+          <a
+            href="https://blog.pakargaming.id"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={linkClass}
+          >
+            {t('blog')}
+          </a>
+        </li>
+      </ul>
     </div>
   )
 }

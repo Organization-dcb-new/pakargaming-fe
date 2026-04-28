@@ -1,25 +1,35 @@
+'use client'
+
 import { Mail, Phone } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 export default function ContactComponent() {
+  const t = useTranslations('Footer')
+
   return (
-    <div className="flex flex-col gap-3">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wide">
-        Hubungi Kami
-      </h3>
+    <div className="flex w-full max-w-sm flex-col gap-3 sm:max-w-none">
+      <h3 className="text-sm font-semibold tracking-wide text-foreground">{t('contact')}</h3>
 
       <ul className="space-y-3">
-        <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200">
-          <Phone className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-          <a href="https://wa.me/628131793708" target="_blank" className="text-sm font-medium">
-            +62 813-1793-708
+        <li>
+          <a
+            href="https://wa.me/628131793708"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-3 text-sm font-medium text-muted-foreground transition-colors hover:text-purple-600 dark:hover:text-purple-400"
+          >
+            <Phone className="h-4 w-4 shrink-0 text-purple-600 dark:text-purple-400" aria-hidden />
+            <span className="break-all">+62 813-1793-708</span>
           </a>
         </li>
 
-        <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200">
-          <Mail className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-          <a href="mailto:pakargaming1@gmail.com" className="text-sm font-medium break-all">
-            pakargaming1@gmail.com
+        <li>
+          <a
+            href="mailto:pakargaming1@gmail.com"
+            className="group inline-flex items-center gap-3 text-sm font-medium text-muted-foreground transition-colors hover:text-purple-600 dark:hover:text-purple-400"
+          >
+            <Mail className="h-4 w-4 shrink-0 text-purple-600 dark:text-purple-400" aria-hidden />
+            <span className="break-all">pakargaming1@gmail.com</span>
           </a>
         </li>
       </ul>

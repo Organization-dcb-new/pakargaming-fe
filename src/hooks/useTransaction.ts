@@ -15,7 +15,6 @@ export function useGetTransaction(id: string) {
         const res = await api.get(`/v1/transactions/${id}`);
         return res.data;
       },
-      refetchInterval: 5000,
       refetchIntervalInBackground: true,
     },
   );
