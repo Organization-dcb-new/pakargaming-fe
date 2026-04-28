@@ -5,15 +5,12 @@ import ResponseStatsDashboard, { TransactionResponseDetail } from '../types/tran
 
 export interface GetTransactionResponsesDashboard extends ResponseStatsDashboard {}
 
-export function useGetTransactionByEmailDashboard(email?: string) {
+export function useGetTransactionDashboard() {
   return useQuery<GetTransactionResponsesDashboard>({
-    queryKey: ['transactions-dashboard', email],
+    queryKey: ['transactions-dashboard'],
     queryFn: async () => {
-      if (!email) throw new Error('Email is required')
-
-      const res = await api.get<ResponseStatsDashboard>(`/v1/transactions/email/dashboard/${email}`)
+      const res = await api.get<ResponseStatsDashboard>(`/v1/transactions/email/dashboard`)
       return res.data
     },
-    enabled: !!email,
   })
 }

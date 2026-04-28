@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Cookies from 'js-cookie'
 import { encryptPayload } from '@/lib/crypto'
 
 // ─── Client-side API (via Next.js proxy) ─────────────────────────────────────
@@ -10,7 +11,13 @@ export const api = axios.create({
   },
 })
 
+
 api.interceptors.request.use((config) => {
+  const token = Cookies.get('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+
   const mutateMethods = ['post', 'put', 'patch']
   if (config.method && mutateMethods.includes(config.method) && config.data) {
     config.data = { payload: encryptPayload(config.data) }
