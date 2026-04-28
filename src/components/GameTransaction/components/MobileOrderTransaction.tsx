@@ -1,4 +1,5 @@
 'use client'
+import { useLayoutEffect, useRef } from 'react'
 import { ShoppingCart } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Price } from '../../../types/Game'
@@ -11,11 +12,32 @@ interface OrderMobileProps {
   Payment: PaymentMethod
 }
 
+const ORDER_BAR_CSS_VAR = '--mobile-order-bar-height'
+
 export default function MobileOrderBar({ Product, handleConfirm, Payment }: OrderMobileProps) {
   const t = useTranslations('GameCheckout')
   const totalPrice = calculateTotalPrice(Payment, Product)
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    const root = document.documentElement
+    const el = rootRef.current
+    if (!el) return
+
+    const publish = () => {
+      root.style.setProperty(ORDER_BAR_CSS_VAR, `${el.offsetHeight}px`)
+    }
+    publish()
+    const ro = new ResizeObserver(publish)
+    ro.observe(el)
+    return () => {
+      ro.disconnect()
+      root.style.removeProperty(ORDER_BAR_CSS_VAR)
+    }
+  }, [Product, Payment])
+
   return (
-    <div className="xl:hidden fixed bottom-0 left-0 right-0 z-50 ">
+    <div ref={rootRef} id="mobile-order-bar" className="xl:hidden fixed bottom-0 left-0 right-0 z-50">
       {/* blur background */}
       <div className="backdrop-blur-md  bg-white/80 dark:bg-black/70 border-t border-purple-500/30 shadow-2xl px-4 py-3">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 ">
