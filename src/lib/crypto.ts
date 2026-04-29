@@ -12,13 +12,7 @@ const getSecretKey = () => {
   }
   return key;
 };
-/**
- * Encrypt data using AES (used by frontend before sending to /api/proxy)
- */
-export function encryptPayload(data: unknown): string {
-  const jsonStr = JSON.stringify(data);
-  return CryptoJS.AES.encrypt(jsonStr, getSecretKey()).toString();
-}
+
 
 /**
  * Decrypt AES payload (used by Next.js proxy route before forwarding to Go)
