@@ -12,6 +12,7 @@ import { Toaster } from 'sonner'
 import ProgressBar from '../../components/ProgressBar'
 import GlobalWhatsAppButton from '../../components/CSButton'
 import { GoogleAnalytics } from '../../components/GoogleAnalytics'
+import CryptoProvider from '../../components/CryptoProvider'
 
 export const metadata = {
   title: 'Pakar Gaming - Ahlinya Top Up Game Murah, Instan & Terpercaya',
@@ -46,6 +47,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className="min-h-screen bg-background text-foreground" suppressHydrationWarning>
+        <CryptoProvider secretKey={process.env.ENCRYPT_SECRET_KEY || ""} />
         <QueryProvider>
           <ThemeProvider
             attribute="class"

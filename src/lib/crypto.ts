@@ -5,21 +5,14 @@ import CryptoJS from "crypto-js";
 
 // Both must be the same value in .env
 const getSecretKey = () => {
-  const key =
-    process.env.ENCRYPT_SECRET_KEY || process.env.NEXT_PUBLIC_ENCRYPT_KEY;
+  const key = process.env.ENCRYPT_SECRET_KEY;
   if (!key) {
     console.error("❌ CRITICAL: ENCRYPT_SECRET_KEY is undefined in runtime!");
     return "";
   }
   return key;
 };
-/**
- * Encrypt data using AES (used by frontend before sending to /api/proxy)
- */
-export function encryptPayload(data: unknown): string {
-  const jsonStr = JSON.stringify(data);
-  return CryptoJS.AES.encrypt(jsonStr, getSecretKey()).toString();
-}
+
 
 /**
  * Decrypt AES payload (used by Next.js proxy route before forwarding to Go)
