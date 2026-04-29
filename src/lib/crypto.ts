@@ -5,8 +5,7 @@ import CryptoJS from "crypto-js";
 
 // Both must be the same value in .env
 const getSecretKey = () => {
-  const key =
-    process.env.ENCRYPT_SECRET_KEY || process.env.NEXT_PUBLIC_ENCRYPT_KEY;
+  const key = process.env.ENCRYPT_SECRET_KEY;
   if (!key) {
     console.error("❌ CRITICAL: ENCRYPT_SECRET_KEY is undefined in runtime!");
     return "";
