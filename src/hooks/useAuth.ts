@@ -9,15 +9,18 @@ type AuthUser = {
 
 export default function useAuth() {
   const [user, setUser] = useState<any>(null)
+  const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const authUser = getAuthUser()
+    const authToken = Cookies.get('token')
     setUser(authUser)
+    setToken(authToken || null)
     setLoading(false)
   }, [])
 
-  return { user, loading }
+  return { user, token, loading }
 }
 
 export const logout = () => {

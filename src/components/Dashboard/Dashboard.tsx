@@ -6,9 +6,9 @@ import MyTransaction from "./components/Transactions";
 import { useGetTransactionByEmailDashboard } from "./hooks/useGetTransaction";
 
 export default function DashboardPages() {
-  const { user, loading: authLoading } = useAuth(); // Assuming useAuth provides a loading state
+  const { user, token, loading: authLoading } = useAuth(); // Assuming useAuth provides a loading state
   const { data: DataDashboard, isLoading: dataLoading } =
-    useGetTransactionByEmailDashboard();
+    useGetTransactionByEmailDashboard(token);
 
   // Combine both loading states
   const isCurrentlyLoading = authLoading || (user && dataLoading);

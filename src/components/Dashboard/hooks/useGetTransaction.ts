@@ -7,14 +7,20 @@ import ResponseStatsDashboard, {
 
 export interface GetTransactionResponsesDashboard extends ResponseStatsDashboard {}
 
-export function useGetTransactionByEmailDashboard() {
+export function useGetTransactionByEmailDashboard(token?: string | null) {
   return useQuery<GetTransactionResponsesDashboard>({
-    queryKey: ["transactions-dashboard"],
+    queryKey: ["transactions-dashboard", token],
     queryFn: async () => {
       const res = await api.get<ResponseStatsDashboard>(
         `/v1/transactions/email/dashboard`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       return res.data;
     },
+    enabled: !!token,
   });
 }
