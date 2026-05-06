@@ -1,7 +1,7 @@
 import axios from "axios";
-import { encryptPayload } from "@/lib/crypto";
 import Cookies from 'js-cookie'
-
+import CryptoJS from "crypto-js";
+import { getClientSecretKey } from "@/lib/cryptoClient";
 
 // ─── Client-side API (via Next.js proxy) ─────────────────────────────────────
 export const api = axios.create({
@@ -20,7 +20,11 @@ api.interceptors.request.use((config) => {
 
   const mutateMethods = ["post", "put", "patch"];
   if (config.method && mutateMethods.includes(config.method) && config.data) {
-    config.data = { payload: encryptPayload(config.data) };
+    const key = getClientSecretKey();
+    if (key) {
+      const jsonStr = JSON.stringify(config.data);
+      config.data = { payload: CryptoJS.AES.encrypt(jsonStr, key).toString() };
+    }
   }
   return config;
 });
