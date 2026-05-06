@@ -28,7 +28,10 @@ export function ProductComponent({
   onLockedAction,
 }: ProductComponentProps) {
   const t = useTranslations("GameCheckout");
-  const hasCategoryProduct = product?.data?.length > 0;
+  const visibleCategories = (product?.data ?? []).filter(
+    (category) => category.product && category.product.length > 0,
+  );
+  const hasCategoryProduct = visibleCategories.length > 0;
 
   const categorizedProductIds = new Set(
     (product?.data ?? []).flatMap((cat) => cat.product.map((p) => p.id)),
@@ -70,7 +73,7 @@ export function ProductComponent({
         {/* CATEGORY BUTTON */}
         <div className="flex flex-wrap gap-2 mb-4">
           {hasCategoryProduct &&
-            product.data.map((category) => (
+            visibleCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => {
@@ -100,7 +103,7 @@ export function ProductComponent({
         {/* CATEGORY PRODUCT */}
         <div className="space-y-6">
           {hasCategoryProduct &&
-            product.data.map((category) => (
+            visibleCategories.map((category) => (
               <div
                 key={category.id}
                 id={`category-${category.id}`}
