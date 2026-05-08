@@ -13,10 +13,6 @@ export function useCreateTransaction() {
 
   return useMutation({
     mutationFn: async (payload: CreateOrderRequest) => {
-      console.log(
-        "[createTransaction] payload:",
-        JSON.stringify(payload, null, 2),
-      );
       const res = await api.post("/v1/transactions", payload);
       return res.data;
     },
