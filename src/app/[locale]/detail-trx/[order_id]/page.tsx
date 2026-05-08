@@ -1,28 +1,53 @@
-'use client'
-import { useParams } from 'next/navigation'
-import PaymentDetailCard from '../../../../components/DetailTrx/PaymentDetail'
-import ProductDetailCard from '../../../../components/DetailTrx/ProductDetail'
-import TransactionTracking from '../../../../components/DetailTrx/StatusTrx'
-import { useGetTransaction } from '../../../../hooks/useTransaction'
-import { Loader2 } from 'lucide-react'
-import PaymentFAQ from '../../../../components/DetailTrx/FAQPayment'
-import { TransactionNotFound } from '../../../../components/Transaction/TransactionNotFound'
+"use client";
+import { useEffect } from "react";
+import { useParams } from "next/navigation";
+import PaymentDetailCard from "../../../../components/DetailTrx/PaymentDetail";
+import ProductDetailCard from "../../../../components/DetailTrx/ProductDetail";
+import TransactionTracking from "../../../../components/DetailTrx/StatusTrx";
+import { useGetTransaction } from "../../../../hooks/useTransaction";
+import { Loader2 } from "lucide-react";
+import PaymentFAQ from "../../../../components/DetailTrx/FAQPayment";
+import { TransactionNotFound } from "../../../../components/Transaction/TransactionNotFound";
 
 export default function DetailTransactionPage() {
-  const { order_id } = useParams<{ order_id: string }>()
-  const { data: transaction, isLoading } = useGetTransaction(order_id)
+  const { order_id } = useParams<{ order_id: string }>();
+  const { data: transaction, isLoading, refetch } = useGetTransaction(order_id);
+
+  const dataTrx = transaction?.data;
+
+  useEffect(() => {
+    if (!dataTrx?.id) return;
+
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4002";
+    const wsProtocol = baseUrl.startsWith("https") ? "wss" : "ws";
+
+    const wsUrl = `${baseUrl.replace(/^http(s)?/, wsProtocol)}/v1/ws/payment/${dataTrx.id}`;
+
+    const socket = new WebSocket(wsUrl);
+
+    socket.onmessage = (event) => {
+      refetch();
+    };
+
+    socket.onerror = (error) => {};
+
+    socket.onclose = () => {};
+    return () => {
+      socket.close();
+    };
+  }, [dataTrx?.id, refetch]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-purple-50/40 dark:via-purple-900/40 to-background flex items-center justify-center px-4 py-10">
         <LoadingSpinner />
       </div>
-    )
+    );
   }
 
-  const dataTrx = transaction?.data
   if (!dataTrx) {
-    return <TransactionNotFound />
+    return <TransactionNotFound />;
   }
 
   return (
@@ -36,7 +61,11 @@ export default function DetailTransactionPage() {
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
               <div className="lg:col-span-5">
-                <TransactionTracking data={dataTrx} isEmbedded showProgress={false} />
+                <TransactionTracking
+                  data={dataTrx}
+                  isEmbedded
+                  showProgress={false}
+                />
               </div>
 
               <div className="flex flex-col gap-6 lg:col-span-7">
@@ -50,7 +79,7 @@ export default function DetailTransactionPage() {
         <PaymentFAQ />
       </div>
     </div>
-  )
+  );
 }
 
 export function LoadingSpinner() {
@@ -58,5 +87,5 @@ export function LoadingSpinner() {
     <div className="flex h-64 items-center justify-center">
       <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
     </div>
-  )
+  );
 }

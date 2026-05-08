@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import axios from "axios";
 
 export function useGetTransaction(id: string) {
-  const { data, isLoading } = useQuery<GetTransactionResponseWithDetailProduct>(
+  const { data, isLoading, refetch } = useQuery<GetTransactionResponseWithDetailProduct>(
     {
       queryKey: ["get-transaction-detail", id],
       queryFn: async () => {
@@ -19,22 +19,29 @@ export function useGetTransaction(id: string) {
     },
   );
 
-  return { data, isLoading };
+  return { data, isLoading, refetch };
 }
 
-export function useGetTransactionByEmail(email?: string, page = 1) {
+export function useGetTransactionByEmail(
+  email?: string,
+  page = 1,
+  token?: string | null,
+) {
   return useQuery<GetTransactionResponses>({
-    queryKey: ["transactions", email, page],
+    queryKey: ["transactions", email, page, token],
     queryFn: async () => {
-      const res = await api.get("/v1/transactions/email/" + email, {
+      const res = await api.get("/v1/transactions/email", {
         params: {
           page,
           limit: 10,
         },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       return res.data;
     },
-    enabled: !!email,
+    enabled: !!email && !!token,
   });
 }
 
