@@ -18,7 +18,8 @@ export default function DetailTransactionPage() {
   useEffect(() => {
     if (!dataTrx?.id) return;
 
-    const wsUrl = `wss://api.pakargaming.id/v1/ws/payment/${dataTrx.id}`;
+    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${wsProtocol}//${window.location.host}/api/ws/payment/${dataTrx.id}`;
 
     const socket = new WebSocket(wsUrl);
 
