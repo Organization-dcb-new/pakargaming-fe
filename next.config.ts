@@ -30,6 +30,15 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/ws/:path*',
+        // Use http/https protocol for destination, Next.js will handle the WS upgrade automatically
+        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.pakargaming.id'}/v1/ws/:path*`,
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {
