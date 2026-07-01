@@ -23,7 +23,7 @@ export default function LogoNavigation({
       ].join(' ')}
     >
       <div className="flex items-center justify-start md:mr-1 lg:mr-2">
-        <div className="animate-fadeInUp max-w-[min(9.5rem,38vw)] sm:max-w-none">
+        <div className="animate-fadeInUp motion-reduce:animate-none max-w-[min(9.5rem,38vw)] sm:max-w-none">
           <img
             src="https://s3.nevaobjects.id/image-dev/uploads/20260121141804.png"
             alt={t('logoAlt')}
@@ -31,10 +31,10 @@ export default function LogoNavigation({
     object-contain object-left
     h-9 w-auto min-[400px]:h-10 sm:h-11 md:h-12
 
-    animate-floatSoft
+    animate-floatSoft motion-reduce:animate-none
 
-    drop-shadow-[0_10px_25px_rgba(0,0,0,0.25)]
-    hover:drop-shadow-[0_14px_35px_rgba(139,92,246,0.35)]
+    drop-shadow-[0_10px_25px_rgb(0_0_0/0.25)]
+    hover:drop-shadow-[0_14px_35px_rgb(147_51_234/0.35)]
     transition-all duration-500
   "
           />

@@ -1,49 +1,45 @@
-'use client'
-
 import { Link } from '../../i18n/routing'
 import { useTranslations } from 'next-intl'
-
-const linkClass =
-  'rounded-md text-sm font-medium text-muted-foreground transition-colors hover:text-purple-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500 dark:hover:text-purple-400'
+import { FOOTER_LINKS, footerHeadingClass, footerLinkClass } from './config'
 
 export default function Information() {
   const t = useTranslations('FooterInformation')
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-3 sm:max-w-none">
-      <h3 className="text-sm font-semibold tracking-wide text-foreground">{t('title')}</h3>
+    <div className="flex w-full flex-col gap-3">
+      <h3 className={footerHeadingClass}>{t('title')}</h3>
 
       <ul className="flex flex-col gap-2">
         <li>
-          <Link href="/about" className={linkClass}>
+          <Link href="/about" className={footerLinkClass}>
             {t('about')}
           </Link>
         </li>
 
         <li>
-          <Link href="/term-and-condition" className={linkClass}>
+          <Link href="/term-and-condition" className={footerLinkClass}>
             {t('terms')}
           </Link>
         </li>
 
         <li>
-          <Link href="/policy-and-privacy" className={linkClass}>
+          <Link href="/policy-and-privacy" className={footerLinkClass}>
             {t('privacy')}
           </Link>
         </li>
 
         <li>
-          <Link href="/check-transaction" className={linkClass}>
+          <Link href="/check-transaction" className={footerLinkClass}>
             {t('checkTransaction')}
           </Link>
         </li>
 
         <li>
           <a
-            href="https://blog.pakargaming.id"
+            href={FOOTER_LINKS.blog}
             target="_blank"
             rel="noopener noreferrer"
-            className={linkClass}
+            className={footerLinkClass}
           >
             {t('blog')}
           </a>

@@ -24,7 +24,7 @@ export function LanguageSwitcher() {
 
   return (
     <div
-      className="mr-2 flex items-center rounded-lg border border-purple-500/30 dark:border-purple-500/20 bg-white/80 dark:bg-slate-800/80 p-0.5"
+      className="mr-2 flex items-center rounded-lg border border-brand/30 bg-card p-0.5"
       role="group"
       aria-label="Language"
     >
@@ -36,10 +36,11 @@ export function LanguageSwitcher() {
             type="button"
             onClick={() => handleLocaleChange(code)}
             disabled={isPending}
-            className={`min-w-[2.25rem] rounded-md px-2 py-1 text-xs font-semibold uppercase transition-colors disabled:opacity-50 ${
+            aria-pressed={active}
+            className={`min-w-[2.25rem] rounded-md px-2 py-1 text-xs font-semibold uppercase transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background ${
               active
-                ? 'bg-purple-600 text-white shadow-sm dark:bg-purple-500'
-                : 'text-gray-700 hover:bg-purple-100 dark:text-gray-300 dark:hover:bg-purple-500/20'
+                ? 'bg-brand text-brand-foreground shadow-sm'
+                : 'text-muted-foreground hover:bg-brand/10'
             }`}
           >
             {label}

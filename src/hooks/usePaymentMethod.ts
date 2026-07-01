@@ -3,7 +3,7 @@ import { GetPaymentMethodResponse } from '../types/PaymentMethod'
 import { api } from '../api/axios'
 
 export function useGetPaymentMethod() {
-  const { data, isLoading } = useQuery<GetPaymentMethodResponse>({
+  const { data, isLoading, isError } = useQuery<GetPaymentMethodResponse>({
     queryKey: ['get-payment-methods'],
     queryFn: async () => {
       const res = await api.get('/v1/payment-categories/client')
@@ -11,5 +11,5 @@ export function useGetPaymentMethod() {
     },
   })
 
-  return { data, isLoading }
+  return { data, isLoading, isError }
 }

@@ -39,7 +39,8 @@
     "address": "Kota Jakarta Selatan, Jakarta, Daerah Khusus Ibukota Jakarta 12150",
     "followUs": "Ikuti kami",
     "securePayment": "Pembayaran aman",
-    "paymentMore": "+10 lainnya",
+    "paymentMore": "+{count} lainnya",
+    "paymentUnavailable": "Metode pembayaran akan segera tersedia.",
     "consumerComplaints": "Layanan pengaduan konsumen",
     "securityPrivacy": "Keamanan & privasi",
     "socialInstagramAria": "PakarGaming di Instagram",
@@ -193,6 +194,11 @@
     "faq6Link": "Instagram Pakargaming"
   },
   "CheckTransaction": {
+    "eyebrow": "Cek Transaksi",
+    "inputLabel": "Nomor Invoice",
+    "feature1": "Tanpa perlu login",
+    "feature2": "Hasil real-time",
+    "feature3": "Aman & terenkripsi",
     "heroBefore": "Cek Invoice Kamu",
     "heroHighlight": "dengan Mudah",
     "heroAfter": "dan Cepat",
@@ -280,6 +286,9 @@
     "buyAgain": "Beli lagi"
   },
   "Dashboard": {
+    "welcome": "Selamat datang kembali",
+    "welcomeSubtitle": "Berikut ringkasan aktivitas transaksi Anda.",
+    "loading": "Memuat data...",
     "summaryTitle": "Ringkasan Transaksi",
     "paymentNumber": "Nomor pembayaran",
     "date": "Tanggal",
@@ -310,7 +319,21 @@
     "placeholder": "Alamat email",
     "subscribe": "Berlangganan"
   },
+  "LogoutDialog": {
+    "title": "Keluar dari akun?",
+    "description": "Anda akan keluar dari akun PakarGaming dan perlu masuk kembali untuk mengakses dashboard.",
+    "cancel": "Batal",
+    "confirm": "Ya, keluar"
+  },
+  "CSButton": {
+    "label": "Chat CS",
+    "bubble": "Butuh bantuan? Chat kami 👋",
+    "dismiss": "Tutup",
+    "aria": "Chat CS",
+    "message": "Halo CS Pakargaming, saya butuh bantuan."
+  },
   "ClientLayout": {
+    "menu": "Menu",
     "dashboard": "Dasbor",
     "logout": "Keluar"
   },

@@ -2,189 +2,242 @@
 
 import React from 'react'
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { CheckCircle, XCircle, Clock, Wallet, Activity, AlertCircle } from 'lucide-react'
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  Wallet,
+  Activity,
+  AlertCircle,
+  Receipt,
+  type LucideIcon,
+} from 'lucide-react'
 import { GetTransactionResponsesDashboard } from '../hooks/useGetTransaction'
 import { PaymentResponseDetail } from '../types/transactions'
 import { useRouter } from '../../../i18n/routing'
 import { useTranslations } from 'next-intl'
+import { Skeleton } from '../../ui/skeleton'
 
 interface MyTransactionProps {
-  DataDashboard: GetTransactionResponsesDashboard
+  DataDashboard?: GetTransactionResponsesDashboard
   isLoading: boolean
 }
+
+const currency = new Intl.NumberFormat('id-ID', {
+  style: 'currency',
+  currency: 'IDR',
+  maximumFractionDigits: 0,
+})
+
 export default function MyTransaction({ DataDashboard, isLoading }: MyTransactionProps) {
   const router = useRouter()
   const t = useTranslations('Dashboard')
 
-  const data: PaymentResponseDetail[] = React.useMemo(
+  const stats = DataDashboard?.data
+  const transactions = stats?.transaction_detail ?? []
+  const isEmpty = !isLoading && transactions.length === 0
+
+  const rows: PaymentResponseDetail[] = React.useMemo(
     () =>
       isLoading
-        ? Array.from({ length: 5 }).map((_, i) => ({
-            id: `${i + 1}`,
-            payment_number: '...',
-            order_id: '...',
-            amount: 0,
-            status: 'Pending',
-            payment_method_id: '...',
-            payment_channel: '...',
-            payment_url: '...',
-            game_name: '...',
-            game_image: '...',
-            game_item: '...',
-            guide: {} as any,
-            created_at: '...',
-          }))
-        : DataDashboard?.data?.transaction_detail || [],
-    [DataDashboard, isLoading]
+        ? Array.from({ length: 5 }).map((_, i) => ({ id: `skeleton-${i}` }) as PaymentResponseDetail)
+        : transactions,
+    [isLoading, transactions]
   )
-
-  const hasData = data.length > 0
 
   const columns = React.useMemo<ColumnDef<PaymentResponseDetail>[]>(
     () => [
       {
         accessorKey: 'payment_number',
         header: t('paymentNumber'),
-        cell: ({ row, getValue }) => {
-          const value = getValue() as string
-          const id = row.original.id
-
-          return hasData ? (
-            <span
-              className="text-indigo-600 dark:text-indigo-400 cursor-pointer hover:underline"
-              onClick={() => router.push(`/detail-trx/${id}`)}
-            >
-              {value}
-            </span>
+        cell: ({ row, getValue }) =>
+          isLoading ? (
+            <Skeleton className="h-4 w-28 rounded" />
           ) : (
-            '-'
-          )
-        },
+            <button
+              type="button"
+              onClick={() => router.push(`/detail-trx/${row.original.id}`)}
+              className="font-medium text-brand transition-colors hover:underline"
+            >
+              {getValue() as string}
+            </button>
+          ),
       },
       {
         accessorKey: 'created_at',
         header: t('date'),
-        cell: ({ getValue }) => {
-          const dateStr = getValue() as string
-          return hasData ? <span>{dateStr.split('.')[0]}</span> : '-'
-        },
+        cell: ({ getValue }) =>
+          isLoading ? (
+            <Skeleton className="h-4 w-32 rounded" />
+          ) : (
+            <span className="text-muted-foreground">
+              {((getValue() as string) || '').split('.')[0].replace('T', ' ')}
+            </span>
+          ),
       },
       {
         accessorKey: 'amount',
         header: t('amount'),
         cell: ({ getValue }) =>
-          hasData ? (
-            <span>
-              {new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                maximumFractionDigits: 0,
-              }).format(getValue() as number)}
-            </span>
+          isLoading ? (
+            <Skeleton className="h-4 w-20 rounded" />
           ) : (
-            '-'
+            <span className="font-medium text-foreground">{currency.format(getValue() as number)}</span>
           ),
       },
       {
         accessorKey: 'status',
         header: t('status'),
         cell: ({ getValue }) =>
-          hasData ? <StatusBadge status={getValue() as string} /> : <span>-</span>,
+          isLoading ? (
+            <Skeleton className="h-5 w-16 rounded-md" />
+          ) : (
+            <StatusBadge status={getValue() as string} />
+          ),
       },
     ],
-    [hasData, router, t]
+    [isLoading, router, t]
   )
 
-  const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() })
+  const table = useReactTable({ data: rows, columns, getCoreRowModel: getCoreRowModel() })
 
   return (
-    <div className="p-4 lg:p-6 space-y-6 font-sans">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('summaryTitle')}</h1>
-      </div>
+    <div className="space-y-6">
+      {/* Summary stats */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-foreground">{t('summaryTitle')}</h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <StatCard
-          title={t('statTotalTransactions')}
-          value={DataDashboard?.data?.total_transactions || 0}
-          icon={Activity}
-          color="indigo"
-        />
-        <StatCard
-          title={t('statTotalAmount')}
-          value={
-            DataDashboard?.data?.total_amount
-              ? `Rp ${DataDashboard.data.total_amount.toLocaleString('id-ID')}`
-              : 'Rp 0'
-          }
-          icon={Wallet}
-          color="emerald"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard
-          title={t('statPending')}
-          value={DataDashboard?.data?.transactions_pending || 0}
-          icon={Clock}
-          color="amber"
-        />
-        <StatCard
-          title={t('statFailed')}
-          value={DataDashboard?.data?.transactions_failed || 0}
-          icon={AlertCircle}
-          color="rose"
-        />
-        <StatCard
-          title={t('statPaid')}
-          value={DataDashboard?.data?.transactions_paid || 0}
-          icon={CheckCircle}
-          color="blue"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{t('recentTitle')}</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <StatCard
+            title={t('statTotalTransactions')}
+            value={stats?.total_transactions ?? 0}
+            icon={Activity}
+            color="brand"
+            loading={isLoading}
+          />
+          <StatCard
+            title={t('statTotalAmount')}
+            value={currency.format(stats?.total_amount ?? 0)}
+            icon={Wallet}
+            color="emerald"
+            loading={isLoading}
+          />
         </div>
 
-        <div className="overflow-hidden bg-white/70 dark:bg-gray-900/70 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
-          {hasData ? (
-            <table className="w-full text-left border-separate border-spacing-0 text-sm">
-              <thead className="bg-gray-50 dark:bg-gray-800/50">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 border-b dark:border-gray-800"
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="group hover:bg-indigo-50/20 dark:hover:bg-indigo-900/10 transition-colors"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className="px-4 py-2 text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <StatCard
+            title={t('statPaid')}
+            value={stats?.transactions_paid ?? 0}
+            icon={CheckCircle}
+            color="blue"
+            loading={isLoading}
+          />
+          <StatCard
+            title={t('statPending')}
+            value={stats?.transactions_pending ?? 0}
+            icon={Clock}
+            color="amber"
+            loading={isLoading}
+          />
+          <StatCard
+            title={t('statFailed')}
+            value={stats?.transactions_failed ?? 0}
+            icon={AlertCircle}
+            color="rose"
+            loading={isLoading}
+          />
+        </div>
+      </section>
+
+      {/* Recent transactions */}
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold text-foreground">{t('recentTitle')}</h2>
+
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          {isEmpty ? (
+            <div className="flex flex-col items-center justify-center gap-3 px-6 py-12 text-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                <Receipt className="h-6 w-6" />
+              </span>
+              <p className="text-sm text-muted-foreground">{t('emptyState')}</p>
+            </div>
           ) : (
-            <div className="text-center p-6 text-gray-500 dark:text-gray-400">{t('emptyState')}</div>
+            <div className="overflow-x-auto">
+              <table className="w-full border-separate border-spacing-0 text-sm">
+                <thead className="bg-muted/50">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          key={header.id}
+                          className="whitespace-nowrap border-b border-border px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody>
+                  {table.getRowModel().rows.map((row) => (
+                    <tr key={row.id} className="transition-colors hover:bg-muted/40">
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="whitespace-nowrap border-b border-border px-4 py-3"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  )
+}
+
+type StatColor = 'brand' | 'emerald' | 'amber' | 'rose' | 'blue'
+
+const STAT_CHIP: Record<StatColor, string> = {
+  brand: 'bg-brand/10 text-brand',
+  emerald: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400',
+  amber: 'bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400',
+  rose: 'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400',
+  blue: 'bg-blue-100 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400',
+}
+
+function StatCard({
+  title,
+  value,
+  icon: Icon,
+  color,
+  loading,
+}: {
+  title: string
+  value: React.ReactNode
+  icon: LucideIcon
+  color: StatColor
+  loading?: boolean
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-4 shadow-sm transition-colors hover:border-brand/30">
+      <div className="flex items-center gap-3">
+        <span
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${STAT_CHIP[color]}`}
+        >
+          <Icon className="h-5 w-5" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{title}</p>
+          {loading ? (
+            <Skeleton className="mt-1.5 h-6 w-20 rounded-md" />
+          ) : (
+            <p className="mt-0.5 truncate text-xl font-bold text-foreground">{value}</p>
           )}
         </div>
       </div>
@@ -192,45 +245,40 @@ export default function MyTransaction({ DataDashboard, isLoading }: MyTransactio
   )
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const t = useTranslations('Dashboard')
-  const config: any = {
-    PAID: { color: 'bg-green-100 text-green-700', Icon: CheckCircle, label: t('statusLabelPaid') },
-    FAILED: { color: 'bg-red-100 text-red-700', Icon: XCircle, label: t('statusLabelFailed') },
-    PENDING: { color: 'bg-yellow-100 text-yellow-700', Icon: Clock, label: t('statusLabelPending') },
-  }
-  const { color, Icon, label } = config[status] || config['PENDING']
-  return (
-    <span
-      className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-semibold ${color} gap-1`}
-    >
-      <Icon className="w-3 h-3" /> {label}
-    </span>
-  )
+const STATUS_STYLES = {
+  paid: {
+    className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
+    Icon: CheckCircle,
+  },
+  failed: {
+    className: 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400',
+    Icon: XCircle,
+  },
+  pending: {
+    className: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+    Icon: Clock,
+  },
+} as const
+
+function normalizeStatus(status: string): keyof typeof STATUS_STYLES {
+  const s = (status || '').toUpperCase()
+  if (s === 'PAID' || s === 'SUCCESS') return 'paid'
+  if (s === 'FAILED') return 'failed'
+  return 'pending'
 }
 
-function StatCard({ title, value, icon: Icon, color }: any) {
-  const colors: any = {
-    indigo: 'from-indigo-500/80 to-indigo-600/80',
-    emerald: 'from-emerald-500/80 to-emerald-600/80',
-    amber: 'from-amber-400/80 to-amber-500/80',
-    rose: 'from-rose-500/80 to-rose-600/80',
-    blue: 'from-blue-500/80 to-blue-600/80',
-  }
+function StatusBadge({ status }: { status: string }) {
+  const t = useTranslations('Dashboard')
+  const key = normalizeStatus(status)
+  const { className, Icon } = STATUS_STYLES[key]
+  const label =
+    key === 'paid' ? t('statusLabelPaid') : key === 'failed' ? t('statusLabelFailed') : t('statusLabelPending')
 
   return (
-    <div
-      className={`relative p-3 rounded-xl bg-gradient-to-br ${colors[color]} text-white shadow-sm hover:scale-[1.02] transition-transform duration-200`}
+    <span
+      className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold ${className}`}
     >
-      <div className="flex justify-between items-start">
-        <p className="text-white/80 text-[10px] font-bold uppercase tracking-wider">{title}</p>
-        <div className="p-1 bg-white/10 dark:bg-white/20 rounded-lg backdrop-blur-sm">
-          <Icon className="w-3 h-3 text-white" />
-        </div>
-      </div>
-      <p className="text-xl font-bold mt-2">{value}</p>
-
-      <div className="absolute -right-3 -bottom-3 w-12 h-12 bg-white/10 dark:bg-white/5 rounded-full blur-2xl" />
-    </div>
+      <Icon className="h-3 w-3" /> {label}
+    </span>
   )
 }

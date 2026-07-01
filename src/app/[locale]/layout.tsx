@@ -56,7 +56,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <NextIntlClientProvider messages={messages}>
-              <div className="min-h-screen bg-gradient-to-br from-background via-purple-50/50 dark:via-purple-900/50 to-background">
+              <div className="min-h-screen">
                 <ProgressBar />
                 <Navigation />
                 <main>

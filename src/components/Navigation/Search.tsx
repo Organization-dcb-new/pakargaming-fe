@@ -58,13 +58,13 @@ export default function SearchComponent({
           }
         }}
         className={[
-          'flex h-10 w-full items-center border border-purple-500/30 bg-white px-2.5 shadow-sm dark:bg-black/30 min-[400px]:px-3',
+          'flex h-10 w-full items-center border border-brand/30 bg-card px-2.5 shadow-sm min-[400px]:px-3 focus-within:ring-2 focus-within:ring-ring',
           effectiveOpen ? 'rounded-xl sm:rounded-full' : 'cursor-pointer rounded-full',
         ].join(' ')}
       >
         <button
           type="button"
-          className="inline-flex shrink-0 cursor-pointer touch-manipulation rounded-md text-purple-600 outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 dark:text-purple-400"
+          className="inline-flex shrink-0 cursor-pointer touch-manipulation rounded-md text-brand outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-expanded={effectiveOpen}
           aria-label={effectiveOpen ? t('collapseSearch') : t('searchPlaceholder')}
           onMouseDown={(e) => e.preventDefault()}
@@ -93,12 +93,21 @@ export default function SearchComponent({
             if (collapsibleChrome || isMobileNav) setOpen(true)
           }}
           onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setKeyword('')
+              if (collapsibleChrome) {
+                setOpen(false)
+                inputRef.current?.blur()
+              }
+            }
+          }}
           onBlur={() => {
             if (collapsibleChrome && !keyword) setOpen(false)
           }}
           placeholder={t('searchPlaceholder')}
           className={[
-            'ml-2 min-w-0 flex-1 cursor-text bg-transparent text-sm outline-none transition-opacity duration-200',
+            'ml-2 min-w-0 flex-1 cursor-text bg-transparent text-sm text-foreground outline-none transition-opacity duration-200 placeholder:text-muted-foreground',
             effectiveOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
           ].join(' ')}
         />
@@ -106,19 +115,19 @@ export default function SearchComponent({
 
       {/* PREVIEW */}
       {effectiveOpen && debouncedKeyword && (
-        <div className="absolute left-0 right-0 top-11 z-[60] max-h-[min(22rem,70vh)] overflow-y-auto overflow-x-hidden rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-900 sm:top-12">
+        <div className="absolute left-0 right-0 top-11 z-50 max-h-[min(22rem,70vh)] overflow-y-auto overflow-x-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl sm:top-12">
           {isLoading && (
-            <div className="flex items-center gap-3 p-4 text-sm text-gray-500">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-purple-500 border-t-transparent"></div>
+            <div className="flex items-center gap-3 p-4 text-sm text-muted-foreground">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand border-t-transparent"></div>
               <span>{t('searching')}</span>
             </div>
           )}
 
           {!isLoading && games.length === 0 && (
             <div className="p-8 text-center">
-              <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+              <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                 <svg
-                  className="h-8 w-8 text-gray-400"
+                  className="h-8 w-8 text-muted-foreground"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -131,7 +140,7 @@ export default function SearchComponent({
                   />
                 </svg>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t('gameNotFound')}</p>
+              <p className="text-sm text-muted-foreground">{t('gameNotFound')}</p>
             </div>
           )}
 
@@ -142,9 +151,9 @@ export default function SearchComponent({
                   onClick={() => setKeyword('')}
                   key={game.id}
                   href={`/games/${game.slug}`}
-                  className="group flex items-center gap-3 border-b border-gray-100 px-4 py-3 transition-all duration-200 last:border-b-0 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:border-gray-800 dark:hover:from-purple-900/20 dark:hover:to-pink-900/20"
+                  className="group flex items-center gap-3 border-b border-border px-4 py-3 transition-colors duration-200 last:border-b-0 hover:bg-brand/10"
                 >
-                  <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 ring-2 ring-gray-200 transition-all group-hover:ring-purple-400 dark:bg-gray-800 dark:ring-gray-700 dark:group-hover:ring-purple-500">
+                  <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-muted ring-2 ring-border transition-all group-hover:ring-brand">
                     {game.thumbnail_url ? (
                       <img
                         src={game.thumbnail_url}
@@ -154,7 +163,7 @@ export default function SearchComponent({
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
-                        <svg className="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="h-6 w-6 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                           <path
                             fillRule="evenodd"
@@ -167,7 +176,7 @@ export default function SearchComponent({
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 transition-colors group-hover:text-purple-600 dark:text-white dark:group-hover:text-purple-400">
+                    <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-brand">
                       {game.name}
                     </p>
                   </div>

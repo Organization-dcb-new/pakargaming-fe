@@ -32,11 +32,7 @@ export default function NavigationShowGame({
           overflow-x-auto md:overflow-visible
           scrollbar-thin scrollbar-thumb-purple-400 scrollbar-track-purple-100
           transition-all duration-300
-          ${
-            isNavSticky
-              ? 'bg-white  dark:bg-black/20 border-b border-purple-500/20 backdrop-blur-sm'
-              : 'bg-transparent'
-          }
+          bg-transparent
         `}
     >
       {shows.map((show) => {
@@ -60,21 +56,18 @@ export default function NavigationShowGame({
           ${
             isSelected
               ? `
-                bg-purple-700
-                text-white
-                border border-purple-700
-                ring-2 ring-purple-400
-                shadow-purple-500/40
-                dark:bg-purple-500 dark:border-purple-500 dark:ring-purple-400
+                bg-gradient-to-r from-brand to-brand-2
+                text-brand-foreground
+                border border-brand/60
+                ring-2 ring-brand/40
+                shadow-brand/40
               `
               : `
-                bg-purple-200
-                text-purple-900
-                hover:bg-purple-300
-                hover:text-purple-950
-                dark:bg-purple-600
-                dark:text-white
-                dark:hover:bg-purple-700
+                bg-card
+                text-brand
+                border border-brand/30
+                hover:border-brand
+                hover:shadow-md
               `
           }
           ${!isSelected && 'hover:scale-[1.05]'}
@@ -99,14 +92,10 @@ export default function NavigationShowGame({
     cursor-pointer
     shadow-sm
 
-    bg-emerald-500
-    text-white
-    border border-emerald-500
-    hover:bg-emerald-600
+    bg-gradient-to-r from-brand to-brand-2
+    text-brand-foreground
+    hover:brightness-110
     hover:scale-[1.05]
-    dark:bg-emerald-400
-    dark:border-emerald-400
-    dark:hover:bg-emerald-500
 
     flex items-center gap-2
   `}
