@@ -1,5 +1,3 @@
-'use client'
-
 import { useTranslations } from 'next-intl'
 import BrandComponent from './Brand'
 import ContactComponent from './Contact'
@@ -15,27 +13,30 @@ export function Footer() {
 
   return (
     <LayoutFooter>
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14 lg:pb-2">
-        <aside className="flex flex-col items-center text-center lg:col-span-4 lg:items-start lg:text-left">
+      {/* Brand + navigation columns */}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12">
+        <div className="lg:col-span-4">
           <BrandComponent />
-        </aside>
-
-        <div className="flex flex-col gap-12 lg:col-span-8">
-          <SecurePayment />
-
-          <nav
-            className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-8"
-            aria-label={t('navLabel')}
-          >
-            <ContactComponent />
-            <Information />
-            <div className="flex justify-center sm:col-span-2 lg:col-span-1 lg:justify-start">
-              <SocialMediaComponent />
-            </div>
-          </nav>
-
-          <EtcComponent />
         </div>
+
+        <nav
+          className="grid grid-cols-1 gap-10 sm:grid-cols-3 lg:col-span-8 lg:gap-8"
+          aria-label={t('navLabel')}
+        >
+          <ContactComponent />
+          <Information />
+          <SocialMediaComponent />
+        </nav>
+      </div>
+
+      {/* Payment methods */}
+      <div className="mt-10 border-t border-border/60 pt-8 dark:border-white/10 lg:mt-12">
+        <SecurePayment />
+      </div>
+
+      {/* Consumer complaints + security badges */}
+      <div className="mt-8 border-t border-border/60 pt-8 dark:border-white/10">
+        <EtcComponent />
       </div>
 
       <CopyrightComponent />

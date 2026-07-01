@@ -40,7 +40,8 @@
     "address": "South Jakarta, Jakarta, Special Capital Region of Jakarta 12150",
     "followUs": "Follow us",
     "securePayment": "Secure payments",
-    "paymentMore": "+10 more",
+    "paymentMore": "+{count} more",
+    "paymentUnavailable": "Payment methods will be available soon.",
     "consumerComplaints": "Consumer complaints",
     "securityPrivacy": "Security & privacy",
     "socialInstagramAria": "PakarGaming on Instagram",
@@ -194,6 +195,11 @@
     "faq6Link": "Pakargaming on Instagram"
   },
   "CheckTransaction": {
+    "eyebrow": "Check transaction",
+    "inputLabel": "Invoice number",
+    "feature1": "No login required",
+    "feature2": "Real-time results",
+    "feature3": "Secure & encrypted",
     "heroBefore": "Check your invoice",
     "heroHighlight": "easily",
     "heroAfter": "and quickly",
@@ -281,6 +287,9 @@
     "buyAgain": "Buy again"
   },
   "Dashboard": {
+    "welcome": "Welcome back",
+    "welcomeSubtitle": "Here's a summary of your transaction activity.",
+    "loading": "Loading data...",
     "summaryTitle": "Transaction summary",
     "paymentNumber": "Payment number",
     "date": "Date",
@@ -311,7 +320,21 @@
     "placeholder": "Email address",
     "subscribe": "Subscribe"
   },
+  "LogoutDialog": {
+    "title": "Log out of your account?",
+    "description": "You'll be signed out of PakarGaming and will need to log in again to access your dashboard.",
+    "cancel": "Cancel",
+    "confirm": "Yes, log out"
+  },
+  "CSButton": {
+    "label": "Chat us",
+    "bubble": "Need help? Chat with us 👋",
+    "dismiss": "Dismiss",
+    "aria": "Chat customer support",
+    "message": "Hi Pakargaming CS, I need help."
+  },
   "ClientLayout": {
+    "menu": "Menu",
     "dashboard": "Dashboard",
     "logout": "Logout"
   },

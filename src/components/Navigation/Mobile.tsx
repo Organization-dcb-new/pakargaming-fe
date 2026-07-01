@@ -5,9 +5,9 @@ import { LayoutDashboard, LogOut, Menu } from 'lucide-react'
 import { ThemeToggle } from '../ThemeToggle'
 import { LanguageSwitcher } from '../LanguageSwitcher'
 import SearchComponent from './Search'
-import { logout } from '../../hooks/useAuth'
 import { useTranslations } from 'next-intl'
 import { Link } from '../../i18n/routing'
+import LogoutConfirmDialog from '../Auth/LogoutConfirmDialog'
 import {
   Sheet,
   SheetContent,
@@ -25,6 +25,9 @@ interface MobileNaviProps {
   onMobileSearchOpenChange: (open: boolean) => void
 }
 
+const focusRing =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+
 export default function MobileNavigation({
   user,
   loginWithGoogle,
@@ -34,6 +37,7 @@ export default function MobileNavigation({
 }: MobileNaviProps) {
   const t = useTranslations('Navigation')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [logoutOpen, setLogoutOpen] = useState(false)
 
   return (
     <div className="relative z-0 flex min-w-0 flex-1 items-center justify-end gap-2 sm:justify-start md:hidden">
@@ -61,25 +65,25 @@ export default function MobileNavigation({
             type="button"
             aria-label={t('openMenu')}
             aria-expanded={menuOpen}
-            className="touch-manipulation inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-purple-500/30 bg-white text-purple-700 shadow-sm transition hover:bg-purple-50 active:scale-[0.97] dark:border-purple-500/25 dark:bg-slate-800/90 dark:text-purple-200 dark:hover:bg-purple-950/50"
+            className={`inline-flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-xl border border-brand/30 bg-card text-brand shadow-sm transition hover:border-brand hover:shadow-md active:scale-[0.97] ${focusRing}`}
           >
             <Menu className="h-6 w-6" strokeWidth={2} />
           </button>
         </SheetTrigger>
         <SheetContent
           side="right"
-          className="z-[100] flex w-[min(100%,20rem)] flex-col gap-0 border-purple-500/20 p-0 sm:max-w-sm dark:border-purple-500/30 [&>button]:right-3.5 [&>button]:top-3.5"
+          className="z-[100] flex w-[min(100%,20rem)] flex-col gap-0 border-border p-0 sm:max-w-sm [&>button]:right-3.5 [&>button]:top-3.5"
         >
-          <SheetHeader className="border-b border-purple-500/15 px-4 pb-3 pt-4 text-left dark:border-purple-500/20">
-            <SheetTitle className="text-lg text-purple-900 dark:text-white">{t('menu')}</SheetTitle>
+          <SheetHeader className="border-b border-border px-4 pb-3 pt-4 text-left">
+            <SheetTitle className="text-lg text-foreground">{t('menu')}</SheetTitle>
           </SheetHeader>
 
           <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
             <div className="space-y-2">
-              <p className="text-xs font-medium uppercase tracking-wide text-purple-600/80 dark:text-purple-300/80">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {t('languageAndTheme')}
               </p>
-              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-purple-500/20 bg-purple-50/50 p-3 dark:border-purple-500/25 dark:bg-slate-800/50">
+              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-brand/20 bg-brand/5 p-3">
                 <LanguageSwitcher />
                 <div className="ml-auto shrink-0">
                   <ThemeToggle />
@@ -94,20 +98,20 @@ export default function MobileNavigation({
                   setMenuOpen(false)
                   loginWithGoogle()
                 }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-purple-700 active:scale-[0.99] dark:bg-purple-500 dark:hover:bg-purple-600 touch-manipulation"
+                className={`flex w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-2 px-4 py-3.5 text-sm font-semibold text-brand-foreground shadow-md shadow-brand/30 transition hover:brightness-110 hover:shadow-lg hover:shadow-brand/50 active:scale-[0.99] ${focusRing}`}
               >
                 <img
-                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  src="/icons/google.svg"
                   alt=""
+                  aria-hidden="true"
                   className="h-5 w-5 shrink-0 rounded-full bg-white p-0.5"
-                  aria-hidden
                 />
                 {t('login')}
               </button>
             )}
 
             {user && (
-              <div className="space-y-3 rounded-xl border border-purple-500/20 bg-white p-4 shadow-sm dark:border-purple-500/30 dark:bg-slate-900/80">
+              <div className="space-y-3 rounded-xl border border-border bg-card p-4 shadow-sm">
                 <div className="flex gap-3">
                   <img
                     src={
@@ -117,28 +121,28 @@ export default function MobileNavigation({
                       )}`
                     }
                     alt={user.name}
-                    className="h-12 w-12 shrink-0 rounded-full border border-purple-500/30 bg-white"
+                    className="h-12 w-12 shrink-0 rounded-full border border-brand/30 bg-card"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold text-gray-900 dark:text-white">{user.name}</p>
-                    <p className="truncate text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                    <p className="truncate font-semibold text-foreground">{user.name}</p>
+                    <p className="truncate text-xs text-muted-foreground">{user.email}</p>
                   </div>
                 </div>
                 <Link
                   href="/dashboard"
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 transition hover:bg-purple-100 dark:text-white dark:hover:bg-purple-500/15 touch-manipulation"
+                  className={`flex touch-manipulation items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition hover:bg-brand/10 ${focusRing}`}
                 >
-                  <LayoutDashboard className="h-4 w-4 shrink-0 text-purple-600 dark:text-purple-400" />
+                  <LayoutDashboard className="h-4 w-4 shrink-0 text-brand" />
                   {t('dashboard')}
                 </Link>
                 <button
                   type="button"
                   onClick={() => {
                     setMenuOpen(false)
-                    logout()
+                    setLogoutOpen(true)
                   }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 touch-manipulation"
+                  className={`flex w-full touch-manipulation items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-destructive transition hover:bg-destructive/10 ${focusRing}`}
                 >
                   <LogOut className="h-4 w-4 shrink-0" />
                   {t('logout')}
@@ -148,6 +152,8 @@ export default function MobileNavigation({
           </div>
         </SheetContent>
       </Sheet>
+
+      <LogoutConfirmDialog open={logoutOpen} onOpenChange={setLogoutOpen} />
     </div>
   )
 }

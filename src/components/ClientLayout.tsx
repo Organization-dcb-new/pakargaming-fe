@@ -1,54 +1,64 @@
 'use client'
 
+import { useState } from 'react'
+import { LayoutDashboard, LogOut } from 'lucide-react'
 import { Link, usePathname } from '../i18n/routing'
-import { logout } from '../hooks/useAuth'
 import { useTranslations } from 'next-intl'
+import LogoutConfirmDialog from './Auth/LogoutConfirmDialog'
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const t = useTranslations('ClientLayout')
+  const [logoutOpen, setLogoutOpen] = useState(false)
 
-  const menus = [{ name: t('dashboard'), href: '/dashboard' }]
+  const menus = [{ name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard }]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-purple-50/50 dark:via-purple-900/50 to-background flex justify-center">
-      <div className="w-full max-w-6xl flex gap-6">
-        <aside className="w-52 py-10 px-4 flex flex-col  h-[calc(100vh-2.5rem)]">
-          <div className="flex flex-col space-y-2 mb-3">
+    <div className="mx-auto flex w-full max-w-6xl gap-6 px-4 py-8 sm:px-6 lg:px-8">
+      <aside className="hidden w-56 shrink-0 md:block">
+        <div className="sticky top-24 rounded-2xl border border-border bg-card p-3 shadow-sm">
+          <p className="px-3 pb-2 pt-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {t('menu')}
+          </p>
+
+          <nav className="flex flex-col gap-1">
             {menus.map((menu) => {
               const isActive = pathname === menu.href
+              const Icon = menu.icon
               return (
                 <Link
                   key={menu.href}
                   href={menu.href}
-                  className={`block px-4 py-2 rounded-lg text-sm font-medium transition
-                    ${
-                      isActive
-                        ? 'bg-purple-600 text-white'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-gray-800'
-                    }
-                  `}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-brand text-white'
+                      : 'text-muted-foreground hover:bg-brand/10 hover:text-brand'
+                  }`}
                 >
+                  <Icon className="h-4 w-4 shrink-0" />
                   {menu.name}
                 </Link>
               )
             })}
-          </div>
+          </nav>
+
+          <div className="my-2 border-t border-border" />
 
           <button
-            onClick={logout}
-            className="block  cursor-pointer text-start w-full px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition"
+            type="button"
+            onClick={() => setLogoutOpen(true)}
+            className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
           >
+            <LogOut className="h-4 w-4 shrink-0" />
             {t('logout')}
           </button>
-        </aside>
+        </div>
+      </aside>
 
-        <main className="flex-1 py-10 px-6">
-          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-sm p-8 min-h-[80vh]">
-            {children}
-          </div>
-        </main>
-      </div>
+      <main className="min-w-0 flex-1">{children}</main>
+
+      <LogoutConfirmDialog open={logoutOpen} onOpenChange={setLogoutOpen} />
     </div>
   )
 }

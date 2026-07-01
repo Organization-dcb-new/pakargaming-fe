@@ -10,6 +10,11 @@
   --popover-foreground: oklch(0.145 0 0);
   --primary: #030213;
   --primary-foreground: oklch(1 0 0);
+  /* Brand — aksen ungu/indigo yang dipakai di seluruh app (mis. navbar).
+     Nilai hue final menyusul; sengaja dipisah dari --primary. */
+  --brand: #9333ea;
+  --brand-foreground: #ffffff;
+  --brand-2: #ec4899; /* ujung gradient (pink) — ikut theme ungu→pink */
   --secondary: oklch(0.95 0.0058 264.53);
   --secondary-foreground: #030213;
   --muted: #ececf0;
@@ -42,14 +47,19 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  /* Dark mode indigo-grey — sengaja tidak near-black biar tidak terlalu gelap.
+     Card & popover sedikit lebih terang dari background supaya permukaan "float". */
+  --background: oklch(0.22 0.018 274);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
+  --card: oklch(0.305 0.022 274);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
+  --popover: oklch(0.305 0.022 274);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.985 0 0);
   --primary-foreground: oklch(0.205 0 0);
+  --brand: #a855f7;
+  --brand-foreground: #ffffff;
+  --brand-2: #f472b6;
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -87,6 +97,9 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-2: var(--brand-2);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -124,6 +137,8 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Background: gradient bawaan app (pita diagonal indigo tipis di atas base).
+     Dark: base di-lightened (indigo-grey) sesuai preferensi, band tetap. */
   body {
     @apply bg-background text-foreground;
     background-color: var(--background);
@@ -139,25 +154,13 @@
       linear-gradient(180deg, #ffffff 0%, #fdfcff 100%);
     background-repeat: no-repeat;
     background-position:
-      right top,
-      right top,
-      right top,
-      left bottom,
-      left bottom,
-      left bottom,
-      center 62%,
-      74% 42%,
-      left top;
+      right top, right top, right top,
+      left bottom, left bottom, left bottom,
+      center 62%, 74% 42%, left top;
     background-size:
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      66% 38%,
-      80% 34%,
-      92% 30%,
-      34% 26%,
-      28% 22%,
-      100% 100%;
+      100% 100%, 100% 100%, 100% 100%,
+      66% 38%, 80% 34%, 92% 30%,
+      34% 26%, 28% 22%, 100% 100%;
     background-attachment: fixed;
   }
 
@@ -172,28 +175,16 @@
       linear-gradient(42deg, rgba(99, 102, 241, 0.09) 0 10%, transparent 10% 100%),
       radial-gradient(circle at 48% 62%, rgba(99, 102, 241, 0.1) 0 9%, transparent 30%),
       radial-gradient(circle at 74% 42%, rgba(99, 102, 241, 0.07) 0 8%, transparent 26%),
-      linear-gradient(180deg, oklch(0.145 0 0) 0%, oklch(0.17 0.03 280) 100%);
+      linear-gradient(180deg, oklch(0.22 0.018 274) 0%, oklch(0.25 0.03 280) 100%);
     background-repeat: no-repeat;
     background-position:
-      right top,
-      right top,
-      right top,
-      left bottom,
-      left bottom,
-      left bottom,
-      center 62%,
-      74% 42%,
-      left top;
+      right top, right top, right top,
+      left bottom, left bottom, left bottom,
+      center 62%, 74% 42%, left top;
     background-size:
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      66% 38%,
-      80% 34%,
-      92% 30%,
-      34% 26%,
-      28% 22%,
-      100% 100%;
+      100% 100%, 100% 100%, 100% 100%,
+      66% 38%, 80% 34%, 92% 30%,
+      34% 26%, 28% 22%, 100% 100%;
     background-attachment: fixed;
   }
 

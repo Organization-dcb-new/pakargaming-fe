@@ -1,10 +1,11 @@
-import { Link } from '../../i18n/routing'
+import { useEffect, useState } from 'react'
+import { Link, usePathname } from '../../i18n/routing'
 import SearchComponent from './Search'
 import { ThemeToggle } from '../ThemeToggle'
 import { LanguageSwitcher } from '../LanguageSwitcher'
 import { LogOut, LayoutDashboard } from 'lucide-react'
-import { logout } from '../../hooks/useAuth'
 import { useTranslations } from 'next-intl'
+import LogoutConfirmDialog from '../Auth/LogoutConfirmDialog'
 
 export type NavLink = {
   path: string
@@ -20,6 +21,9 @@ interface DesktopNavProps {
   setOpenProfile: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+const focusRing =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+
 export default function DesktopNavigation({
   visibleNavLinks,
   loginWithGoogle,
@@ -28,6 +32,18 @@ export default function DesktopNavigation({
   setOpenProfile,
 }: DesktopNavProps) {
   const t = useTranslations('Navigation')
+  const pathname = usePathname()
+  const [logoutOpen, setLogoutOpen] = useState(false)
+
+  // Tutup dropdown profil dengan tombol Escape
+  useEffect(() => {
+    if (!openProfile) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenProfile(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [openProfile, setOpenProfile])
 
   return (
     <div className="hidden min-w-0 flex-1 shrink md:flex md:min-w-0 md:items-center md:gap-4 lg:gap-8">
@@ -35,28 +51,24 @@ export default function DesktopNavigation({
         <div className="min-w-0 flex-1">
           <SearchComponent variant="desktop" />
         </div>
-        {visibleNavLinks.map((link) => (
-          <Link
-            key={link.path}
-            href={link.path}
-            className="
-    relative text-sm font-semibold
-    text-purple-600 dark:text-purple-400
-    transition-colors duration-200
-    hover:text-purple-600 dark:hover:text-purple-400
-    after:absolute after:left-0 after:-bottom-1
-    after:h-[2px] after:w-0
-    after:bg-purple-600 dark:after:bg-purple-400
-    after:transition-all after:duration-300
-    hover:after:w-full
-  "
-          >
-            {link.label}
-          </Link>
-        ))}
+        {visibleNavLinks.map((link) => {
+          const active = pathname === link.path
+          return (
+            <Link
+              key={link.path}
+              href={link.path}
+              aria-current={active ? 'page' : undefined}
+              className={`relative rounded-sm text-sm font-semibold text-brand transition-colors duration-200 after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:bg-brand after:transition-all after:duration-300 hover:after:w-full ${
+                active ? 'after:w-full' : 'after:w-0'
+              } ${focusRing}`}
+            >
+              {link.label}
+            </Link>
+          )
+        })}
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 border-l border-purple-500/20 pl-3 dark:border-purple-500/20 md:gap-3 lg:gap-4 lg:pl-8">
+      <div className="flex shrink-0 items-center gap-2 border-l border-brand/20 pl-3 md:gap-3 lg:gap-4 lg:pl-8">
         <LanguageSwitcher />
         <ThemeToggle />
 
@@ -64,23 +76,27 @@ export default function DesktopNavigation({
           <button
             type="button"
             onClick={loginWithGoogle}
-            className="flex cursor-pointer items-center gap-2 rounded-full bg-purple-600 px-4 py-2 text-white shadow-sm transition-all hover:bg-purple-700 hover:shadow-lg hover:shadow-purple-500/30 active:scale-[0.98] dark:bg-purple-500 dark:hover:bg-purple-600 md:gap-3 md:px-5 lg:px-6 touch-manipulation"
+            className={`flex cursor-pointer touch-manipulation items-center gap-2 rounded-full bg-gradient-to-r from-brand to-brand-2 px-4 py-2 text-brand-foreground shadow-md shadow-brand/30 transition-all hover:brightness-110 hover:shadow-lg hover:shadow-brand/50 active:scale-[0.98] md:gap-3 md:px-5 lg:px-6 ${focusRing}`}
           >
             <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="w-5 h-5 bg-white rounded-full p-0.5 shadow-sm"
+              src="/icons/google.svg"
+              alt=""
+              aria-hidden="true"
+              className="h-5 w-5 rounded-full bg-white p-0.5 shadow-sm"
             />
             <span className="font-medium">{t('login')}</span>
           </button>
         ) : (
           <div className="relative">
-            <div
+            <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation()
                 setOpenProfile((prev) => !prev)
               }}
-              className="flex items-center gap-3 cursor-pointer select-none"
+              aria-haspopup="menu"
+              aria-expanded={openProfile}
+              className={`flex select-none items-center gap-3 rounded-full transition-colors ${focusRing}`}
             >
               <img
                 src={
@@ -90,29 +106,33 @@ export default function DesktopNavigation({
                   )}`
                 }
                 alt={user.name}
-                className="w-9 h-9 rounded-full border border-purple-500/30 bg-white"
+                className="h-9 w-9 rounded-full border border-brand/30 bg-card"
               />
 
-              <span className="text-sm font-medium text-gray-800 dark:text-white hidden lg:inline">
+              <span className="hidden text-sm font-medium text-foreground lg:inline">
                 {user.name}
               </span>
-            </div>
+            </button>
 
             {/* Dropdown */}
             {openProfile && (
-              <div className="absolute right-0 z-50 mt-3 w-[min(14rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-purple-500/20 bg-white shadow-xl backdrop-blur-xl sm:w-56 dark:border-purple-500/30 dark:bg-slate-900/90">
+              <div
+                role="menu"
+                className="absolute right-0 z-50 mt-3 w-[min(14rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-border bg-popover text-popover-foreground shadow-xl backdrop-blur-xl sm:w-56"
+              >
                 {/* Header */}
-                <div className="flex items-center gap-3 px-4 py-4 border-b border-purple-500/20">
+                <div className="flex items-center gap-3 border-b border-border px-4 py-4">
                   <img
                     src={user.picture || '/avatar.png'}
-                    alt={user.name}
-                    className="w-10 h-10 rounded-full border border-purple-500/30"
+                    alt=""
+                    aria-hidden="true"
+                    className="h-10 w-10 rounded-full border border-brand/30"
                   />
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                    <p className="truncate text-sm font-semibold text-foreground">
                       {user.name}
                     </p>
-                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    <p className="truncate text-xs text-muted-foreground">{user.email}</p>
                   </div>
                 </div>
 
@@ -120,48 +140,26 @@ export default function DesktopNavigation({
                 <div className="py-2">
                   <Link
                     href="/dashboard"
-                    className="group w-full flex items-center gap-3 px-4 py-3 text-sm 
-             text-gray-800 dark:text-white
-             hover:bg-purple-500/10 
-             transition-all duration-200"
+                    role="menuitem"
+                    className={`group flex w-full items-center gap-3 px-4 py-3 text-sm text-foreground transition-all duration-200 hover:bg-brand/10 ${focusRing} focus-visible:-outline-offset-2`}
                   >
-                    <LayoutDashboard
-                      className="w-4 h-4 text-gray-600 dark:text-white/80 
-               group-hover:text-purple-600 
-               dark:group-hover:text-purple-400
-               group-hover:scale-110 
-               transition-all duration-200"
-                    />
-
-                    <span
-                      className="font-medium 
-               group-hover:text-purple-600 
-               dark:group-hover:text-purple-400 
-               transition-colors duration-200"
-                    >
+                    <LayoutDashboard className="h-4 w-4 text-muted-foreground transition-all duration-200 group-hover:scale-110 group-hover:text-brand" />
+                    <span className="font-medium transition-colors duration-200 group-hover:text-brand">
                       {t('dashboard')}
                     </span>
                   </Link>
 
                   <button
                     type="button"
-                    onClick={logout}
-                    className="group flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-sm text-gray-800 transition-all duration-200 hover:bg-purple-500/10 dark:text-white touch-manipulation"
+                    role="menuitem"
+                    onClick={() => {
+                      setOpenProfile(false)
+                      setLogoutOpen(true)
+                    }}
+                    className={`group flex w-full cursor-pointer touch-manipulation items-center gap-3 px-4 py-3 text-sm text-foreground transition-all duration-200 hover:bg-destructive/10 ${focusRing} focus-visible:-outline-offset-2`}
                   >
-                    <LogOut
-                      className="w-4 h-4 text-gray-600 dark:text-white/80 
-               group-hover:text-purple-600 
-               dark:group-hover:text-purple-400
-               group-hover:scale-110 
-               transition-all duration-200"
-                    />
-
-                    <span
-                      className="font-medium 
-               group-hover:text-purple-600 
-               dark:group-hover:text-purple-400 
-               transition-colors duration-200"
-                    >
+                    <LogOut className="h-4 w-4 text-muted-foreground transition-all duration-200 group-hover:scale-110 group-hover:text-destructive" />
+                    <span className="font-medium transition-colors duration-200 group-hover:text-destructive">
                       {t('logout')}
                     </span>
                   </button>
@@ -171,6 +169,8 @@ export default function DesktopNavigation({
           </div>
         )}
       </div>
+
+      <LogoutConfirmDialog open={logoutOpen} onOpenChange={setLogoutOpen} />
     </div>
   )
 }

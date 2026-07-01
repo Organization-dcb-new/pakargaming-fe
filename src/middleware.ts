@@ -9,7 +9,7 @@ export default function middleware(request: NextRequest) {
 
   const token = request.cookies.get('token')?.value
 
-  const protectedRoute = /^\/(id|en)?\/my-transaction/
+  const protectedRoute = /^\/(id|en)?\/(my-transaction|dashboard)/
 
   if (protectedRoute.test(pathname) && !token) {
     const locale = pathname.startsWith('/en') ? 'en' : 'id'

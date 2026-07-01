@@ -1,22 +1,22 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import useAuth from '../../../hooks/useAuth'
 import { Skeleton } from '../../ui/skeleton'
 
 export default function ProfileDashboard() {
   const { user } = useAuth()
+  const t = useTranslations('Dashboard')
 
   if (!user) {
-    // Skeleton saat loading
     return (
-      <div className="w-full">
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl border border-purple-200/50 dark:border-purple-500/20 shadow-xl overflow-hidden p-6">
-          <div className="flex items-center gap-4">
-            <Skeleton className="w-20 h-20 rounded-full" />
-            <div className="flex flex-col gap-2">
-              <Skeleton className="w-32 h-5 rounded-md" />
-              <Skeleton className="w-40 h-4 rounded-md" />
-            </div>
+      <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-16 w-16 rounded-full" />
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-4 w-24 rounded-md" />
+            <Skeleton className="h-5 w-40 rounded-md" />
+            <Skeleton className="h-4 w-52 rounded-md" />
           </div>
         </div>
       </div>
@@ -24,32 +24,23 @@ export default function ProfileDashboard() {
   }
 
   return (
-    <div className="w-full">
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm">
       <div
-        className="bg-white/70 dark:bg-gray-800/70 
-                   backdrop-blur-md 
-                   rounded-2xl 
-                   border border-purple-200/50 dark:border-purple-500/20 
-                   shadow-xl overflow-hidden"
-      >
-        {/* Top Accent */}
-        <div className="h-2 bg-gradient-to-r from-purple-500 to-purple-700" />
+        className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-brand/10 blur-3xl"
+        aria-hidden
+      />
 
-        <div className="p-6">
-          {/* Profile Section */}
-          <div className="flex items-center gap-4">
-            <img
-              src={user.picture}
-              alt={user.name}
-              className="w-20 h-20 rounded-full object-cover 
-                         border-4 border-purple-200/50 dark:border-purple-500/30"
-            />
+      <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
+        <img
+          src={user.picture || '/avatar.png'}
+          alt={user.name}
+          className="h-16 w-16 shrink-0 rounded-full border-2 border-brand/30 object-cover"
+        />
 
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{user.name}</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
-            </div>
-          </div>
+        <div className="min-w-0">
+          <p className="text-sm text-muted-foreground">{t('welcome')},</p>
+          <h1 className="truncate text-xl font-bold text-foreground sm:text-2xl">{user.name}</h1>
+          <p className="truncate text-sm text-muted-foreground">{user.email}</p>
         </div>
       </div>
     </div>
