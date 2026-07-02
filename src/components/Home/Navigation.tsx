@@ -3,6 +3,8 @@
 import { Show } from '../../types/Show'
 import { Link } from '../../i18n/routing'
 import { useTranslations } from 'next-intl'
+import { motion, useReducedMotion } from 'motion/react'
+import { Search } from 'lucide-react'
 
 interface NavigationShowProps {
   isNavSticky: boolean
@@ -18,21 +20,33 @@ export default function NavigationShowGame({
   shows,
 }: NavigationShowProps) {
   const t = useTranslations('CheckTransaction')
+  const tHome = useTranslations('Home')
+  const shouldReduceMotion = useReducedMotion()
+
+  const chipTransition = shouldReduceMotion
+    ? { duration: 0 }
+    : { type: 'spring' as const, stiffness: 400, damping: 32 }
 
   return (
-    <div
+    <nav
       id="show-navigation"
+      aria-label={tHome('sectionNavLabel')}
       className={`
           p-3
-          sticky top-14 md:top-16 z-30
+          sticky top-14 md:top-16 z-40
           py-2 md:py-3
           flex md:flex-wrap
           gap-2 md:gap-4
           justify-start md:justify-center
           overflow-x-auto md:overflow-visible
-          scrollbar-thin scrollbar-thumb-purple-400 scrollbar-track-purple-100
-          transition-all duration-300
-          bg-transparent
+          [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
+          [mask-image:linear-gradient(to_right,transparent,black_16px,black_calc(100%-16px),transparent)] md:[mask-image:none]
+          transition-[background-color,border-color,box-shadow] duration-300 motion-reduce:transition-none
+          ${
+            isNavSticky
+              ? 'bg-background/80 backdrop-blur-md border-b border-border/60 shadow-sm'
+              : 'bg-transparent border-b border-transparent'
+          }
         `}
     >
       {shows.map((show) => {
@@ -42,38 +56,34 @@ export default function NavigationShowGame({
           <button
             key={show.id}
             onClick={() => scrollToSection(`show-${show.id}`)}
+            aria-current={isSelected ? 'true' : undefined}
             className={`
+          relative
           flex-shrink-0
-    
           px-3 md:px-4
           py-1.5 md:py-2
           rounded-full
           text-xs md:text-sm
           font-semibold
-          transition-all duration-200
+          transition-colors duration-200 motion-reduce:transition-none
           cursor-pointer
-          shadow-sm
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
           ${
             isSelected
-              ? `
-                bg-gradient-to-r from-brand to-brand-2
-                text-brand-foreground
-                border border-brand/60
-                ring-2 ring-brand/40
-                shadow-brand/40
-              `
-              : `
-                bg-card
-                text-brand
-                border border-brand/30
-                hover:border-brand
-                hover:shadow-md
-              `
+              ? 'text-brand-foreground border border-transparent'
+              : 'bg-card text-brand border border-brand/30 hover:border-brand hover:bg-brand/10'
           }
-          ${!isSelected && 'hover:scale-[1.05]'}
         `}
           >
-            {show.name}
+            {isSelected && (
+              <motion.span
+                layoutId="show-chip-active"
+                aria-hidden
+                className="absolute inset-0 rounded-full bg-gradient-brand shadow-md"
+                transition={chipTransition}
+              />
+            )}
+            <span className="relative z-10">{show.name}</span>
           </button>
         )
       })}
@@ -81,29 +91,27 @@ export default function NavigationShowGame({
       {shows.length > 0 && (
         <Link
           href="/check-transaction"
-          className={`
+          className="
     flex-shrink-0
     px-3 md:px-4
     py-1.5 md:py-2
     rounded-full
     text-xs md:text-sm
     font-semibold
-    transition-all duration-200
+    transition-colors duration-200 motion-reduce:transition-none
     cursor-pointer
     shadow-sm
-
-    bg-gradient-to-r from-brand to-brand-2
+    bg-gradient-brand
     text-brand-foreground
     hover:brightness-110
-    hover:scale-[1.05]
-
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
     flex items-center gap-2
-  `}
+  "
         >
-          <span className="text-base">🔍</span>
+          <Search className="h-4 w-4" aria-hidden />
           {t('checkTrxLink')}
         </Link>
       )}
-    </div>
+    </nav>
   )
 }

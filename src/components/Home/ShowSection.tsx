@@ -1,16 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { Show } from '../../types/Show'
-import { getRibbon } from '../../utils/ribbon'
-import Image from 'next/image'
-import { Link } from '../../i18n/routing'
-import { useBreakpoint } from '../../hooks/useBreakpoint'
+import { ChevronDown } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { Show } from '../../types/Show'
+import { useBreakpoint } from '../../hooks/useBreakpoint'
+import { Reveal } from './components/Reveal'
+import { GameTile } from './components/GameTile'
+import { SectionHeader } from './components/SectionHeader'
+import { getShowBadgeVariant } from './components/ShowBadge'
 
 interface ShowSectionProps {
   shows: Show[]
 }
+
 export default function ShowSectionGames({ shows }: ShowSectionProps) {
   const t = useTranslations('Home')
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -30,118 +33,29 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
         const hasManyGames = show.games.length > limit
 
         const games = isExpanded ? show.games : show.games.slice(0, limit)
-
-        const ribbon = getRibbon(show)
+        const badge = getShowBadgeVariant(show)
 
         return (
-          <div
+          <section
             key={show.id}
             id={`show-${show.id}`}
-            className="scroll-mt-36 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-10 space-y-12"
+            className="scroll-mt-36 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 space-y-5"
           >
-            <div className="mb-6">
-              <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
-                {show.name}
-              </h2>
-            </div>
+            <Reveal>
+              {/* Badge pindah ke ribbon animasi di tile — header cukup judul + jumlah */}
+              <SectionHeader title={show.name} count={show.games.length} />
+            </Reveal>
 
-            <div
-              className="
-    grid
-    grid-cols-3
-    sm:grid-cols-4
-    md:grid-cols-5
-    lg:grid-cols-6
-    gap-3 
-    justify-items-center
-  "
-            >
-              {games.map((game) => (
-                <Link
-                  key={game.id}
-                  href={`/games/${game.slug}`}
-                  className="
-  group relative
-  w-[120px] h-[120px]
-  sm:w-[130px] sm:h-[130px]
-  md:w-[140px] md:h-[140px]
-  lg:w-[150px] lg:h-[150px]
-  xl:w-[170px] xl:h-[170px]
-  2xl:w-[190px] 2xl:h-[190px]
-  overflow-hidden rounded-2xl
-  border border-white/10
-  bg-gray-300 dark:bg-zinc-900/40
-  transition-all duration-300 ease-out
-
-  hover:border-purple-500/70
-  hover:shadow-lg hover:shadow-purple-500/20
-  hover:scale-[1.03]
-
-  active:scale-[0.98]
-"
-                >
-                  <div className="relative w-full h-full overflow-hidden">
-                    {ribbon && (
-                      <div
-                        className={`
-          absolute z-20
-          top-2 left-[-40px]
-          rotate-[-45deg]
-          bg-gradient-to-r ${ribbon.className}
-          w-[130px]
-          py-1
-          text-[8px]
-          font-extrabold text-white
-          uppercase tracking-wider
-          text-center shadow-md
-        `}
-                      >
-                        {ribbon.label}
-                      </div>
-                    )}
-
-                    <Image
-                      src={
-                        game.thumbnail_url ||
-                        'https://api.dicebear.com/9.x/pixel-art/svg'
-                      }
-                      alt={game.name}
-                      fill
-                      priority
-                      unoptimized={true}
-                      className="
-        object-cover
-        transition-transform duration-500
-        group-hover:scale-105
-      "
-                    />
-
-                    <div
-                      className="
-      absolute bottom-0 left-0 w-full
-      bg-gradient-to-t from-black/80 via-black/40 to-transparent
-      px-2 py-1
-    "
-                    >
-                      <p
-                        className="
-        text-[15px]
-        font-semibold
-        text-white
-        text-center
-        line-clamp-2
-      "
-                      >
-                        {game.name}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4 md:grid-cols-5 lg:grid-cols-6">
+              {games.map((game, i) => (
+                <Reveal key={game.id} delay={(i % 6) * 0.04}>
+                  <GameTile game={game} badge={badge} />
+                </Reveal>
               ))}
             </div>
 
             {hasManyGames && (
-              <div className="mt-1 flex justify-center">
+              <div className="flex justify-center">
                 <button
                   type="button"
                   onClick={() =>
@@ -150,13 +64,21 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                       [show.id]: !isExpanded,
                     }))
                   }
-                  className="text-sm cursor-pointer font-medium text-purple-600 dark:text-purple-400 hover:underline"
+                  className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-card px-5 py-2 text-sm font-semibold text-brand shadow-sm transition-all duration-200 hover:border-brand hover:bg-brand/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none"
                 >
-                  {isExpanded ? t('showLessGames') : t('showMoreGames')}
+                  {isExpanded
+                    ? t('showLessGames')
+                    : t('showMoreCount', { count: show.games.length - limit })}
+                  <ChevronDown
+                    aria-hidden
+                    className={`h-4 w-4 transition-transform duration-200 motion-reduce:transition-none ${
+                      isExpanded ? 'rotate-180' : ''
+                    }`}
+                  />
                 </button>
               </div>
             )}
-          </div>
+          </section>
         )
       })}
     </>

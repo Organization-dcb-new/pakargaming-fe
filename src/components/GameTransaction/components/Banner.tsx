@@ -20,7 +20,7 @@ export default function BannerGameTransaction({ game }: GameTransactionProps) {
   ];
 
   return (
-    <div className="w-full flex flex-col justify-center items-center border-b border-purple-500/30 dark:border-purple-500/20 ">
+    <div className="w-full flex flex-col justify-center items-center border-b border-border">
       <div
         className="relative w-full overflow-hidden"
         style={{
@@ -72,21 +72,21 @@ export default function BannerGameTransaction({ game }: GameTransactionProps) {
         </div>
 
         <div className="pt-5 pl-35 sm:pl-40 sm:mb-5 md:pl-71 xl:pl-75">
-          <h1 className="text-balance text-base font-bold tracking-tight text-gray-900 sm:text-xl dark:text-white">
+          <h1 className="text-balance text-lg font-bold tracking-tight text-foreground sm:text-xl md:text-2xl">
             {game.name}
           </h1>
         </div>
 
         <div className="mt-10 sm:mt-3 sm:mr-7.5 md:ml-63 lg:w-100 xl:ml-72 lg:ml-68 ">
-          <div className="flex flex-row justify-between sm:justify-center sm:gap-3 items-center text-xs sm:text-sm text-gray-600 font-medium ">
+          <div className="flex flex-wrap justify-start gap-2">
             {features.map((item, i) => (
               <div
                 key={i}
-                className="flex items-center gap-1 sm:mb-2 text-gray-700 dark:text-gray-200 "
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-2.5 py-1 text-xs font-medium text-foreground backdrop-blur-sm sm:text-sm"
               >
                 <item.icon
                   aria-hidden
-                  className="h-4 w-4 shrink-0 text-purple-600 dark:text-purple-300 sm:h-5 sm:w-5"
+                  className="h-4 w-4 shrink-0 text-brand"
                   strokeWidth={2}
                 />
                 <p>{item.label}</p>
