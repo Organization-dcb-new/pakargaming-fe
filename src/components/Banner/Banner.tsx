@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useGetBanners } from '../../hooks/useBanner'
 import { Banner } from '../../types/Banner'
 import { ShowSkeleton } from './Loading'
@@ -14,7 +15,8 @@ import { BANNER_IMAGE_HEIGHT, BANNER_IMAGE_WIDTH } from './bannerDimensions'
 const AUTOPLAY_DELAY = 5000
 
 export default function BannerCarousel() {
-  const { data, isLoading, isError } = useGetBanners()
+  const t = useTranslations('Home')
+  const { data, isLoading, isError, refetch } = useGetBanners()
   const banners: Banner[] = data?.data ?? []
   const total = banners.length
 
@@ -35,19 +37,20 @@ export default function BannerCarousel() {
     setIndex((prev) => (prev - 1 + total) % total)
   }, [total])
 
-  // Autoplay (pause on hover)
+  // Autoplay (pause on hover). `index` ikut deps supaya timer di-reset saat user
+  // pindah slide manual — sinkron dengan progress bar yang juga restart per slide.
   useEffect(() => {
-    if (total === 0 || isHovering) return
+    if (total <= 1 || isHovering) return
 
     timerRef.current = setInterval(next, AUTOPLAY_DELAY)
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [next, total, isHovering])
+  }, [next, total, isHovering, index])
 
   if (isLoading) return <ShowSkeleton />
-  if (isError) return <ErrorBanner />
+  if (isError) return <ErrorBanner onRetry={() => refetch()} />
   if (total === 0) return <EmptyBanner />
 
   return (
@@ -72,10 +75,10 @@ export default function BannerCarousel() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute inset-0 block outline-none ring-inset focus-visible:ring-2 focus-visible:ring-white/90"
-                aria-label={`Banner ${i + 1}`}>
+                aria-label={t('bannerLinkLabel', { index: i + 1, total })}>
                 <Image
                   src={banner.image || "/placeholder.png"}
-                  alt="Banner"
+                  alt={t('bannerLinkLabel', { index: i + 1, total })}
                   fill
                   priority={i === 0}
                   className="object-cover"
@@ -93,40 +96,53 @@ export default function BannerCarousel() {
           aria-hidden
         />
 
-        {/* NAVIGATION */}
-        <button
-          type="button"
-          onClick={prev}
-          aria-label="Previous slide"
-          className="absolute left-2 top-1/2 z-[2] flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:left-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
-          <ChevronLeft className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
-        </button>
-
-        <button
-          type="button"
-          onClick={next}
-          aria-label="Next slide"
-          className="absolute right-2 top-1/2 z-[2] flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:right-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
-          <ChevronRight className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
-        </button>
-
-        {/* DOTS */}
-        <div className="absolute bottom-4 left-1/2 z-[2] flex -translate-x-1/2 gap-2.5 px-2">
-          {banners.map((_, i) => (
+        {/* NAVIGATION — tidak relevan saat banner cuma satu */}
+        {total > 1 && (
+          <>
             <button
               type="button"
-              key={i}
-              onClick={() => setIndex(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              aria-current={index === i ? 'true' : undefined}
-              className={`touch-manipulation rounded-full transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/90 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40 ${
-                index === i
-                  ? 'h-2.5 w-8 bg-white shadow-[0_0_12px_rgba(255,255,255,0.45)]'
-                  : 'h-2.5 w-2.5 bg-white/45 hover:bg-white/75'
-              }`}
-            />
-          ))}
-        </div>
+              onClick={prev}
+              aria-label={t('prevSlide')}
+              className="absolute left-2 top-1/2 z-[2] flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 motion-reduce:transition-none hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:left-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
+              <ChevronLeft className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
+            </button>
+
+            <button
+              type="button"
+              onClick={next}
+              aria-label={t('nextSlide')}
+              className="absolute right-2 top-1/2 z-[2] flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 motion-reduce:transition-none hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:right-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
+              <ChevronRight className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
+            </button>
+
+            {/* DOTS */}
+            <div className="absolute bottom-4 left-1/2 z-[2] flex -translate-x-1/2 gap-2.5 px-2">
+              {banners.map((_, i) => (
+                <button
+                  type="button"
+                  key={i}
+                  onClick={() => setIndex(i)}
+                  aria-label={t('goToSlide', { index: i + 1 })}
+                  aria-current={index === i ? 'true' : undefined}
+                  className={`touch-manipulation rounded-full transition-all duration-300 ease-out motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/90 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40 ${
+                    index === i
+                      ? 'relative h-2.5 w-8 overflow-hidden bg-white/40'
+                      : 'h-2.5 w-2.5 bg-white/45 hover:bg-white/75'
+                  }`}>
+                  {index === i && (
+                    <span
+                      // isHovering ikut key: saat hover selesai, bar & timer JS sama-sama
+                      // restart dari 0 sehingga progress tetap jujur terhadap autoplay
+                      key={`p-${index}-${isHovering}`}
+                      aria-hidden
+                      className="absolute inset-0 origin-left rounded-full bg-white animate-[banner-progress_5s_linear_forwards] group-hover:[animation-play-state:paused] motion-reduce:animate-none motion-reduce:scale-x-100"
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </LayoutBanner>
   );

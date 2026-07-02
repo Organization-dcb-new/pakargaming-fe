@@ -15,6 +15,16 @@
   --brand: #9333ea;
   --brand-foreground: #ffffff;
   --brand-2: #ec4899; /* ujung gradient (pink) — ikut theme ungu→pink */
+  --gradient-brand: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+  /* Status semantik (rules §2.2) — badge, ribbon, toast */
+  --success: #15803d;
+  --success-foreground: #ffffff;
+  --warning: #b45309;
+  --warning-foreground: #ffffff;
+  --info: #0369a1;
+  --info-foreground: #ffffff;
+  --pending: #a16207;
+  --pending-foreground: #ffffff;
   --secondary: oklch(0.95 0.0058 264.53);
   --secondary-foreground: #030213;
   --muted: #ececf0;
@@ -60,10 +70,21 @@
   --brand: #a855f7;
   --brand-foreground: #ffffff;
   --brand-2: #f472b6;
+  /* Status dark: bg terang + teks sangat gelap — kontras AA aman di permukaan gelap */
+  --success: #22c55e;
+  --success-foreground: #052e16;
+  --warning: #f59e0b;
+  --warning-foreground: #451a03;
+  --info: #38bdf8;
+  --info-foreground: #082f49;
+  --pending: #facc15;
+  --pending-foreground: #422006;
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
+  /* Dinaikkan dari 0.708 → 0.78 supaya teks sekunder lolos kontras AA di permukaan
+     terang seperti footer (overlay bg-white/[0.04]): 4.04 → 5.24. */
+  --muted-foreground: oklch(0.78 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
@@ -100,6 +121,14 @@
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-2: var(--brand-2);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-pending: var(--pending);
+  --color-pending-foreground: var(--pending-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -132,6 +161,39 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Gradient brand — definisikan sekali (rules §2.3), jangan tulis from-purple to-pink berulang */
+@utility bg-gradient-brand {
+  background-image: var(--gradient-brand);
+}
+
+@utility text-gradient-brand {
+  background-image: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Progress autoplay banner — durasi harus sinkron dengan AUTOPLAY_DELAY di Banner.tsx (5s) */
+@keyframes banner-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Kilau ribbon tile game — sapuan cahaya periodik (jeda di 55–100%) */
+@keyframes ribbon-shine {
+  0% {
+    transform: translateX(-160%) skewX(-12deg);
+  }
+  55%,
+  100% {
+    transform: translateX(340%) skewX(-12deg);
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -142,15 +204,16 @@
   body {
     @apply bg-background text-foreground;
     background-color: var(--background);
+    /* Diredam (≈50%) supaya atensi ke konten, bukan background (redesign home 2026-07) */
     background-image:
-      linear-gradient(62deg, transparent 0 50%, rgba(99, 102, 241, 0.11) 50% 64%, transparent 64% 100%),
-      linear-gradient(62deg, transparent 0 58%, rgba(99, 102, 241, 0.09) 58% 72%, transparent 72% 100%),
-      linear-gradient(62deg, transparent 0 66%, rgba(99, 102, 241, 0.07) 66% 80%, transparent 80% 100%),
-      linear-gradient(38deg, rgba(99, 102, 241, 0.14) 0 16%, transparent 16% 100%),
-      linear-gradient(34deg, rgba(99, 102, 241, 0.1) 0 12%, transparent 12% 100%),
-      linear-gradient(42deg, rgba(99, 102, 241, 0.08) 0 10%, transparent 10% 100%),
-      radial-gradient(circle at 48% 62%, rgba(99, 102, 241, 0.08) 0 9%, transparent 30%),
-      radial-gradient(circle at 74% 42%, rgba(99, 102, 241, 0.06) 0 8%, transparent 26%),
+      linear-gradient(62deg, transparent 0 50%, rgba(99, 102, 241, 0.055) 50% 64%, transparent 64% 100%),
+      linear-gradient(62deg, transparent 0 58%, rgba(99, 102, 241, 0.045) 58% 72%, transparent 72% 100%),
+      linear-gradient(62deg, transparent 0 66%, rgba(99, 102, 241, 0.035) 66% 80%, transparent 80% 100%),
+      linear-gradient(38deg, rgba(99, 102, 241, 0.07) 0 16%, transparent 16% 100%),
+      linear-gradient(34deg, rgba(99, 102, 241, 0.05) 0 12%, transparent 12% 100%),
+      linear-gradient(42deg, rgba(99, 102, 241, 0.04) 0 10%, transparent 10% 100%),
+      radial-gradient(circle at 48% 62%, rgba(99, 102, 241, 0.04) 0 9%, transparent 30%),
+      radial-gradient(circle at 74% 42%, rgba(99, 102, 241, 0.03) 0 8%, transparent 26%),
       linear-gradient(180deg, #ffffff 0%, #fdfcff 100%);
     background-repeat: no-repeat;
     background-position:
@@ -166,15 +229,16 @@
 
   .dark body {
     background-color: var(--background);
+    /* Diredam (≈50%) — selaras dengan light mode */
     background-image:
-      linear-gradient(62deg, transparent 0 50%, rgba(99, 102, 241, 0.14) 50% 64%, transparent 64% 100%),
-      linear-gradient(62deg, transparent 0 58%, rgba(99, 102, 241, 0.11) 58% 72%, transparent 72% 100%),
-      linear-gradient(62deg, transparent 0 66%, rgba(99, 102, 241, 0.08) 66% 80%, transparent 80% 100%),
-      linear-gradient(38deg, rgba(99, 102, 241, 0.16) 0 16%, transparent 16% 100%),
-      linear-gradient(34deg, rgba(99, 102, 241, 0.12) 0 12%, transparent 12% 100%),
-      linear-gradient(42deg, rgba(99, 102, 241, 0.09) 0 10%, transparent 10% 100%),
-      radial-gradient(circle at 48% 62%, rgba(99, 102, 241, 0.1) 0 9%, transparent 30%),
-      radial-gradient(circle at 74% 42%, rgba(99, 102, 241, 0.07) 0 8%, transparent 26%),
+      linear-gradient(62deg, transparent 0 50%, rgba(99, 102, 241, 0.07) 50% 64%, transparent 64% 100%),
+      linear-gradient(62deg, transparent 0 58%, rgba(99, 102, 241, 0.055) 58% 72%, transparent 72% 100%),
+      linear-gradient(62deg, transparent 0 66%, rgba(99, 102, 241, 0.04) 66% 80%, transparent 80% 100%),
+      linear-gradient(38deg, rgba(99, 102, 241, 0.08) 0 16%, transparent 16% 100%),
+      linear-gradient(34deg, rgba(99, 102, 241, 0.06) 0 12%, transparent 12% 100%),
+      linear-gradient(42deg, rgba(99, 102, 241, 0.045) 0 10%, transparent 10% 100%),
+      radial-gradient(circle at 48% 62%, rgba(99, 102, 241, 0.05) 0 9%, transparent 30%),
+      radial-gradient(circle at 74% 42%, rgba(99, 102, 241, 0.035) 0 8%, transparent 26%),
       linear-gradient(180deg, oklch(0.22 0.018 274) 0%, oklch(0.25 0.03 280) 100%);
     background-repeat: no-repeat;
     background-position:
