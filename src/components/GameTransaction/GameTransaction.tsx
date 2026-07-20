@@ -75,6 +75,7 @@ export default function GameTransaction() {
   );
   const [openModalConfirm, setOpenModalConfirm] = useState<boolean>(false);
   const [userMdn, setUserMdn] = useState("");
+  const [referralCode, setReferralCode] = useState("");
 
   const { data: dataPaymentMethods } = useGetPaymentMethod();
   const { data: dataGameDetail, isLoading: isLoadingGameDetail } =
@@ -254,6 +255,7 @@ export default function GameTransaction() {
       game_data: account,
       product_id: selectedPackage.id,
       ...(needsUserMdn ? { user_mdn: normalizeUserMdn(userMdn) } : {}),
+      referral_code: referralCode ? referralCode.trim() : undefined,
     });
   };
 
@@ -296,6 +298,8 @@ export default function GameTransaction() {
       requiresPhone={needsUserMdn}
       userMdn={userMdn}
       setUserMdn={setUserMdn}
+      referralCode={referralCode}
+      setReferralCode={setReferralCode}
       isLocked={lockContactStep}
       onLockedAction={handleBlockedContactAction}
     />,

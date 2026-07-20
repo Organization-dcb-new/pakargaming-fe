@@ -1,6 +1,8 @@
 'use client'
-import { Mail, Smartphone } from 'lucide-react'
+import { Mail, Smartphone, Ticket } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { useCheckReferralCode } from '../hooks/useCheckReferralCode'
 
 interface ContactFormProps {
   step?: number
@@ -9,6 +11,8 @@ interface ContactFormProps {
   requiresPhone?: boolean
   userMdn: string
   setUserMdn: (value: string) => void
+  referralCode: string
+  setReferralCode: (value: string) => void
   isLocked?: boolean
   onLockedAction?: () => void
 }
@@ -20,10 +24,43 @@ export default function ContactForm({
   requiresPhone = false,
   userMdn,
   setUserMdn,
+  referralCode,
+  setReferralCode,
   isLocked = false,
   onLockedAction,
 }: ContactFormProps) {
   const t = useTranslations('GameCheckout')
+  const checkMutation = useCheckReferralCode()
+  const [validationMsg, setValidationMsg] = useState<{ text: string; isError: boolean } | null>(null)
+
+  const handleCheckCode = () => {
+    if (!referralCode.trim()) {
+      setValidationMsg({ text: 'Kode referral tidak boleh kosong', isError: true })
+      return
+    }
+    checkMutation.mutate(referralCode.trim(), {
+      onSuccess: (res) => {
+        if (res.data && res.data.is_active) {
+          setValidationMsg({
+            text: `Kode referral valid! Diskon ${res.data.percent}% akan diterapkan.`,
+            isError: false
+          })
+        } else {
+          setValidationMsg({
+            text: 'Kode referral tidak aktif.',
+            isError: true
+          })
+        }
+      },
+      onError: () => {
+        setValidationMsg({
+          text: 'Kode referral tidak ditemukan.',
+          isError: true
+        })
+      }
+    })
+  }
+
   return (
     <div id="contact-section" className="relative w-full sm:w-150 ">
       {/* Step Badge */}
@@ -120,6 +157,64 @@ export default function ContactForm({
   "
             />
           </>
+        )}
+
+        <div className="flex items-center gap-2 mb-2 mt-5">
+          <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+            Kode Referral (Opsional)
+          </h2>
+          <Ticket className="w-4 h-4 text-purple-400 dark:text-purple-300" />
+        </div>
+        <p className="text-gray-600 dark:text-purple-200 mb-4 text-xs leading-snug">
+          Masukkan kode referral Anda jika ada untuk mendapatkan diskon tambahan.
+        </p>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={referralCode}
+            onChange={(e) => {
+              setReferralCode(e.target.value)
+              if (validationMsg) setValidationMsg(null)
+            }}
+            readOnly={isLocked}
+            onFocus={() => {
+              if (isLocked) onLockedAction?.()
+            }}
+            placeholder="Contoh : MABAR"
+            className="
+              flex-1 px-4 py-3 rounded-2xl
+              bg-white/80 dark:bg-white/20
+              border border-purple-500/50 dark:border-purple-300
+              text-gray-900 dark:text-white
+              placeholder-gray-400 dark:placeholder-purple-300
+              focus:outline-none
+              focus:border-purple-500
+              focus:ring-2 focus:ring-purple-500/20
+              focus:bg-white dark:focus:bg-white/30
+              transition-all duration-200
+              text-sm
+            "
+          />
+          <button
+            type="button"
+            onClick={handleCheckCode}
+            disabled={isLocked || checkMutation.isPending}
+            className="
+              px-5 py-3 rounded-2xl
+              bg-gradient-to-r from-purple-500 to-pink-500
+              text-white text-sm font-bold
+              hover:from-purple-600 hover:to-pink-600
+              disabled:opacity-50 transition-all duration-200
+              shadow-md
+            "
+          >
+            {checkMutation.isPending ? 'Checking...' : 'Cek'}
+          </button>
+        </div>
+        {validationMsg && (
+          <p className={`mt-2 text-xs font-medium ${validationMsg.isError ? 'text-red-500' : 'text-green-500'}`}>
+            {validationMsg.text}
+          </p>
         )}
       </div>
     </div>

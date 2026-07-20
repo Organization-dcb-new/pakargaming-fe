@@ -5,4 +5,5 @@ export interface CreateOrderRequest {
   product_id: string;
   /** Wajib untuk channel seperti OVO dan Smartfren Airtime */
   user_mdn?: string;
+  referral_code?: string;
 }
