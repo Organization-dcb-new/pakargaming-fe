@@ -42,7 +42,7 @@ export default function ContactForm({
       onSuccess: (res) => {
         if (res.data && res.data.is_active) {
           setValidationMsg({
-            text: `Kode referral valid! Diskon ${res.data.percent}% akan diterapkan.`,
+            text: `Kode referral valid!`,
             isError: false
           })
         } else {
