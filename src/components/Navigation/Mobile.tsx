@@ -40,12 +40,12 @@ export default function MobileNavigation({
   const [logoutOpen, setLogoutOpen] = useState(false)
 
   return (
-    <div className="relative z-0 flex min-w-0 flex-1 items-center justify-end gap-2 sm:justify-start md:hidden">
+    <div className="relative z-30 flex min-w-0 flex-1 items-center justify-end gap-2 sm:justify-start md:hidden">
       {/* Phone: rata kanan + animasi max-width. Tablet (sm–md): penuh mendekati logo */}
       <div className="flex min-w-0 flex-1 justify-end max-sm:ml-auto sm:min-w-0 sm:w-full sm:justify-start">
         <div
           className={[
-            'min-w-0 w-full overflow-hidden transition-[max-width] duration-300 ease-in-out sm:flex-1',
+            'min-w-0 w-full transition-[max-width] duration-300 ease-in-out sm:flex-1',
             mobileSearchOpen ? 'max-w-full' : 'max-w-12 sm:max-w-full',
           ].join(' ')}
         >

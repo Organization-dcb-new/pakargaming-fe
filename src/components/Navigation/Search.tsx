@@ -26,6 +26,8 @@ export default function SearchComponent({
   const [open, setOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const containerRef = useRef<HTMLDivElement>(null)
+
   const isMobileNav = variant === 'mobile'
   const isDesktopNav = variant === 'desktop'
   const isPhone = useMediaQuery('(max-width: 639px)')
@@ -39,11 +41,29 @@ export default function SearchComponent({
     onOpenChange(collapsibleChrome ? open : false)
   }, [open, collapsibleChrome, isMobileNav, onOpenChange])
 
+  // Click outside to close mobile search
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        if (!keyword) {
+          setOpen(false)
+        }
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [keyword])
+
   const { data, isLoading } = useGetGameBySearch(debouncedKeyword)
   const games = data?.data ?? []
 
   return (
     <div
+      ref={containerRef}
       className={[
         'relative min-w-0',
         isDesktopNav ? 'w-full min-w-0 max-w-full flex-1' : 'w-full min-w-0 max-w-full',
@@ -102,9 +122,6 @@ export default function SearchComponent({
               }
             }
           }}
-          onBlur={() => {
-            if (collapsibleChrome && !keyword) setOpen(false)
-          }}
           placeholder={t('searchPlaceholder')}
           className={[
             'ml-2 min-w-0 flex-1 cursor-text bg-transparent text-sm text-foreground outline-none transition-opacity duration-200 placeholder:text-muted-foreground',
@@ -148,7 +165,11 @@ export default function SearchComponent({
             <div className="max-h-96 overflow-y-auto">
               {games.slice(0, 5).map((game) => (
                 <Link
-                  onClick={() => setKeyword('')}
+                  onClick={() => {
+                    setKeyword('')
+                    setOpen(false)
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
                   key={game.id}
                   href={`/games/${game.slug}`}
                   className="group flex items-center gap-3 border-b border-border px-4 py-3 transition-colors duration-200 last:border-b-0 hover:bg-brand/10"
