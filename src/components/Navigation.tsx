@@ -26,7 +26,10 @@ export function Navigation() {
     return () => window.removeEventListener('click', handler)
   }, [])
 
+  const BLOG_URL = process.env.NEXT_PUBLIC_BLOG_URL || 'http://localhost:3001'
+
   const navLinks = [
+    { path: BLOG_URL, label: 'Blog', auth: false, external: true },
     // { path: '/my-transaction', label: t('transaction'), auth: true },
     // { path: '/check-transaction', label: t('transaction'), auth: false },
   ]

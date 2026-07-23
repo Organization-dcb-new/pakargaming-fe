@@ -11,6 +11,7 @@ export type NavLink = {
   path: string
   label: string
   auth: boolean
+  external?: boolean
 }
 
 interface DesktopNavProps {
@@ -53,6 +54,22 @@ export default function DesktopNavigation({
         </div>
         {visibleNavLinks.map((link) => {
           const active = pathname === link.path
+          const isExternal = link.external || link.path.startsWith('http')
+          
+          if (isExternal) {
+            return (
+              <a
+                key={link.path}
+                href={link.path}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`relative rounded-sm text-sm font-semibold text-brand transition-colors duration-200 after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:bg-brand after:transition-all after:duration-300 hover:after:w-full after:w-0 ${focusRing}`}
+              >
+                {link.label}
+              </a>
+            )
+          }
+
           return (
             <Link
               key={link.path}

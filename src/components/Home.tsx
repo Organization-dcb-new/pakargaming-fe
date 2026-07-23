@@ -2,6 +2,7 @@
 
 import BannerComponent from './Banner/Banner'
 import GamesByShow from './Home/GamesByShow'
+import BlogSection from './Home/BlogSection'
 
 export function Home() {
   return (
@@ -10,6 +11,8 @@ export function Home() {
       <BannerComponent />
       {/* Game Show  */}
       <GamesByShow />
+      {/* Blog & Gaming News Section */}
+      <BlogSection />
     </div>
   )
 }
