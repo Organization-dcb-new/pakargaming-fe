@@ -10,8 +10,8 @@ export const FOOTER_CONTACT = {
   whatsappNumber: WHATSAPP_NUMBER,
   whatsappDisplay: '+62 813-1793-708',
   whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}`,
-  email: 'pakargaming1@gmail.com',
-  emailUrl: 'mailto:pakargaming1@gmail.com',
+  email: 'cs@pakargaming.id',
+  emailUrl: 'mailto:cs@pakargaming.id',
 } as const
 
 export const FOOTER_SOCIAL = {
