@@ -13,7 +13,11 @@
     "logoAlt": "Pakar Gaming",
     "menu": "Menu",
     "openMenu": "Buka menu",
-    "languageAndTheme": "Bahasa & tema"
+    "languageAndTheme": "Bahasa & tema",
+    "checkTransaction": "Cek Transaksi",
+    "mainNav": "Navigasi utama",
+    "accountMenu": "Menu akun",
+    "brand": "Pakar Gaming"
   },
   "Home": {
     "heroTitle": "Tingkatkan Skill Gaming Anda",

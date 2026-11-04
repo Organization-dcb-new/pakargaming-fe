@@ -1,65 +1,31 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 
 import UseLoginGoogleOauth from '../hooks/useLogin'
+import useAuth from '../hooks/useAuth'
 import DesktopNavigation from './Navigation/Desktop'
 import LoadingNav from './Navigation/Loading'
 import MobileNavigation from './Navigation/Mobile'
+import MobileSearch from './Navigation/MobileSearch'
 import LogoNavigation from './Navigation/Logo'
-import useAuth from '../hooks/useAuth'
-import MobileBottomNav from './Navigation/MobileBottom'
 import LayoutTop from './Navigation/LayoutTop'
-import LayoutBottom from './Navigation/LayoutBottom'
 
 export function Navigation() {
-  const [openProfile, setOpenProfile] = useState(false)
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
 
-  const t = useTranslations('Navigation')
   const { loginWithGoogle } = UseLoginGoogleOauth()
   const { user, loading } = useAuth()
-
-  useEffect(() => {
-    const handler = () => setOpenProfile(false)
-    window.addEventListener('click', handler)
-    return () => window.removeEventListener('click', handler)
-  }, [])
-
-  const navLinks = [
-    // { path: '/my-transaction', label: t('transaction'), auth: true },
-    // { path: '/check-transaction', label: t('transaction'), auth: false },
-  ]
-  const visibleNavLinks = navLinks.filter((link) => !link.auth || user)
 
   if (loading) {
     return <LoadingNav />
   }
 
   return (
-    <>
-      <LayoutTop>
-        <LogoNavigation collapsedOnMobile={mobileSearchOpen} />
-        <DesktopNavigation
-          visibleNavLinks={visibleNavLinks}
-          loginWithGoogle={loginWithGoogle}
-          user={user}
-          openProfile={openProfile}
-          setOpenProfile={setOpenProfile}
-        />
-        <MobileNavigation
-          loginWithGoogle={loginWithGoogle}
-          openProfile={openProfile}
-          user={user}
-          setOpenProfile={setOpenProfile}
-          mobileSearchOpen={mobileSearchOpen}
-          onMobileSearchOpenChange={setMobileSearchOpen}
-        />
-      </LayoutTop>
-
-      <LayoutBottom>
-        <MobileBottomNav visibleNavLinks={visibleNavLinks} />
-      </LayoutBottom>
-    </>
+    <LayoutTop>
+      <MobileNavigation user={user} loginWithGoogle={loginWithGoogle} />
+      <LogoNavigation collapsedOnMobile={mobileSearchOpen} />
+      <DesktopNavigation user={user} loginWithGoogle={loginWithGoogle} />
+      <MobileSearch open={mobileSearchOpen} onOpenChange={setMobileSearchOpen} />
+    </LayoutTop>
   )
 }

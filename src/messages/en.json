@@ -13,7 +13,11 @@
     "logoAlt": "Pakar Gaming",
     "menu": "Menu",
     "openMenu": "Open menu",
-    "languageAndTheme": "Language & theme"
+    "languageAndTheme": "Language & theme",
+    "checkTransaction": "Check Transaction",
+    "mainNav": "Main navigation",
+    "accountMenu": "Account menu",
+    "brand": "Pakar Gaming"
   },
 
   "Home": {
