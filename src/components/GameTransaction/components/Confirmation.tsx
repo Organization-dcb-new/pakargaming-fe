@@ -1,10 +1,16 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Price } from '../../../types/Game'
 import { PaymentMethod } from '../../../types/PaymentMethod'
-import { formatPrice } from '../../../utils/format_price'
 import { calculateTotalPrice } from './PaymentMethod'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '../../ui/dialog'
 
 interface ConfirmModalProps {
   loading?: boolean
@@ -15,6 +21,7 @@ interface ConfirmModalProps {
   open: boolean
 }
 
+/** Modal konfirmasi pesanan — Dialog ui/ (focus trap, Esc, aria-modal; rules §7). */
 export default function ConfirmModal({
   loading = false,
   onConfirm,
@@ -24,84 +31,61 @@ export default function ConfirmModal({
   Payment,
 }: ConfirmModalProps) {
   const t = useTranslations('GameCheckout')
-  const [visible, setVisible] = useState(false)
   const finalPrice = calculateTotalPrice(Payment, Product)
 
-  useEffect(() => {
-    if (open) {
-      setVisible(true)
-    } else {
-      const t = setTimeout(() => setVisible(false), 200)
-      return () => clearTimeout(t)
-    }
-  }, [open])
-
-  if (!visible) return null
-
   return (
-    <div
-      className={`
-        fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4
-        transition-all duration-200
-        ${open ? 'bg-black/50' : 'bg-black/0'}
-      `}
+    <Dialog
+      open={open}
+      onOpenChange={(value) => {
+        // Jangan bisa ditutup saat order sedang diproses
+        if (!loading) setOpen(value)
+      }}
     >
-      {/* backdrop */}
-      <div className="absolute inset-0" onClick={loading ? undefined : () => setOpen(false)} />
+      <DialogContent className="gap-5 rounded-2xl border-border bg-card p-6 sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-display text-xl font-bold text-foreground">
+            {t('confirmTitle')}
+          </DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground">
+            {t('confirmSubtitle')}
+          </DialogDescription>
+        </DialogHeader>
 
-      {/* modal */}
-      <div
-        className={`
-          relative w-full max-w-md bg-white p-6 shadow-2xl
-          rounded-t-3xl sm:rounded-2xl
-          transform transition-all duration-200 ease-out
-          ${open ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}
-        `}
-      >
-        {/* Header */}
-        <div className="text-center">
-          <h2 className="text-lg font-semibold text-gray-900">{t('confirmTitle')}</h2>
-          <p className="mt-1 text-sm text-gray-500">{t('confirmSubtitle')}</p>
+        <dl className="flex flex-col gap-2.5 rounded-xl bg-muted p-4 text-sm">
+          <div className="flex justify-between gap-3">
+            <dt className="text-muted-foreground">{t('confirmProduct')}</dt>
+            <dd className="text-right font-semibold text-foreground">{Product?.name || '-'}</dd>
+          </div>
+          <div className="flex justify-between gap-3">
+            <dt className="text-muted-foreground">{t('confirmPayment')}</dt>
+            <dd className="text-right font-semibold text-foreground">{Payment?.full_name || '-'}</dd>
+          </div>
+          <div className="flex items-baseline justify-between gap-3 border-t border-border pt-2.5">
+            <dt className="font-semibold text-foreground">{t('confirmTotal')}</dt>
+            <dd className="font-display text-xl font-bold text-primary">Rp {finalPrice}</dd>
+          </div>
+        </dl>
+
+        <div className="flex gap-2.5">
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            disabled={loading}
+            className="h-12 flex-1 cursor-pointer rounded-lg border border-border text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+          >
+            {t('confirmEdit')}
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={loading}
+            className="chamfer flex h-12 flex-[2] cursor-pointer items-center justify-center gap-2 rounded-sm bg-primary text-sm font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+          >
+            {loading && <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />}
+            {loading ? t('confirmProcessing') : t('confirmContinue')}
+          </button>
         </div>
-
-        {/* Detail */}
-        <div className="mt-5 rounded-2xl border border-purple-100 bg-purple-50/50 p-4 space-y-3 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-500">{t('confirmProduct')}</span>
-            <span className="font-medium text-gray-900 text-right">{Product?.name || '-'}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span className="text-gray-500">{t('confirmPayment')}</span>
-            <span className="font-medium text-gray-900 text-right">
-              {Payment?.full_name || '-'}
-            </span>
-          </div>
-
-          <div className="flex justify-between border-t border-purple-200 pt-2">
-            <span className="font-medium text-gray-700">{t('confirmTotal')}</span>
-            <span className="font-bold text-green-600">Rp {finalPrice}</span>
-          </div>
-        </div>
-
-        {/* Action */}
-        <button
-          onClick={onConfirm}
-          disabled={loading}
-          className="
-            mt-6 w-full rounded-xl
-            bg-gradient-to-r from-pink-500 to-purple-600
-            py-3 text-sm font-semibold text-white
-            shadow-md transition
-            hover:shadow-purple-500/30
-            active:scale-[0.98]
-            disabled:opacity-50
-            cursor-pointer
-          "
-        >
-          {loading ? t('confirmProcessing') : t('confirmContinue')}
-        </button>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }

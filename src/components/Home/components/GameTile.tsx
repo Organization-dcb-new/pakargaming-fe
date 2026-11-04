@@ -5,25 +5,12 @@ import Image from 'next/image'
 import { Link } from '../../../i18n/routing'
 import type { ShowGame } from '../../../types/Show'
 import { ShowBadge, ShowBadgeVariant } from './ShowBadge'
+import { getInitials } from '../../../utils/initials'
 
 interface GameTileProps {
   game: ShowGame
   /** Ribbon animasi (kilau) sesuai flag show: popular / new / hot */
   badge?: ShowBadgeVariant | null
-}
-
-/** Inisial nama game untuk placeholder thumbnail, mis. "Free Fire" → "FF". */
-function getInitials(name: string) {
-  const words = name
-    .split(/\s+/)
-    .map((word) => word.replace(/[^\p{L}\p{N}]/gu, ''))
-    .filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return words
-    .slice(0, 3)
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase()
 }
 
 /**

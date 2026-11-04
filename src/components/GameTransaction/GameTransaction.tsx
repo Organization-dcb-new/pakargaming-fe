@@ -2,9 +2,9 @@
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useGetGamesBySlug } from "../../hooks/useGame";
-import SpinnerGameTransaction from "./components/Spinner";
+import GameTransactionSkeleton from "./components/GameTransactionSkeleton";
 import LayoutGamesTransaction from "./components/Layout";
-import BannerGameTransaction from "./components/Banner";
+import GameHeader from "./components/GameHeader";
 import AccountComponent from "./components/Account";
 import LayoutData from "./components/LayoutData";
 import { cloneElement, ReactElement, useEffect, useState } from "react";
@@ -25,6 +25,7 @@ import { useGetCategoryProduct } from "./hooks/useGetCategoryProduct";
 import DescriptionGame from "./components/Description";
 import FAQSection from "./components/FAQ";
 import GameMaintenance from "./components/GameMaintenance";
+import GameNotFound from "./components/GameNotFound";
 
 const PAYMENT_CODES_NEEDING_USER_MDN = new Set(["ovo", "smartfren_airtime"]);
 const MIN_PRODUCT_PRICE_FOR_VA = 10000;
@@ -139,7 +140,15 @@ export default function GameTransaction() {
   }, [isAccountStepCompleted, selectedPackage, selectedPayment]);
 
   if (isLoadingGameDetail) {
-    return <SpinnerGameTransaction />;
+    return <GameTransactionSkeleton />;
+  }
+
+  if (!dataGameDetail?.data) {
+    return (
+      <LayoutGamesTransaction>
+        <GameNotFound />
+      </LayoutGamesTransaction>
+    );
   }
 
   if (dataGameDetail?.data && !dataGameDetail.data.is_active) {
@@ -307,9 +316,9 @@ export default function GameTransaction() {
 
   return (
     <LayoutGamesTransaction>
-      <BannerGameTransaction game={dataGameDetail.data} />
+      <GameHeader game={dataGameDetail.data} />
       <LayoutData>
-        <div className="flex flex-col gap-5 items-center">
+        <div className="flex min-w-0 flex-col gap-4">
           {sections.map((Section, i) =>
             cloneElement(Section, {
               step: i + 1,
@@ -318,15 +327,22 @@ export default function GameTransaction() {
           )}
         </div>
 
-        <div className="flex items-center flex-col ">
-          <HelpCard />
+        <aside className="flex flex-col gap-4 lg:sticky lg:top-20">
           <OrderTransactionComponent
             handleConfirm={handleOpenConfirm}
             Payment={activePayment}
             Product={activeProduct}
+            gameName={dataGameDetail.data.name}
           />
-        </div>
+          <HelpCard />
+        </aside>
       </LayoutData>
+      <div className="mt-8 flex flex-col gap-5">
+        <DescriptionGame game={dataGameDetail} />
+        <FAQSection />
+      </div>
+      {/* Spacer setinggi bar order mobile (diukur MobileOrderBar) supaya konten bawah tidak tertutup */}
+      <div aria-hidden className="h-[var(--mobile-order-bar-height,0px)] lg:hidden" />
       <MobileOrderBar
         Payment={activePayment}
         Product={activeProduct}
@@ -340,10 +356,6 @@ export default function GameTransaction() {
         onConfirm={handleCreateOrder}
         loading={isPending}
       />
-      <div className="mt-5">
-        <DescriptionGame game={dataGameDetail} />
-        <FAQSection />
-      </div>
     </LayoutGamesTransaction>
   );
 }

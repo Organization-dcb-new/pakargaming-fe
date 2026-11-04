@@ -3,11 +3,16 @@
 import { useLocale, useTranslations } from 'next-intl'
 import { usePathname, useRouter } from '../i18n/routing'
 import { useTransition } from 'react'
+import { setEntranceSuppressed, startPageTransition, waitForDocumentLang } from '../lib/pageTransition'
 
 const locales = [
   { code: 'en', label: 'EN' },
   { code: 'id', label: 'ID' },
 ] as const
+
+/** Jeda setelah locale baru ter-render, supaya komponen yang mount ulang (navbar, dsb.) selesai
+ *  settle sebelum snapshot crossfade diambil. Pakai setTimeout: rAF tidak jalan selama render ditahan. */
+const SETTLE_MS = 80
 
 export function LanguageSwitcher() {
   const locale = useLocale()
@@ -18,9 +23,14 @@ export function LanguageSwitcher() {
 
   const handleLocaleChange = (newLocale: (typeof locales)[number]['code']) => {
     if (newLocale === locale) return
-    startTransition(() => {
-      router.replace(pathname, { locale: newLocale })
-    })
+    setEntranceSuppressed(true)
+    startPageTransition(async () => {
+      startTransition(() => {
+        router.replace(pathname, { locale: newLocale })
+      })
+      await waitForDocumentLang(newLocale)
+      await new Promise((resolve) => setTimeout(resolve, SETTLE_MS))
+    }).finally(() => setEntranceSuppressed(false))
   }
 
   return (

@@ -3,17 +3,27 @@
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { Button } from './ui/button'
 import { useTranslations } from 'next-intl'
+import { startPageTransition } from '../lib/pageTransition'
 
 export function ThemeToggle() {
   const t = useTranslations('Theme')
-  const { theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // resolvedTheme (bukan theme): saat tema "system", theme === 'system' sehingga toggle tidak berefek
+  const toggleTheme = () => {
+    const next = resolvedTheme === 'dark' ? 'light' : 'dark'
+    // flushSync: next-themes memasang class tema di effect — harus selesai di dalam callback
+    // supaya snapshot "sesudah" crossfade sudah bertema baru.
+    startPageTransition(() => flushSync(() => setTheme(next)))
+  }
 
   if (!mounted) {
     return (
@@ -27,7 +37,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      onClick={toggleTheme}
       className="w-9 h-9 cursor-pointer"
     >
       <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

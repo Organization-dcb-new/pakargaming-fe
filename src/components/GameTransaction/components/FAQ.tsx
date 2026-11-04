@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { ChevronDown } from "lucide-react";
+import { FOOTER_SOCIAL } from "../../Footer/config";
 
 interface FAQItem {
   question: string;
@@ -57,10 +59,10 @@ export default function FAQSection() {
           <div>
             <p>{t("faq6P1")}</p>
             <a
-              href="https://www.instagram.com/pakargaming.id/"
+              href={FOOTER_SOCIAL.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-purple-600 hover:underline"
+              className="font-semibold text-primary hover:underline"
             >
               {t("faq6Link")}
             </a>
@@ -76,69 +78,55 @@ export default function FAQSection() {
   };
 
   return (
-    <div className="w-full max-w-[1030px] mx-auto px-4 sm:px-0 mt-12">
-      <div className="bg-black/5 dark:bg-white/5 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-purple-500/30 shadow-xl">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-1 h-6 bg-purple-500 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
-            {t("faqTitle")}
-          </h2>
-        </div>
+    <section
+      aria-labelledby="faq-title"
+      className="rounded-2xl border border-border bg-card p-5 sm:p-8"
+    >
+      <div className="mb-5 flex items-center gap-3">
+        <span aria-hidden className="h-6 w-1.5 shrink-0 -skew-x-12 bg-gradient-brand" />
+        <h2
+          id="faq-title"
+          className="font-display text-lg font-bold tracking-tight text-foreground sm:text-xl"
+        >
+          {t("faqTitle")}
+        </h2>
+      </div>
 
-        <div className="space-y-4">
-          {faqData.map((item, index) => (
-            <div
-              key={index}
-              className="border border-purple-500/20 rounded-xl overflow-hidden transition-all"
-            >
+      <div className="space-y-3">
+        {faqData.map((item, index) => {
+          const isOpen = activeIndex === index;
+          return (
+            <div key={index} className="overflow-hidden rounded-xl border border-border">
               <button
                 type="button"
                 onClick={() => toggle(index)}
-                className="w-full text-left px-4 py-3 flex justify-between items-center hover:bg-purple-500/5 transition-all"
+                aria-expanded={isOpen}
+                aria-controls={`faq-panel-${index}`}
+                className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors duration-200 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring motion-reduce:transition-none"
               >
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {item.question}
-                </span>
-                <span
-                  className={`transition-transform duration-300 ${
-                    activeIndex === index ? "rotate-180" : ""
+                <span className="font-semibold text-foreground">{item.question}</span>
+                <ChevronDown
+                  aria-hidden
+                  className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 motion-reduce:transition-none ${
+                    isOpen ? "rotate-180 text-primary" : ""
                   }`}
-                >
-                  <svg
-                    className={`w-5 h-5 text-purple-500 transition-all duration-300 ease-in-out ${
-                      activeIndex === index
-                        ? "rotate-180 scale-110"
-                        : "rotate-0 scale-100 opacity-70"
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </span>
+                />
               </button>
 
               <div
-                className={`px-4 transition-all duration-300 ease-in-out overflow-hidden ${
-                  activeIndex === index
-                    ? "max-h-[500px] py-3 opacity-100"
-                    : "max-h-0 py-0 opacity-0"
+                id={`faq-panel-${index}`}
+                className={`overflow-hidden px-4 transition-all duration-300 ease-in-out motion-reduce:transition-none ${
+                  isOpen ? "max-h-[500px] py-3 opacity-100" : "max-h-0 py-0 opacity-0"
                 }`}
               >
-                <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                <div className="max-w-prose text-sm leading-relaxed text-muted-foreground">
                   {item.answer}
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
-    </div>
+    </section>
   );
 }

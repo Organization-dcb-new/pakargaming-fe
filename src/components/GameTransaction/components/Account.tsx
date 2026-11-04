@@ -4,6 +4,9 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useRef } from 'react'
 import { GameDetail, GameInput } from '../../../types/Game'
 import { useCheckIDV2 } from '../hooks/useCheckID'
+import { Check, Loader2 } from 'lucide-react'
+import StepCard from './StepCard'
+import { fieldInputClass, fieldLabelClass } from './fieldStyles'
 
 type DynamicAccount = Record<string, any>
 
@@ -77,66 +80,67 @@ export default function AccountCard({
   }, [data, values, game.id, setAccount, account])
 
   return (
-    <div id="account-section" className="relative w-full sm:w-150 ">
-      {/* Step Badge */}
-      <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-md border-2 border-white dark:border-zinc-900 z-10">
-        {step}
+    <StepCard id="account-section" step={step} title={t('accountEnterTitle')}>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+        {gameData
+          ?.sort((a, b) => a.sort_order - b.sort_order)
+          .map((input) => (
+            <label key={input.id} className={fieldLabelClass}>
+              <span>
+                {input.label}
+                {input.required && (
+                  <span aria-hidden className="ml-1 text-destructive">
+                    *
+                  </span>
+                )}
+              </span>
+
+              {input.input_type === 'dropdown' ? (
+                <select
+                  {...register(input.key, { required: input.required })}
+                  aria-required={input.required}
+                  className={`${fieldInputClass} cursor-pointer`}
+                >
+                  <option value="">{input.placeholder}</option>
+                  {input.Options?.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  {...register(input.key, { required: input.required })}
+                  type={input.input_type}
+                  placeholder={input.placeholder}
+                  aria-required={input.required}
+                  className={fieldInputClass}
+                />
+              )}
+            </label>
+          ))}
       </div>
 
-      <div className="bg-black/5 dark:bg-white/10 backdrop-blur-lg rounded-3xl p-4 sm:p-6 border border-purple-500/30 hover:border-purple-500 transition-all duration-300 shadow-xl">
-        <h2 className="text-sm sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
-          {t('accountEnterTitle')}
-        </h2>
+      <div role="status" aria-live="polite">
+        {isPending && (
+          <p className="mt-4 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin text-primary motion-reduce:animate-none" aria-hidden />
+            {t('accountChecking')}
+          </p>
+        )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-          {gameData
-            ?.sort((a, b) => a.sort_order - b.sort_order)
-            .map((input) => (
-              <div key={input.id} className="flex flex-col">
-                <label className="text-xs sm:text-sm font-semibold text-gray-800 dark:text-white mb-1">
-                  {input.label}
-                  {input.required && <span className="text-red-500 ml-1">*</span>}
-                </label>
-
-                {input.input_type === 'dropdown' ? (
-                  <select
-                    {...register(input.key, { required: input.required })}
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl bg-white dark:bg-white/20 border border-purple-500/30 text-gray-900 dark:text-white text-sm outline-none transition-all duration-200 hover:border-purple-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:bg-white dark:focus:bg-white/30"
-                  >
-                    <option value="">{input.placeholder}</option>
-                    {input.Options?.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.name}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    {...register(input.key, { required: input.required })}
-                    type={input.input_type}
-                    placeholder={input.placeholder}
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl bg-white dark:bg-white/20 border border-purple-500/30 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-purple-300 text-sm outline-none transition-all duration-200 hover:border-purple-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:bg-white dark:focus:bg-white/30"
-                  />
-                )}
-              </div>
-            ))}
-        </div>
-
-        {(isPending || data?.username) && (
-          <div className="mt-4 flex items-center">
-            {isPending && (
-              <div className="flex items-center gap-2 text-purple-500 text-sm">
-                <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
-                Mengecek ID akun...
-              </div>
-            )}
-
-            {!isPending && data?.username && (
-              <div className="text-green-500 text-sm font-semibold">✓ Account: {data.username}</div>
-            )}
+        {!isPending && data?.username && (
+          <div className="mt-4 flex items-center gap-3 rounded-xl border border-success/30 bg-success/10 px-3.5 py-3">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground">
+              <Check className="h-4 w-4" strokeWidth={3} aria-hidden />
+            </span>
+            <span className="flex min-w-0 flex-col">
+              <span className="text-xs text-muted-foreground">{t('accountFound')}</span>
+              <span className="truncate font-bold text-foreground">{data.username}</span>
+            </span>
           </div>
         )}
       </div>
-    </div>
+    </StepCard>
   )
 }

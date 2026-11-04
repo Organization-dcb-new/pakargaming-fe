@@ -22,6 +22,9 @@
   /* Brand = ungu logo — aksen sekunder (chip, tint, tag). */
   --brand: #8a35ac;
   --brand-foreground: #ffffff;
+  /* Ungu logo solid (sama di light & dark) — fill badge nomor langkah & tag; teks putih AA (6.6:1) */
+  --brand-solid: var(--logo-purple);
+  --brand-solid-foreground: #ffffff;
   --gradient-brand: linear-gradient(135deg, var(--logo-purple) 0%, var(--logo-cyan) 100%);
   /* Background "arena": grid tipis + glow logo di pojok atas (intensitas subtle) */
   --grid-line: rgba(20, 18, 31, 0.03);
@@ -140,6 +143,8 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
+  --color-brand-solid: var(--brand-solid);
+  --color-brand-solid-foreground: var(--brand-solid-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
@@ -218,6 +223,14 @@
     color-mix(in oklab, var(--foreground) 7%, transparent) 0 2px,
     transparent 2px 12px
   );
+}
+
+/* Crossfade halaman saat ganti tema / bahasa (lib/pageTransition.ts) — 300ms (rules §12).
+   Reduced-motion sudah di-skip di JS, jadi tidak perlu fallback di sini. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+  animation-timing-function: ease-in-out;
 }
 
 /* Progress autoplay banner — durasi harus sinkron dengan AUTOPLAY_DELAY di Banner.tsx (5s) */

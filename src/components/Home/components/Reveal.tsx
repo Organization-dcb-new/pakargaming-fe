@@ -1,7 +1,8 @@
 'use client'
 
 import { motion, useReducedMotion } from 'motion/react'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
+import { isEntranceSuppressed } from '../../../lib/pageTransition'
 
 interface RevealProps {
   children: ReactNode
@@ -10,11 +11,15 @@ interface RevealProps {
   className?: string
 }
 
-/** Fade + slide-up sekali saat elemen masuk viewport. Nonaktif saat prefers-reduced-motion. */
+/**
+ * Fade + slide-up sekali saat elemen masuk viewport. Nonaktif saat prefers-reduced-motion,
+ * dan saat mount ulang akibat ganti bahasa (halaman sudah di-crossfade, jangan animasi dua kali).
+ */
 export function Reveal({ children, delay = 0, className }: RevealProps) {
   const reduceMotion = useReducedMotion()
+  const [skipEntrance] = useState(isEntranceSuppressed)
 
-  if (reduceMotion) {
+  if (reduceMotion || skipEntrance) {
     return <div className={className}>{children}</div>
   }
 

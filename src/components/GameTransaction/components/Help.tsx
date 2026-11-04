@@ -1,31 +1,30 @@
 'use client'
-import { Headset } from 'lucide-react'
+import { ChevronRight, Headset } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { FOOTER_CONTACT } from '../../Footer/config'
 
+/** Kartu bantuan CS (WhatsApp) — nomor dari config, bukan hardcoded (rules §8). */
 export default function HelpCard() {
   const t = useTranslations('GameCheckout')
+
   return (
     <a
-      href="https://wa.me/628131793708" 
+      href={FOOTER_CONTACT.whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className='w-full flex justify-center xl:w-100 xl:self-start'
+      className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors duration-200 hover:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
     >
-      <div className="bg-black/5 w-full sm:w-150  dark:bg-white/10 rounded-3xl p-4 sm:p-6 border border-purple-500/30 hover:border-purple-500 transition-all duration-300 shadow-xl hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-        {/* Header with icon */}
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/30">
-            <Headset className="w-5 h-5 text-purple-500" />
-          </div>
-
-          <div className="flex flex-col">
-            <p className="text-sm font-bold text-gray-900 dark:text-white">{t('helpTitle')}</p>
-            <p className="text-xs text-gray-600 dark:text-purple-200 leading-relaxed">
-              {t('helpSubtitle')}
-            </p>
-          </div>
-        </div>
-      </div>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand/40 bg-brand/10 text-brand">
+        <Headset className="h-5 w-5" aria-hidden />
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="text-sm font-bold text-foreground">{t('helpTitle')}</span>
+        <span className="text-xs leading-relaxed text-muted-foreground">{t('helpSubtitle')}</span>
+      </span>
+      <ChevronRight
+        className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-primary motion-reduce:transition-none"
+        aria-hidden
+      />
     </a>
   )
 }

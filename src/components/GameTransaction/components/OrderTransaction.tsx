@@ -9,73 +9,59 @@ interface OrderProps {
   Product: Price
   Payment: PaymentMethod
   handleConfirm: () => void
+  /** Nama game — baris pertama ringkasan */
+  gameName?: string
 }
 
-export default function OrderSummary({ Payment, Product, handleConfirm }: OrderProps) {
+const EMPTY = '—'
+
+export default function OrderSummary({ Payment, Product, handleConfirm, gameName }: OrderProps) {
   const t = useTranslations('GameCheckout')
   const totalPrice = calculateTotalPrice(Payment, Product)
 
+  const rows = [
+    { label: t('orderGame'), value: gameName },
+    { label: t('orderPackage'), value: Product?.name },
+    { label: t('orderPayment'), value: Payment?.full_name },
+  ]
+
   return (
-    <div className=" hidden xl:block sticky top-24 mt-5">
-      <div className="bg-black/5  xl:w-100  dark:bg-white/10 rounded-3xl p-4 sm:p-6 border border-purple-500/30 shadow-xl">
-        <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4">
-          {t('orderSummaryTitle')}
-        </h2>
+    <section
+      aria-labelledby="order-summary-title"
+      className="hidden flex-col gap-4 rounded-2xl border border-border bg-card p-5 lg:flex"
+    >
+      <h2 id="order-summary-title" className="font-display text-lg font-semibold text-foreground">
+        {t('orderSummaryTitle')}
+      </h2>
 
-        {/* Info */}
-        <div className="space-y-3 text-sm mb-4">
-          <div className="flex justify-between">
-            <span className="text-gray-500 text-sm dark:text-purple-200">{t('orderPackage')} : </span>
-            <span className="font-medium text-gray-900 dark:text-white text-right">
-              {Product?.name}
-            </span>
+      <dl className="flex flex-col gap-2.5 text-sm">
+        {rows.map(({ label, value }) => (
+          <div key={label} className="flex justify-between gap-3">
+            <dt className="shrink-0 text-muted-foreground">{label}</dt>
+            <dd className="text-right font-semibold text-foreground">{value || EMPTY}</dd>
           </div>
+        ))}
+      </dl>
 
-          <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-purple-200">{t('orderPayment')} : </span>
-            <span className="font-medium text-gray-900 dark:text-white text-right">
-              {Payment?.full_name}
-            </span>
-          </div>
+      <div className="h-px bg-border" />
 
-          <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-white/10">
-            <span className="font-semibold">{t('orderTotal')} : </span>
-            <span className=" text-xl font-bold text-green-500 dark:text-green-400">
-              {totalPrice !== null && (
-                <p className="sm:text-sm font-semibold text-purple-600 dark:text-purple-400">
-                  Rp {totalPrice}
-                </p>
-              )}
-            </span>
-          </div>
-        </div>
-
-        <button
-          onClick={() => {
-            handleConfirm()
-          }}
-          className="
-    w-full
-    bg-gradient-to-r from-pink-500 to-purple-600
-    text-white font-semibold
-    py-3
-    rounded-full
-    transition-all duration-300
-    cursor-pointer
-    flex items-center justify-center gap-2
-    text-sm
-    hover:shadow-lg
-    hover:shadow-purple-500/30
-    hover:scale-[1.03]
-    active:scale-[0.97]
-    disabled:opacity-60
-    disabled:cursor-not-allowed
-  "
-        >
-          <ShoppingCart className="w-4 h-4" />
-          {t('orderBuy')}
-        </button>
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="font-semibold text-foreground">{t('orderTotal')}</span>
+        <span className="font-display text-2xl font-bold text-primary">
+          {totalPrice !== null ? `Rp ${totalPrice}` : EMPTY}
+        </span>
       </div>
-    </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          handleConfirm()
+        }}
+        className="chamfer flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-sm bg-primary text-base font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card motion-reduce:transition-none"
+      >
+        <ShoppingCart className="h-4 w-4" aria-hidden />
+        {t('orderBuy')}
+      </button>
+    </section>
   )
 }

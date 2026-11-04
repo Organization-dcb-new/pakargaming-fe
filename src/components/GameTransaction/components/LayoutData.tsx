@@ -1,5 +1,10 @@
 import { ReactNode } from 'react'
 
+/** Grid checkout: kolom langkah (kiri) + ringkasan sticky (kanan, mulai lg). */
 export default function LayoutData({ children }: { children: ReactNode }) {
-  return <div className="min-h-screen flex flex-col xl:flex-row gap-5 justify-center px-5 mt-5">{children}</div>
+  return (
+    <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      {children}
+    </div>
+  )
 }

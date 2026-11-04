@@ -1,12 +1,13 @@
 'use client'
 
-import { CheckCircle2,  } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import { GetPaymentMethodResponse, PaymentMethod } from '../../../types/PaymentMethod'
 import Image from 'next/image'
 import { Price } from '../../../types/Game'
 import { formatPrice } from '../../../utils/format_price'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import StepCard from './StepCard'
 
 interface PaymentMethodProps {
   PaymentMethod: GetPaymentMethodResponse
@@ -77,26 +78,23 @@ export default function PaymentMethodTransactionComponent({
   }
 
   return (
-    <div
+    <StepCard
       id="payment-method-section"
-      className="relative w-full sm:w-150 scroll-mt-28">
-      {/* Step Badge */}
-      <div className="absolute -top-2 -left-2 sm:-top-3 sm:-left-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-md border-2 border-white dark:border-zinc-900 z-10">
-        {step}
-      </div>
+      step={step ?? 3}
+      title={t('selectPayment')}
+      locked={isLocked}
+      lockedLabel={t('stepLocked')}
+    >
+      <div className="space-y-3">
+        {categories.map((category, index) => {
+          const isOpen = activeIndexes.includes(index)
+          const panelId = `payment-category-${category.id}`
 
-      <div className="bg-black/5 dark:bg-white/10 rounded-3xl p-4 sm:p-6 border border-purple-500/30 hover:border-purple-500 transition-all duration-300 shadow-xl">
-        <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
-          {t('selectPayment')}
-        </h2>
-
-        <div className="space-y-4">
-          {categories.map((category, index) => (
-            <div
-              key={category.id}
-              className="border border-purple-500/20 rounded-xl overflow-hidden transition-all">
+          return (
+            <div key={category.id} className="overflow-hidden rounded-xl border border-border">
               {/* HEADER */}
               <button
+                type="button"
                 onClick={() => {
                   if (isLocked) {
                     onLockedAction?.()
@@ -104,138 +102,117 @@ export default function PaymentMethodTransactionComponent({
                   }
                   toggle(index)
                 }}
-                className="w-full px-4 py-3 flex justify-between items-center hover:bg-purple-500/5 transition-all">
-                {/* LEFT SIDE */}
-                <div className="flex justify-between w-full gap-3">
-                  <span className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
-                    {category.name}
-                  </span>
+                aria-expanded={isOpen}
+                aria-controls={panelId}
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left transition-colors duration-200 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring motion-reduce:transition-none"
+              >
+                <span className="flex-1 font-semibold text-foreground">{category.name}</span>
 
-                  {/* ICON LIST */}
-                  <div className="flex justify-center gap-3 mr-1">
-                    {category.payment_method?.map((payment) => {
-                      const iconSrc = getValidImageSrc(payment.icon_url)
-                      return (
-                        <div
-                          key={payment.id}
-                          className="w-8 h-8 justify-center flex gap-10 items-center">
-                          {iconSrc ? (
-                            <Image
-                              src={iconSrc}
-                              alt={payment.name}
-                              width={48}
-                              height={48}
-                              unoptimized={true}
-                              className="object-contain"
-                            />
-                          ) : null}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
+                {/* ICON LIST — logo pihak ketiga di atas plat putih supaya terbaca di dark */}
+                <span className="hidden items-center gap-1.5 sm:flex">
+                  {category.payment_method?.slice(0, 4).map((payment) => {
+                    const iconSrc = getValidImageSrc(payment.icon_url)
+                    return iconSrc ? (
+                      <span
+                        key={payment.id}
+                        className="flex h-6 w-9 items-center justify-center rounded bg-white px-1"
+                      >
+                        <Image
+                          src={iconSrc}
+                          alt=""
+                          width={32}
+                          height={20}
+                          unoptimized={true}
+                          className="max-h-4 w-auto object-contain"
+                        />
+                      </span>
+                    ) : null
+                  })}
+                </span>
 
-                {/* ARROW */}
-                <svg
-                  className={`w-4 h-4 text-purple-500 transition-all duration-300 ${
-                    activeIndexes.includes(index) ? "rotate-180" : "opacity-70"
+                <ChevronDown
+                  aria-hidden
+                  className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 motion-reduce:transition-none ${
+                    isOpen ? 'rotate-180' : ''
                   }`}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+                />
               </button>
 
               {/* COLLAPSE CONTENT */}
               <div
-                className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                  activeIndexes.includes(index)
-                    ? "max-h-[800px] opacity-100"
-                    : "max-h-0 opacity-0"
-                }`}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 pt-0 mt-4">
+                id={panelId}
+                className={`overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none ${
+                  isOpen ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'
+                }`}
+              >
+                <div className="flex flex-col gap-2 px-3 pb-3">
                   {category.payment_method?.map((payment) => {
-                    const isSelected = activePayment?.id === payment.id;
-                    const isDisabled = !payment.is_active;
-                    const totalPrice = calculateTotalPrice(
-                      payment,
-                      ActiveProduct,
-                    )
+                    const isSelected = activePayment?.id === payment.id
+                    const isDisabled = !payment.is_active
+                    const totalPrice = calculateTotalPrice(payment, ActiveProduct)
                     const iconSrc = getValidImageSrc(payment.icon_url)
 
                     return (
-                      <div
+                      <button
                         key={payment.id}
+                        type="button"
+                        tabIndex={isOpen ? undefined : -1}
                         onClick={() => {
                           if (isLocked) {
                             onLockedAction?.()
                             return
                           }
-                          if (!isDisabled) setSelectedPaymentMethod(payment);
+                          if (!isDisabled) setSelectedPaymentMethod(payment)
                         }}
-                        className={`
-        relative rounded-2xl p-3
-        transition-all duration-300 
-        flex flex-row items-center gap-3 min-h-[60px]
-        ${
-          isDisabled
-            ? "opacity-50 cursor-not-allowed border border-gray-300 bg-gray-100 dark:bg-white/10"
-            : isSelected
-              ? "cursor-pointer border-2 border-purple-500 bg-white dark:bg-white/20 shadow-md scale-[1.02]"
-              : "cursor-pointer border border-purple-500/30 bg-white/80 dark:bg-white/20 dark:hover:bg-white/30 hover:scale-[1.01]"
-        }
-      `}>
-                        {/* Badge Selected */}
-                        {isSelected && !isDisabled && (
-                          <div className="absolute -top-2 -right-2 bg-purple-500 rounded-full p-1 shadow-md">
-                            <CheckCircle2 className="w-4 h-4 text-white" />
-                          </div>
-                        )}
-
-                        <div
-                          className={`flex items-center justify-center h-12 w-12 rounded-xl transition-all ${
-                            isSelected && !isDisabled
-                              ? "bg-white shadow-md"
-                              : "bg-transparent"
-                          }`}>
+                        aria-pressed={isSelected}
+                        aria-disabled={isDisabled}
+                        className={`flex min-h-14 w-full items-center gap-3 rounded-xl border-2 px-3 py-2.5 text-left transition-[border-color,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none ${
+                          isDisabled
+                            ? 'cursor-not-allowed border-border bg-muted opacity-50'
+                            : isSelected
+                              ? 'cursor-pointer border-primary bg-primary/10'
+                              : 'cursor-pointer border-border bg-input-background hover:border-primary/60'
+                        }`}
+                      >
+                        <span className="flex h-9 w-14 shrink-0 items-center justify-center rounded-md bg-white px-1.5 shadow-sm">
                           {iconSrc ? (
                             <Image
                               src={iconSrc}
-                              alt={payment.name}
-                              width={40}
-                              height={40}
+                              alt=""
+                              width={48}
+                              height={28}
                               unoptimized={true}
-                              className="object-contain"
+                              className="max-h-6 w-auto object-contain"
                             />
                           ) : null}
-                        </div>
+                        </span>
 
-                        <p className="text-gray-900 dark:text-white text-sm xl:text-sm font-medium leading-snug line-clamp-2 flex-1">
+                        <span className="line-clamp-2 flex-1 text-sm font-semibold leading-snug text-foreground">
                           {payment.full_name}
-                        </p>
+                        </span>
 
-                        <div className="flex w-auto justify-end">
-                          {ActiveProduct?.selling_price && (
-                            <p className="text-sm xl:text-xs font-semibold text-purple-600 dark:text-purple-400">
-                              Rp {totalPrice}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    );
+                        {ActiveProduct?.selling_price && (
+                          <span
+                            className={`shrink-0 whitespace-nowrap font-display text-sm font-semibold ${
+                              isSelected ? 'text-primary' : 'text-foreground'
+                            }`}
+                          >
+                            Rp {totalPrice}
+                          </span>
+                        )}
+
+                        {isSelected && !isDisabled && (
+                          <Check className="h-4 w-4 shrink-0 text-primary" strokeWidth={3} aria-hidden />
+                        )}
+                      </button>
+                    )
                   })}
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          )
+        })}
       </div>
-    </div>
-  );
+    </StepCard>
+  )
 }
