@@ -68,13 +68,14 @@ function refreshSchedules() {
   return store.inflight
 }
 
-/** Stale-while-revalidate: data lama langsung dipakai sambil diperbarui di background. */
+/**
+ * Data paling lama REFRESH_MS. Saat perlu refresh, request menunggu hasilnya maksimal TIMEOUT_MS;
+ * lewat dari itu pakai data terakhir (atau kosong kalau belum pernah dapat data).
+ */
 function getSchedules() {
   const { cached } = store
   if (cached && Date.now() - cached.fetchedAt < REFRESH_MS) return Promise.resolve(cached.schedules)
-  const refreshing = refreshSchedules()
-  if (cached) return Promise.resolve(cached.schedules)
-  return withTimeout(refreshing, TIMEOUT_MS, [])
+  return withTimeout(refreshSchedules(), TIMEOUT_MS, cached?.schedules ?? [])
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
