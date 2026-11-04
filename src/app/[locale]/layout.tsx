@@ -13,6 +13,9 @@ import ProgressBar from '../../components/ProgressBar'
 import GlobalWhatsAppButton from '../../components/CSButton'
 import { GoogleAnalytics } from '../../components/GoogleAnalytics'
 import CryptoProvider from '../../components/CryptoProvider'
+import MaintenancePage from '../../components/Maintenance/MaintenancePage'
+import MaintenanceWatcher from '../../components/Maintenance/MaintenanceWatcher'
+import { getActiveMaintenance } from '../../lib/maintenance'
 
 export const metadata = {
   title: 'Pakar Gaming - Ahlinya Top Up Game Murah, Instan & Terpercaya',
@@ -42,7 +45,7 @@ export default async function RootLayout({
 
   // Providing all messages to the client
   // side is the easiest way to get started
-  const messages = await getMessages()
+  const [messages, maintenance] = await Promise.all([getMessages(), getActiveMaintenance()])
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -56,18 +59,23 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <NextIntlClientProvider messages={messages}>
-              <div className="min-h-screen">
-                <ProgressBar />
-                <Navigation />
-                <main>
-                  {children}
-                  <Toaster position="top-center" richColors closeButton expand />
-                </main>
-                <Footer />
+              <MaintenanceWatcher active={Boolean(maintenance)} />
+              {maintenance ? (
+                <MaintenancePage schedule={maintenance} />
+              ) : (
+                <div className="min-h-screen">
+                  <ProgressBar />
+                  <Navigation />
+                  <main>
+                    {children}
+                    <Toaster position="top-center" richColors closeButton expand />
+                  </main>
+                  <Footer />
 
-                <GlobalWhatsAppButton />
-                <GoogleAnalytics />
-              </div>
+                  <GlobalWhatsAppButton />
+                  <GoogleAnalytics />
+                </div>
+              )}
             </NextIntlClientProvider>
           </ThemeProvider>
         </QueryProvider>

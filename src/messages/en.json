@@ -402,5 +402,16 @@
   "Common": {
     "loading": "Loading...",
     "error": "Something went wrong"
+  },
+  "Maintenance": {
+    "title": "We're Under Maintenance",
+    "description": "We're improving our systems so your top ups run even smoother. The site is temporarily unavailable, please check back once maintenance is complete.",
+    "estimatedEnd": "Estimated completion",
+    "endsIn": "Ends in",
+    "days": "{count, plural, one {# day} other {# days}}",
+    "noEstimate": "No estimated completion time yet",
+    "almostDone": "Almost done…",
+    "contactCs": "Contact Support",
+    "autoRefresh": "This page will reload automatically once maintenance is complete."
   }
 }

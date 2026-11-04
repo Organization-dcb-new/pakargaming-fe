@@ -401,5 +401,16 @@
   "Common": {
     "loading": "Memuat...",
     "error": "Terjadi kesalahan"
+  },
+  "Maintenance": {
+    "title": "Situs Sedang Maintenance",
+    "description": "Kami sedang meningkatkan sistem supaya top up kamu makin lancar. Untuk sementara situs belum bisa digunakan, silakan kembali lagi setelah maintenance selesai.",
+    "estimatedEnd": "Perkiraan selesai",
+    "endsIn": "Selesai dalam",
+    "days": "{count} hari",
+    "noEstimate": "Belum ada perkiraan waktu selesai",
+    "almostDone": "Sebentar lagi selesai…",
+    "contactCs": "Hubungi CS",
+    "autoRefresh": "Halaman ini akan terbuka otomatis setelah maintenance selesai."
   }
 }
