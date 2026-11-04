@@ -25,13 +25,16 @@ export default function DesktopNavigation({ user, loginWithGoogle }: DesktopNavP
               key={href}
               href={href}
               aria-current={active ? 'page' : undefined}
-              className={`inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-lg px-3 text-sm font-medium transition-colors duration-200 ${
+              className={`inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-lg px-3 text-sm font-semibold transition-colors duration-200 ${
                 active
-                  ? 'bg-brand/10 text-brand'
-                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                  ? 'bg-muted text-foreground'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               } ${focusRing}`}
             >
-              <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <Icon
+                className={`h-4 w-4 shrink-0 ${active ? 'text-primary' : ''}`}
+                aria-hidden="true"
+              />
               {t(labelKey)}
             </Link>
           )

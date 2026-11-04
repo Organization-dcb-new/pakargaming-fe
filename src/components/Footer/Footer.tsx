@@ -30,12 +30,12 @@ export function Footer() {
       </div>
 
       {/* Payment methods */}
-      <div className="mt-10 border-t border-border/60 pt-8 dark:border-white/10 lg:mt-12">
+      <div className="mt-10 border-t border-border pt-8 lg:mt-12">
         <SecurePayment />
       </div>
 
       {/* Consumer complaints + security badges */}
-      <div className="mt-8 border-t border-border/60 pt-8 dark:border-white/10">
+      <div className="mt-8 border-t border-border pt-8">
         <EtcComponent />
       </div>
 

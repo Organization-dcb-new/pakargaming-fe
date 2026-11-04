@@ -17,14 +17,14 @@ export default function ContactComponent() {
             rel="noopener noreferrer"
             className={footerContactLinkClass}
           >
-            <Phone className="h-4 w-4 shrink-0 text-purple-600 dark:text-purple-400" aria-hidden />
+            <Phone className="h-4 w-4 shrink-0 text-primary" aria-hidden />
             <span className="break-all">{FOOTER_CONTACT.whatsappDisplay}</span>
           </a>
         </li>
 
         <li>
           <a href={FOOTER_CONTACT.emailUrl} className={footerContactLinkClass}>
-            <Mail className="h-4 w-4 shrink-0 text-purple-600 dark:text-purple-400" aria-hidden />
+            <Mail className="h-4 w-4 shrink-0 text-primary" aria-hidden />
             <span className="break-all">{FOOTER_CONTACT.email}</span>
           </a>
         </li>

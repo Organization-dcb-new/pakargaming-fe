@@ -83,7 +83,7 @@ export default function BannerCarousel() {
                   priority={i === 0}
                   className="object-cover"
                   unoptimized={true}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) calc(100vw - 2rem), min(1024px, 100vw - 2rem)"
+                  sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1280px) calc(100vw - 4rem), 1216px"
                 />
               </a>
             </div>

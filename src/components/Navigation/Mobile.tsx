@@ -20,7 +20,7 @@ const sectionLabelClass = 'px-3 text-xs font-medium uppercase tracking-wide text
 const itemClass =
   'flex h-10 w-full touch-manipulation items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors duration-200'
 const itemStateClass = (active: boolean) =>
-  active ? 'bg-brand/10 text-brand' : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+  active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
 
 export default function MobileNavigation({ user, loginWithGoogle }: MobileNavProps) {
   const t = useTranslations('Navigation')
@@ -127,7 +127,7 @@ export default function MobileNavigation({ user, loginWithGoogle }: MobileNavPro
                   closeMenu()
                   loginWithGoogle()
                 }}
-                className={`flex h-10 w-full cursor-pointer touch-manipulation items-center justify-center gap-2 rounded-lg bg-brand px-4 text-sm font-medium text-brand-foreground shadow-sm transition-colors duration-200 hover:bg-brand/90 ${focusRing}`}
+                className={`chamfer flex h-11 w-full cursor-pointer touch-manipulation items-center justify-center gap-2 rounded-sm bg-primary px-4 text-sm font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 ${focusRing}`}
               >
                 <img
                   src="/icons/google.svg"

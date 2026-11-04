@@ -91,7 +91,7 @@ export default function GamesByShow() {
         <button
           type="button"
           onClick={() => refetch()}
-          className="rounded-full bg-gradient-brand px-5 py-2 text-sm font-semibold text-brand-foreground hover:brightness-110 transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none"
+          className="chamfer cursor-pointer rounded-sm bg-primary px-5 py-2 text-sm font-bold text-primary-foreground transition-colors duration-200 [--chamfer:8px] hover:bg-primary/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
         >
           {t('retry')}
         </button>

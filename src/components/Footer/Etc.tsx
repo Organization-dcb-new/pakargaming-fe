@@ -28,23 +28,28 @@ export default function EtcComponent() {
 
       <div className="flex flex-col gap-3 sm:items-end">
         <p className="text-xs font-medium text-foreground sm:text-right">{t('securityPrivacy')}</p>
-        <div className="flex flex-row items-center gap-6 sm:justify-end">
-          <Image
-            src="/ssl.webp"
-            alt="SSL secure"
-            width={120}
-            height={40}
-            sizes="120px"
-            className="h-8 w-auto object-contain"
-          />
-          <Image
-            src="/kan.webp"
-            alt="Privacy certification"
-            width={120}
-            height={40}
-            sizes="120px"
-            className="h-8 w-auto object-contain"
-          />
+        {/* Badge sertifikasi pihak ketiga dirancang untuk latar terang → plat putih */}
+        <div className="flex flex-row items-center gap-3 sm:justify-end">
+          <span className="flex h-11 items-center rounded-md bg-white px-2 shadow-sm ring-1 ring-border">
+            <Image
+              src="/ssl.webp"
+              alt="SSL secure"
+              width={120}
+              height={40}
+              sizes="120px"
+              className="h-8 w-auto object-contain"
+            />
+          </span>
+          <span className="flex h-11 items-center rounded-md bg-white px-2 shadow-sm ring-1 ring-border">
+            <Image
+              src="/kan.webp"
+              alt="Privacy certification"
+              width={120}
+              height={40}
+              sizes="120px"
+              className="h-8 w-auto object-contain"
+            />
+          </span>
         </div>
       </div>
     </div>

@@ -5,12 +5,12 @@ import { Link } from '../../i18n/routing'
 import { useTranslations } from 'next-intl'
 import { focusRing } from './config'
 
-/** Ikon + nama brand; dipakai di topbar dan header drawer mobile. */
+/** Ikon + wordmark "PAKARGAMING" (kata kedua cyan); dipakai di topbar dan header drawer mobile. */
 export function BrandMark() {
   const t = useTranslations('Navigation')
 
   return (
-    <span className="flex min-w-0 items-center gap-2">
+    <span className="flex min-w-0 items-center gap-2.5">
       <Image
         src="/logo.png"
         alt=""
@@ -18,8 +18,10 @@ export function BrandMark() {
         height={32}
         className="h-8 w-8 shrink-0 object-contain"
       />
-      <span className="truncate text-base font-bold tracking-tight text-foreground">
-        {t('brand')}
+      <span className="truncate font-display text-lg font-bold uppercase tracking-wider text-foreground">
+        {t.rich('wordmark', {
+          accent: (chunks) => <span className="text-primary">{chunks}</span>,
+        })}
       </span>
     </span>
   )

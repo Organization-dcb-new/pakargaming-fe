@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Gamepad2 } from 'lucide-react'
 import { Link } from '../../../i18n/routing'
 import type { ShowGame } from '../../../types/Show'
 import { ShowBadge, ShowBadgeVariant } from './ShowBadge'
@@ -13,8 +12,22 @@ interface GameTileProps {
   badge?: ShowBadgeVariant | null
 }
 
+/** Inisial nama game untuk placeholder thumbnail, mis. "Free Fire" → "FF". */
+function getInitials(name: string) {
+  const words = name
+    .split(/\s+/)
+    .map((word) => word.replace(/[^\p{L}\p{N}]/gu, ''))
+    .filter(Boolean)
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return words
+    .slice(0, 3)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase()
+}
+
 /**
- * Tile game fluid (mengikuti kolom grid, bukan pixel mati) dengan hover lift,
+ * Kartu game fluid (mengikuti kolom grid, bukan pixel mati) dengan hover lift + glow cyan,
  * glare sweep, ribbon animasi, dan fallback saat thumbnail kosong/gagal dimuat.
  */
 export function GameTile({ game, badge }: GameTileProps) {
@@ -24,12 +37,17 @@ export function GameTile({ game, badge }: GameTileProps) {
   return (
     <Link
       href={`/games/${game.slug}`}
-      className="group flex w-full flex-col gap-2 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="group flex h-full w-full flex-col gap-2.5 rounded-2xl border border-border bg-card p-2 transition-[transform,border-color,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:border-primary hover:shadow-glow active:scale-[0.98] sm:p-2.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
-      <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-border/60 bg-muted shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-1 group-hover:border-brand/60 group-hover:shadow-lg group-hover:shadow-brand/15 group-active:scale-[0.98] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-active:scale-100">
+      <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted">
         {showFallback ? (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-accent">
-            <Gamepad2 className="h-8 w-8 text-muted-foreground" aria-hidden />
+          <div className="bg-stripes flex h-full w-full items-center justify-center">
+            <span
+              aria-hidden
+              className="font-display text-2xl font-bold tracking-wide text-muted-foreground sm:text-3xl"
+            >
+              {getInitials(game.name)}
+            </span>
           </div>
         ) : (
           <Image
@@ -56,7 +74,7 @@ export function GameTile({ game, badge }: GameTileProps) {
         />
       </div>
 
-      <p className="line-clamp-2 text-center text-sm font-medium text-foreground transition-colors duration-200 group-hover:text-brand">
+      <p className="line-clamp-2 px-0.5 text-sm font-semibold leading-snug text-foreground transition-colors duration-200 group-hover:text-primary">
         {game.name}
       </p>
     </Link>

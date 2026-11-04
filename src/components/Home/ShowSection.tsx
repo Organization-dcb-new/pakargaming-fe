@@ -48,7 +48,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
 
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4 md:grid-cols-5 lg:grid-cols-6">
               {games.map((game, i) => (
-                <Reveal key={game.id} delay={(i % 6) * 0.04}>
+                <Reveal key={game.id} delay={(i % 6) * 0.04} className="h-full">
                   <GameTile game={game} badge={badge} />
                 </Reveal>
               ))}
@@ -64,7 +64,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
                       [show.id]: !isExpanded,
                     }))
                   }
-                  className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-card px-5 py-2 text-sm font-semibold text-brand shadow-sm transition-all duration-200 hover:border-brand hover:bg-brand/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-5 py-2 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
                 >
                   {isExpanded
                     ? t('showLessGames')

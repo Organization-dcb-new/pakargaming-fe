@@ -17,7 +17,9 @@
     "checkTransaction": "Cek Transaksi",
     "mainNav": "Navigasi utama",
     "accountMenu": "Menu akun",
-    "brand": "Pakar Gaming"
+    "brand": "Pakar Gaming",
+    "wordmark": "Pakar<accent>Gaming</accent>",
+    "language": "Bahasa"
   },
   "Home": {
     "heroTitle": "Tingkatkan Skill Gaming Anda",

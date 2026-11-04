@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl'
 import { FOOTER_SOCIAL, footerHeadingClass } from './config'
 
 const socialLinkClass =
-  'rounded-lg p-1 transition-transform duration-200 hover:scale-110 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500'
+  'rounded-lg p-1 transition-transform duration-200 hover:scale-110 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring'
 
 export default function SocialMediaComponent() {
   const t = useTranslations('Footer')

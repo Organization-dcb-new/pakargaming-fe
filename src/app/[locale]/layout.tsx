@@ -7,8 +7,9 @@ import { Navigation } from '../../components/Navigation'
 import { Footer } from '../../components/Footer/Footer'
 import { ThemeProvider } from '../../components/ThemeProvider'
 import QueryProvider from '../../providers/query-provider'
+import { fontDisplay, fontSans } from '../../styles/fonts'
 
-import { Toaster } from 'sonner'
+import { Toaster } from '../../components/ui/sonner'
 import ProgressBar from '../../components/ProgressBar'
 import GlobalWhatsAppButton from '../../components/CSButton'
 import { GoogleAnalytics } from '../../components/GoogleAnalytics'
@@ -48,13 +49,17 @@ export default async function RootLayout({
   const [messages, maintenance] = await Promise.all([getMessages(), getActiveMaintenance()])
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${fontSans.variable} ${fontDisplay.variable}`}
+      suppressHydrationWarning
+    >
       <body className="min-h-screen bg-background text-foreground" suppressHydrationWarning>
         <CryptoProvider secretKey={process.env.ENCRYPT_SECRET_KEY || ""} />
         <QueryProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >

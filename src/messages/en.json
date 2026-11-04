@@ -17,7 +17,9 @@
     "checkTransaction": "Check Transaction",
     "mainNav": "Main navigation",
     "accountMenu": "Account menu",
-    "brand": "Pakar Gaming"
+    "brand": "Pakar Gaming",
+    "wordmark": "Pakar<accent>Gaming</accent>",
+    "language": "Language"
   },
 
   "Home": {

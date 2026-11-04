@@ -31,7 +31,7 @@ export default function SecurePayment() {
       {isLoading ? (
         <div className="flex min-h-[3.25rem] flex-wrap items-center gap-3">
           {Array.from({ length: MAX_VISIBLE }).map((_, i) => (
-            <div key={i} className="h-11 w-12 animate-pulse rounded-md bg-muted" aria-hidden />
+            <div key={i} className="h-12 w-16 animate-pulse rounded-md bg-muted" aria-hidden />
           ))}
         </div>
       ) : isError || allPayments.length === 0 ? (
@@ -39,19 +39,23 @@ export default function SecurePayment() {
       ) : (
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           {visiblePayments.map((payment) => (
-            <Image
+            <span
               key={payment.id}
-              src={payment.icon_url}
-              alt={payment.name}
-              width={48}
-              height={48}
-              unoptimized
-              className="h-10 w-auto max-h-12 object-contain transition-transform duration-200 hover:scale-105 sm:h-12"
-            />
+              className="flex h-12 min-w-16 items-center justify-center rounded-md bg-white px-2 shadow-sm ring-1 ring-border transition-transform duration-200 hover:scale-105 motion-reduce:transition-none"
+            >
+              <Image
+                src={payment.icon_url}
+                alt={payment.name}
+                width={48}
+                height={48}
+                unoptimized
+                className="h-8 w-auto max-w-20 object-contain"
+              />
+            </span>
           ))}
 
           {remaining > 0 && (
-            <span className="inline-flex items-center rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground dark:border-white/10 dark:bg-white/[0.06]">
+            <span className="inline-flex items-center rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
               {t('paymentMore', { count: remaining })}
             </span>
           )}

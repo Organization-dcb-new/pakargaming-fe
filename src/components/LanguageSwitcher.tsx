@@ -1,6 +1,6 @@
 'use client'
 
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { usePathname, useRouter } from '../i18n/routing'
 import { useTransition } from 'react'
 
@@ -11,6 +11,7 @@ const locales = [
 
 export function LanguageSwitcher() {
   const locale = useLocale()
+  const t = useTranslations('Navigation')
   const router = useRouter()
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
@@ -24,9 +25,9 @@ export function LanguageSwitcher() {
 
   return (
     <div
-      className="mr-2 flex items-center rounded-lg border border-brand/30 bg-card p-0.5"
+      className="mr-2 flex items-center rounded-lg border border-border bg-card p-0.5"
       role="group"
-      aria-label="Language"
+      aria-label={t('language')}
     >
       {locales.map(({ code, label }) => {
         const active = locale === code
@@ -37,10 +38,10 @@ export function LanguageSwitcher() {
             onClick={() => handleLocaleChange(code)}
             disabled={isPending}
             aria-pressed={active}
-            className={`min-w-[2.25rem] rounded-md px-2 py-1 text-xs font-semibold uppercase transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background ${
+            className={`min-w-[2.25rem] rounded-md px-2 py-1 font-display text-xs font-bold uppercase tracking-wider transition-colors duration-200 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background ${
               active
-                ? 'bg-brand text-brand-foreground shadow-sm'
-                : 'text-muted-foreground hover:bg-brand/10'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >
             {label}

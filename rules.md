@@ -64,7 +64,17 @@ Tambahkan di `:root` dan `.dark` pada `src/styles/theme.css`, lalu daftarkan di 
 --pending: ...;   --pending-foreground: ...;
 ```
 
-> **Catatan penting:** `--primary` saat ini masih placeholder shadcn (`#030213`, hitam-navy), padahal seluruh app pakai aksen ungu/indigo. Saat token brand difinalisasi, **`--primary` harus disamakan ke warna brand**, bukan dibiarkan hitam. Sampai itu diputuskan, jangan menyebar `#030213`.
+> **Brand final (redesign "Neon Arena", 2026-11):** warna diambil dari logo. Dark = default.
+> - `--primary` = **cyan logo** (`#0bc1dc` di dark, teal `#0a7590` di light supaya lolos AA) → CTA, harga, link, fokus, state aktif.
+> - `--brand` = **ungu logo** (`#8a35ac` di light, `#c98be6` di dark) → aksen sekunder: chip, tint, tag.
+> - `--gradient-brand` (ungu → cyan) **hanya dekoratif** (garis, aksen) — jangan taruh teks di atasnya.
+>
+> **Bahasa visual (utility di `theme.css`):**
+> - `chamfer` — sudut terpotong ala logo untuk CTA utama & tag. Atur ukuran: `chamfer [--chamfer:8px]`. Ring fokus otomatis aman (clip dilepas saat `:focus-visible`).
+> - `shadow-glow` — glow cyan untuk hover kartu interaktif (pengganti `shadow-[...]` inline).
+> - `font-display` — Chakra Petch untuk heading, wordmark, angka. Body tetap Plus Jakarta Sans.
+> - `bg-stripes` — placeholder thumbnail game.
+> - Chip/filter aktif = inverse (`bg-foreground text-background`), bukan gradient.
 
 ### 2.3 Aturan pakai
 | Kebutuhan | ✅ Pakai | ❌ Jangan |
@@ -93,14 +103,14 @@ Tambahkan di `:root` dan `.dark` pada `src/styles/theme.css`, lalu daftarkan di 
   - Modal/sheet besar → `rounded-2xl`
   - Pill/badge/avatar → `rounded-full`
   Jangan campur `rounded-3xl`/`2xl`/`xl` acak di elemen sejenis.
-- **Shadow**: pakai `shadow-sm` (elemen), `shadow-lg`/`shadow-xl` (kartu menonjol/modal). Jangan tulis `shadow-[0_0_8px_rgba(168,85,247,.5)]` inline.
+- **Shadow**: pakai `shadow-sm` (elemen), `shadow-lg`/`shadow-xl` (kartu menonjol/modal), `shadow-glow` (hover kartu interaktif). Jangan tulis `shadow-[0_0_8px_rgba(168,85,247,.5)]` inline.
 - **Z-index** (patuhi tingkatan ini): konten `0` → sticky nav `40` → dropdown/popover `50` → sheet/drawer `100` → modal/dialog `110` → toast `120`. Jangan pakai `z-[60]` ad-hoc tanpa alasan.
 
 ---
 
 ## 4. Tipografi
 
-- Font brand dimuat via `next/font` (saat ini `src/styles/fonts.css` **kosong** — wajib diisi). Jangan impor `@font-face` eksternal ad-hoc per komponen.
+- Font brand dimuat via `next/font` di `src/styles/fonts.ts` (Chakra Petch = `font-display`, Plus Jakarta Sans = body). `h1`–`h3` otomatis pakai font display. Jangan impor font ad-hoc per komponen.
 - **Skala minimum**: teks yang dibaca user **≥ 12px** (`text-xs`). Dilarang `text-[11px]`/`text-[10px]` untuk konten (langgar WCAG 1.4.4). Label mikro pakai `text-xs` + `tracking-wide`.
 - Hierarki heading via elemen semantik (`h1`→`h2`→`h3`), jangan lompat level demi ukuran. Ukuran diatur utility, bukan mengandalkan default `@layer base`.
 - Teks panjang (halaman legal/about) dibatasi lebar baca: `max-w-prose` (~65 karakter). Jangan biarkan baris memanjang selebar `max-w-4xl`.
@@ -233,4 +243,4 @@ Sebuah halaman dianggap **selesai di-refactor** jika:
 
 ---
 
-_Living document — perbarui saat pola baru disepakati. Nilai final warna brand & ambisi visual menyusul (lihat catatan §2.2)._
+_Living document — perbarui saat pola baru disepakati. Warna brand & bahasa visual: lihat catatan §2.2._

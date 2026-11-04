@@ -10,11 +10,11 @@ export function ShowSkeleton() {
     <section
       role="status"
       aria-busy="true"
-      className="w-full max-w-5xl mx-auto px-4 py-10 animate-pulse motion-reduce:animate-none">
+      className="w-full animate-pulse motion-reduce:animate-none">
       <span className="sr-only">{t('loading')}</span>
-      <div className="relative w-full overflow-hidden rounded-2xl shadow-2xl">
+      <div className="relative w-full overflow-hidden rounded-2xl border border-border">
         <div
-          className="w-full rounded-2xl bg-muted"
+          className="w-full bg-muted"
           style={{
             aspectRatio: `${BANNER_IMAGE_WIDTH} / ${BANNER_IMAGE_HEIGHT}`,
           }}

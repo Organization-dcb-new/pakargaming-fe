@@ -44,7 +44,7 @@ export default function NavigationShowGame({
           transition-[background-color,border-color,box-shadow] duration-300 motion-reduce:transition-none
           ${
             isNavSticky
-              ? 'bg-background/80 backdrop-blur-md border-b border-border/60 shadow-sm'
+              ? 'bg-background/85 backdrop-blur-md border-b border-border shadow-sm'
               : 'bg-transparent border-b border-transparent'
           }
         `}
@@ -70,8 +70,8 @@ export default function NavigationShowGame({
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
           ${
             isSelected
-              ? 'text-brand-foreground border border-transparent'
-              : 'bg-card text-brand border border-brand/30 hover:border-brand hover:bg-brand/10'
+              ? 'text-background border border-transparent'
+              : 'bg-card text-muted-foreground border border-border hover:border-primary/60 hover:text-foreground'
           }
         `}
           >
@@ -79,7 +79,7 @@ export default function NavigationShowGame({
               <motion.span
                 layoutId="show-chip-active"
                 aria-hidden
-                className="absolute inset-0 rounded-full bg-gradient-brand shadow-md"
+                className="absolute inset-0 rounded-full bg-foreground shadow-md"
                 transition={chipTransition}
               />
             )}
@@ -100,10 +100,10 @@ export default function NavigationShowGame({
     font-semibold
     transition-colors duration-200 motion-reduce:transition-none
     cursor-pointer
-    shadow-sm
-    bg-gradient-brand
-    text-brand-foreground
-    hover:brightness-110
+    border border-primary/50
+    bg-primary/10
+    text-primary
+    hover:bg-primary/20
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
     flex items-center gap-2
   "

@@ -12,7 +12,7 @@ export default function LoadingNav() {
       {/* Brand */}
       <div className="flex shrink-0 items-center gap-2">
         <div className={`h-8 w-8 rounded-lg ${bone}`} />
-        <div className={`h-4 w-24 rounded ${bone}`} />
+        <div className={`h-5 w-36 rounded ${bone}`} />
       </div>
 
       {/* Desktop: menu */}
@@ -24,16 +24,16 @@ export default function LoadingNav() {
 
       {/* Mobile: search */}
       <div className="flex min-w-0 flex-1 justify-end lg:hidden">
-        <div className={`h-10 w-12 rounded-full sm:w-full sm:max-w-md ${bone}`} />
+        <div className={`h-10 w-12 rounded-lg sm:w-full sm:max-w-md ${bone}`} />
       </div>
 
       {/* Desktop: search, bahasa, tema, akun */}
       <div className="ml-auto hidden items-center gap-2 lg:flex">
-        <div className={`h-10 w-52 rounded-full xl:w-72 ${bone}`} />
+        <div className={`h-10 w-52 rounded-lg xl:w-72 ${bone}`} />
         <div className={`h-8 w-20 rounded-lg ${bone}`} />
         <div className={`h-9 w-9 rounded-md ${bone}`} />
         <div className="mx-1 h-6 w-px bg-border" />
-        <div className={`h-9 w-9 rounded-full ${bone}`} />
+        <div className={`h-9 w-20 rounded-sm ${bone}`} />
       </div>
     </LayoutTop>
   )

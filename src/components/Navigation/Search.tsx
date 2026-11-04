@@ -78,13 +78,13 @@ export default function SearchComponent({
           }
         }}
         className={[
-          'flex h-10 w-full items-center border border-brand/30 bg-card px-2.5 shadow-sm min-[400px]:px-3 focus-within:ring-2 focus-within:ring-ring',
-          effectiveOpen ? 'rounded-xl sm:rounded-full' : 'cursor-pointer rounded-full',
+          'group flex h-10 w-full items-center rounded-lg border border-border bg-card px-2.5 transition-colors duration-200 min-[400px]:px-3 hover:border-primary/50 focus-within:border-primary focus-within:ring-2 focus-within:ring-ring/30 motion-reduce:transition-none',
+          effectiveOpen ? '' : 'cursor-pointer',
         ].join(' ')}
       >
         <button
           type="button"
-          className="inline-flex shrink-0 cursor-pointer touch-manipulation rounded-md text-brand outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex shrink-0 cursor-pointer touch-manipulation rounded-md text-muted-foreground outline-none transition-colors duration-200 group-focus-within:text-primary focus-visible:ring-2 focus-visible:ring-ring"
           aria-expanded={effectiveOpen}
           aria-label={effectiveOpen ? t('collapseSearch') : t('searchPlaceholder')}
           onMouseDown={(e) => e.preventDefault()}
@@ -135,7 +135,7 @@ export default function SearchComponent({
         <div className="absolute left-0 right-0 top-11 z-50 max-h-[min(22rem,70vh)] overflow-y-auto overflow-x-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl sm:top-12">
           {isLoading && (
             <div className="flex items-center gap-3 p-4 text-sm text-muted-foreground">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand border-t-transparent"></div>
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
               <span>{t('searching')}</span>
             </div>
           )}
@@ -172,9 +172,9 @@ export default function SearchComponent({
                   onMouseDown={(e) => e.preventDefault()}
                   key={game.id}
                   href={`/games/${game.slug}`}
-                  className="group flex items-center gap-3 border-b border-border px-4 py-3 transition-colors duration-200 last:border-b-0 hover:bg-brand/10"
+                  className="group flex items-center gap-3 border-b border-border px-4 py-3 transition-colors duration-200 last:border-b-0 hover:bg-muted"
                 >
-                  <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-muted ring-2 ring-border transition-all group-hover:ring-brand">
+                  <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-muted ring-2 ring-border transition-all group-hover:ring-primary">
                     {game.thumbnail_url ? (
                       <img
                         src={game.thumbnail_url}
@@ -197,7 +197,7 @@ export default function SearchComponent({
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-brand">
+                    <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-primary">
                       {game.name}
                     </p>
                   </div>

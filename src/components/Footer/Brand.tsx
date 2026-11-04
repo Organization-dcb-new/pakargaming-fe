@@ -1,12 +1,6 @@
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import { AR_One_Sans } from 'next/font/google'
 import { FOOTER_LOGO_SRC } from './config'
-
-const taglineFont = AR_One_Sans({
-  subsets: ['latin-ext'],
-  display: 'swap',
-})
 
 export default function BrandComponent() {
   const t = useTranslations('Footer')
@@ -23,11 +17,11 @@ export default function BrandComponent() {
       />
 
       <div>
-        <h2 className="text-base font-semibold leading-snug text-foreground sm:text-lg">
+        <h2 className="font-display text-base font-bold leading-snug text-foreground sm:text-lg">
           {t('brandName')}
         </h2>
         <p
-          className={`${taglineFont.className} mt-1 text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem]`}
+          className="mt-1 text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem]"
         >
           {t('tagline')}
         </p>

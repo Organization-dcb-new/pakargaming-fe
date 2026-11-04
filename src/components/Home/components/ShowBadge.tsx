@@ -7,7 +7,7 @@ import type { Show } from '../../../types/Show'
 export type ShowBadgeVariant = 'popular' | 'new' | 'hot'
 
 const VARIANT_CLASS: Record<ShowBadgeVariant, string> = {
-  popular: 'bg-gradient-brand text-brand-foreground',
+  popular: 'bg-background/90 text-primary ring-1 ring-inset ring-primary/40 backdrop-blur-sm',
   new: 'bg-success text-success-foreground',
   hot: 'bg-warning text-warning-foreground',
 }
@@ -43,7 +43,7 @@ export function ShowBadge({ variant, animated = false }: ShowBadgeProps) {
 
   return (
     <span
-      className={`relative inline-flex items-center gap-1 overflow-hidden rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide shadow-sm ${VARIANT_CLASS[variant]}`}
+      className={`chamfer relative inline-flex items-center gap-1 overflow-hidden px-2 py-0.5 font-display text-xs font-bold uppercase tracking-wider shadow-sm [--chamfer:5px] ${VARIANT_CLASS[variant]}`}
     >
       <Icon className="h-3 w-3" aria-hidden />
       {label}

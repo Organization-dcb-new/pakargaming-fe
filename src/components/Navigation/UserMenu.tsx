@@ -29,7 +29,7 @@ export default function UserMenu({ user, loginWithGoogle }: UserMenuProps) {
       <button
         type="button"
         onClick={loginWithGoogle}
-        className={`inline-flex h-9 shrink-0 cursor-pointer touch-manipulation items-center gap-2 whitespace-nowrap rounded-lg bg-brand px-3.5 text-sm font-medium text-brand-foreground shadow-sm transition-colors duration-200 hover:bg-brand/90 active:scale-[0.98] ${focusRing}`}
+        className={`chamfer inline-flex h-9 shrink-0 cursor-pointer touch-manipulation items-center gap-2 whitespace-nowrap rounded-sm bg-primary px-4 text-sm font-bold text-primary-foreground transition-colors duration-200 [--chamfer:8px] hover:bg-primary/85 active:scale-[0.98] motion-reduce:active:scale-100 ${focusRing}`}
       >
         <img
           src="/icons/google.svg"
