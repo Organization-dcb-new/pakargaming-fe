@@ -230,7 +230,9 @@
     "orderGame": "Game",
     "confirmEdit": "Edit",
     "gameNotFoundTitle": "Game not found",
-    "gameNotFoundDesc": "The game you're looking for isn't available or failed to load. Try another game from the home page."
+    "gameNotFoundDesc": "The game you're looking for isn't available or failed to load. Try another game from the home page.",
+    "toastAccountNotFound": "Account not found",
+    "toastCheckIdFailed": "Couldn't check the ID, try again"
   },
   "CheckTransaction": {
     "inputLabel": "Invoice number",
@@ -247,7 +249,9 @@
     "recentTitle": "Your recent transactions",
     "recentEmpty": "No transactions on your account yet.",
     "recentError": "Couldn't load your transaction history.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "toastNotFound": "Transaction not found",
+    "toastError": "Something went wrong, try again"
   },
   "Auth": {
     "loggingIn": "Logging you in..."
@@ -420,7 +424,9 @@
     "error": "Something went wrong",
     "statusPaid": "Success",
     "statusPending": "Pending",
-    "statusFailed": "Failed"
+    "statusFailed": "Failed",
+    "notifications": "Notifications",
+    "closeNotification": "Close notification"
   },
   "Maintenance": {
     "title": "We're Under Maintenance",
@@ -432,5 +438,12 @@
     "almostDone": "Almost done…",
     "contactCs": "Contact Support",
     "autoRefresh": "This page will reload automatically once maintenance is complete."
+  },
+  "NotFound": {
+    "badge": "Game over",
+    "title": "Page not found",
+    "description": "The link might be wrong, or the page has been moved or deleted. Head back to the home page to keep topping up.",
+    "ctaHome": "Back to home",
+    "ctaCheckTransaction": "Check transaction"
   }
 }

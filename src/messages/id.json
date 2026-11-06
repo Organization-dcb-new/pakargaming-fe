@@ -230,7 +230,9 @@
     "orderGame": "Game",
     "confirmEdit": "Ubah",
     "gameNotFoundTitle": "Game tidak ditemukan",
-    "gameNotFoundDesc": "Game yang kamu cari tidak tersedia atau gagal dimuat. Coba pilih game lain dari beranda."
+    "gameNotFoundDesc": "Game yang kamu cari tidak tersedia atau gagal dimuat. Coba pilih game lain dari beranda.",
+    "toastAccountNotFound": "Akun tidak ditemukan",
+    "toastCheckIdFailed": "Gagal cek ID, coba lagi"
   },
   "CheckTransaction": {
     "inputLabel": "Nomor Invoice",
@@ -247,7 +249,9 @@
     "recentTitle": "Transaksi terakhir kamu",
     "recentEmpty": "Belum ada transaksi di akunmu.",
     "recentError": "Gagal memuat riwayat transaksi.",
-    "retry": "Coba lagi"
+    "retry": "Coba lagi",
+    "toastNotFound": "Transaksi tidak ditemukan",
+    "toastError": "Terjadi kesalahan, coba lagi"
   },
   "Auth": {
     "loggingIn": "Sedang masuk..."
@@ -420,7 +424,9 @@
     "error": "Terjadi kesalahan",
     "statusPaid": "Berhasil",
     "statusPending": "Menunggu",
-    "statusFailed": "Gagal"
+    "statusFailed": "Gagal",
+    "notifications": "Notifikasi",
+    "closeNotification": "Tutup notifikasi"
   },
   "Maintenance": {
     "title": "Situs Sedang Maintenance",
@@ -432,5 +438,12 @@
     "almostDone": "Sebentar lagi selesai…",
     "contactCs": "Hubungi CS",
     "autoRefresh": "Halaman ini akan terbuka otomatis setelah maintenance selesai."
+  },
+  "NotFound": {
+    "badge": "Game over",
+    "title": "Halaman tidak ditemukan",
+    "description": "Link-nya mungkin salah, atau halamannya sudah dipindah atau dihapus. Yuk balik ke beranda dan lanjut top up.",
+    "ctaHome": "Kembali ke beranda",
+    "ctaCheckTransaction": "Cek transaksi"
   }
 }

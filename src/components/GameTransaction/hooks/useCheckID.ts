@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { api } from '../../../api/axios'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 
 type CheckIDPayloadV2 = {
   category_code: string
@@ -11,6 +12,8 @@ type CheckIDPayloadV2 = {
 }
 
 export function useCheckIDV2() {
+  const t = useTranslations('GameCheckout')
+
   return useMutation({
     mutationFn: async (payload: CheckIDPayloadV2) => {
       const res = await api.post('/v1/transactions/check-id', payload)
@@ -21,11 +24,11 @@ export function useCheckIDV2() {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
         if (status === 400) {
-          toast.error('Akun tidak ditemukan')
+          toast.error(t('toastAccountNotFound'))
           return
         }
       }
-      toast.error('Gagal cek ID')
+      toast.error(t('toastCheckIdFailed'))
     },
   })
 }

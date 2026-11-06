@@ -219,6 +219,16 @@
   }
 }
 
+/* Bar aksen kiri toast (ui/sonner.tsx). Warna diatur per tipe lewat --toast-accent.
+   Dibuat lewat background, bukan ::before/::after, karena kedua pseudo-element dipakai Sonner (area swipe & hover). */
+@utility toast-accent {
+  background-image: linear-gradient(
+    to right,
+    var(--toast-accent, var(--primary)) 3px,
+    transparent 3px
+  );
+}
+
 /* Garis diagonal untuk placeholder thumbnail game */
 @utility bg-stripes {
   background-image: repeating-linear-gradient(

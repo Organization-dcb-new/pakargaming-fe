@@ -22,5 +22,7 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/(id|en)/:path*'],
+  // Semua path kecuali API, aset Next.js, dan file statis (yang mengandung titik) — matcher standar next-intl.
+  // Path tanpa prefix bahasa (mis. /abc) ikut di-redirect ke /id/abc, jadi dapat halaman 404 yang sudah dilokalkan.
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
 }

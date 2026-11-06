@@ -75,7 +75,7 @@ export default async function RootLayout({
                   <Navigation />
                   <main>
                     {children}
-                    <Toaster position="top-center" richColors closeButton expand />
+                    <Toaster />
                   </main>
                   <Footer />
 
