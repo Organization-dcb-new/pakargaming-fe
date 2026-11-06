@@ -1,7 +1,7 @@
 'use client'
 
 import { Moon, Sun } from 'lucide-react'
-import { useTheme } from 'next-themes'
+import { useTheme } from '@wrksz/themes/client'
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { Button } from './ui/button'
@@ -20,7 +20,7 @@ export function ThemeToggle() {
   // resolvedTheme (bukan theme): saat tema "system", theme === 'system' sehingga toggle tidak berefek
   const toggleTheme = () => {
     const next = resolvedTheme === 'dark' ? 'light' : 'dark'
-    // flushSync: next-themes memasang class tema di effect — harus selesai di dalam callback
+    // flushSync: update tema harus ter-commit (class di <html> berganti) di dalam callback
     // supaya snapshot "sesudah" crossfade sudah bertema baru.
     startPageTransition(() => flushSync(() => setTheme(next)))
   }

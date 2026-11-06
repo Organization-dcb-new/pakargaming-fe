@@ -5,6 +5,8 @@
 :root {
   --logo-purple: #8a35ac;
   --logo-cyan: #0bc1dc;
+  /* Warna brand pihak ketiga (rules §2.3: boleh literal) — tombol CS WhatsApp */
+  --whatsapp: #25d366;
 }
 
 :root {
@@ -145,6 +147,7 @@
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-solid: var(--brand-solid);
   --color-brand-solid-foreground: var(--brand-solid-foreground);
+  --color-whatsapp: var(--whatsapp);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);

@@ -15,13 +15,6 @@ export default function LoadingNav() {
         <div className={`h-5 w-36 rounded ${bone}`} />
       </div>
 
-      {/* Desktop: menu */}
-      <div className="hidden items-center gap-1 lg:flex">
-        {[0, 1].map((i) => (
-          <div key={i} className={`h-9 w-28 rounded-lg ${bone}`} />
-        ))}
-      </div>
-
       {/* Mobile: search */}
       <div className="flex min-w-0 flex-1 justify-end lg:hidden">
         <div className={`h-10 w-12 rounded-lg sm:w-full sm:max-w-md ${bone}`} />

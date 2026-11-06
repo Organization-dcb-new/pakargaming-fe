@@ -12,12 +12,15 @@ interface GameHeaderProps {
   game: GameDetail
 }
 
-/** Header ringkas halaman top-up: breadcrumb + ikon game + nama + chip keunggulan. */
+/** Header halaman top-up: breadcrumb + strip banner art + ikon game (menindih) + nama + chip keunggulan. */
 export default function GameHeader({ game }: GameHeaderProps) {
   const t = useTranslations('GameCheckout')
   const tNav = useTranslations('Navigation')
   const [imageFailed, setImageFailed] = useState(false)
+  const [bannerFailed, setBannerFailed] = useState(false)
   const showFallback = !game.thumbnail_url || imageFailed
+  // Strip banner selalu tampil; tanpa art (kosong / gagal dimuat) → latar dekoratif bertema logo
+  const showBannerArt = !!game.banner_url && !bannerFailed
 
   const features = [
     { icon: Gauge, label: t('bannerFeature1'), tone: 'border-primary/30 bg-primary/10', iconTone: 'text-primary' },
@@ -46,8 +49,44 @@ export default function GameHeader({ game }: GameHeaderProps) {
         </ol>
       </nav>
 
-      <div className="flex items-center gap-4 sm:gap-5">
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-border bg-muted sm:h-24 sm:w-24">
+      <div className="relative isolate h-36 overflow-hidden rounded-2xl border border-border bg-card sm:h-48 lg:h-56">
+        {showBannerArt ? (
+          <>
+            <Image
+              src={game.banner_url}
+              alt=""
+              fill
+              unoptimized
+              priority
+              sizes="(max-width: 1280px) 100vw, 1216px"
+              className="object-cover"
+              onError={() => setBannerFailed(true)}
+            />
+            {/* Scrim bawah (di atas media) supaya tepi ikon yang menindih tetap tegas */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent"
+            />
+          </>
+        ) : (
+          <div aria-hidden className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-brand opacity-20" />
+            <div className="bg-stripes absolute inset-0" />
+            <Image
+              src="/logo.png"
+              alt=""
+              width={224}
+              height={224}
+              className="absolute -bottom-10 right-4 h-44 w-44 object-contain opacity-15 sm:h-56 sm:w-56 lg:right-12"
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-start gap-4 px-3 sm:gap-5 sm:px-5">
+        <div
+          className="relative -mt-10 h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-border bg-muted shadow-lg ring-4 ring-background sm:-mt-12 sm:h-24 sm:w-24"
+        >
           {showFallback ? (
             <div
               aria-hidden
@@ -69,7 +108,7 @@ export default function GameHeader({ game }: GameHeaderProps) {
           )}
         </div>
 
-        <div className="min-w-0 space-y-2.5">
+        <div className="min-w-0 space-y-2.5 pt-3">
           <h1 className="text-balance font-display text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl">
             {game.name}
           </h1>

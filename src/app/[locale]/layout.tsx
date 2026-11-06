@@ -5,7 +5,9 @@ import { routing } from '../../i18n/routing'
 import '../globals.css'
 import { Navigation } from '../../components/Navigation'
 import { Footer } from '../../components/Footer/Footer'
-import { ThemeProvider } from '../../components/ThemeProvider'
+// @wrksz/themes/next: script anti-flash disuntik via useServerInsertedHTML — tanpa warning
+// "Encountered a script tag" dari React 19 (next-themes merender <script> di komponen)
+import { ThemeProvider } from '@wrksz/themes/next'
 import QueryProvider from '../../providers/query-provider'
 import { fontDisplay, fontSans } from '../../styles/fonts'
 

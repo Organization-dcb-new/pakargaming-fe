@@ -16,9 +16,10 @@ export default function GameTransactionSkeleton() {
         <span className="sr-only">{t('loading')}</span>
 
         <div className={`mb-4 h-4 w-40 ${bone}`} />
-        <div className="mb-6 flex items-center gap-4 sm:gap-5">
-          <div className="h-20 w-20 shrink-0 rounded-2xl bg-muted sm:h-24 sm:w-24" />
-          <div className="flex-1 space-y-3">
+        <div className="h-36 rounded-2xl bg-muted sm:h-48 lg:h-56" />
+        <div className="mb-6 flex items-start gap-4 px-3 sm:gap-5 sm:px-5">
+          <div className="-mt-10 h-20 w-20 shrink-0 rounded-2xl bg-muted ring-4 ring-background sm:-mt-12 sm:h-24 sm:w-24" />
+          <div className="flex-1 space-y-3 pt-3">
             <div className={`h-8 w-2/3 max-w-sm ${bone}`} />
             <div className="flex gap-2">
               {[0, 1, 2].map((i) => (

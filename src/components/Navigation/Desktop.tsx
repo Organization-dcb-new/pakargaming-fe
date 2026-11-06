@@ -1,46 +1,17 @@
-import { useTranslations } from 'next-intl'
-import { Link, usePathname } from '../../i18n/routing'
 import SearchComponent from './Search'
 import { ThemeToggle } from '../ThemeToggle'
 import { LanguageSwitcher } from '../LanguageSwitcher'
 import UserMenu from './UserMenu'
-import { NAV_ITEMS, focusRing, isNavActive } from './config'
 
 interface DesktopNavProps {
   user: any
   loginWithGoogle: () => void
 }
 
+/** Topbar desktop: tanpa menu link (Beranda via logo, Cek Transaksi via chip Home & footer). */
 export default function DesktopNavigation({ user, loginWithGoogle }: DesktopNavProps) {
-  const t = useTranslations('Navigation')
-  const pathname = usePathname()
-
   return (
     <div className="hidden min-w-0 flex-1 items-center gap-4 lg:flex">
-      <nav aria-label={t('mainNav')} className="flex items-center gap-1">
-        {NAV_ITEMS.map(({ href, labelKey, icon: Icon }) => {
-          const active = isNavActive(pathname, href)
-          return (
-            <Link
-              key={href}
-              href={href}
-              aria-current={active ? 'page' : undefined}
-              className={`inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-lg px-3 text-sm font-semibold transition-colors duration-200 ${
-                active
-                  ? 'bg-muted text-foreground'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              } ${focusRing}`}
-            >
-              <Icon
-                className={`h-4 w-4 shrink-0 ${active ? 'text-primary' : ''}`}
-                aria-hidden="true"
-              />
-              {t(labelKey)}
-            </Link>
-          )
-        })}
-      </nav>
-
       <div className="ml-auto flex shrink-0 items-center gap-2">
         <div className="w-52 xl:w-72">
           <SearchComponent variant="desktop" />
