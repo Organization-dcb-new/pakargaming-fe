@@ -352,23 +352,19 @@
   },
   "Dashboard": {
     "welcome": "Selamat datang kembali",
-    "welcomeSubtitle": "Berikut ringkasan aktivitas transaksi Anda.",
     "loading": "Memuat data...",
-    "summaryTitle": "Ringkasan Transaksi",
-    "paymentNumber": "Nomor pembayaran",
-    "date": "Tanggal",
-    "amount": "Jumlah",
-    "status": "Status",
     "statTotalTransactions": "Total transaksi",
     "statTotalAmount": "Total nominal",
-    "statPending": "PENDING",
-    "statFailed": "FAILED",
-    "statPaid": "PAID",
     "recentTitle": "Transaksi Terbaru",
-    "emptyState": "Transaksi tidak ditemukan",
+    "emptyState": "Belum ada transaksi",
     "statusLabelPaid": "Berhasil",
     "statusLabelFailed": "Gagal",
-    "statusLabelPending": "Menunggu"
+    "statusLabelPending": "Menunggu",
+    "emptyHint": "Top up pertamamu bakal muncul di sini.",
+    "emptyCta": "Mulai top up",
+    "errorState": "Gagal memuat data dasbor.",
+    "retry": "Coba lagi",
+    "checkTransaction": "Cek transaksi"
   },
   "FooterInformation": {
     "title": "Informasi",
@@ -400,7 +396,8 @@
   "ClientLayout": {
     "menu": "Menu",
     "dashboard": "Dasbor",
-    "logout": "Keluar"
+    "logout": "Keluar",
+    "checkTransaction": "Cek transaksi"
   },
   "About": {
     "badge": "Tentang Kami",

@@ -352,23 +352,19 @@
   },
   "Dashboard": {
     "welcome": "Welcome back",
-    "welcomeSubtitle": "Here's a summary of your transaction activity.",
     "loading": "Loading data...",
-    "summaryTitle": "Transaction summary",
-    "paymentNumber": "Payment number",
-    "date": "Date",
-    "amount": "Amount",
-    "status": "Status",
     "statTotalTransactions": "Total transactions",
     "statTotalAmount": "Total amount",
-    "statPending": "PENDING",
-    "statFailed": "FAILED",
-    "statPaid": "PAID",
     "recentTitle": "Recent transactions",
-    "emptyState": "No transactions found",
+    "emptyState": "No transactions yet",
     "statusLabelPaid": "Paid",
     "statusLabelFailed": "Failed",
-    "statusLabelPending": "Pending"
+    "statusLabelPending": "Pending",
+    "emptyHint": "Your first top-up will show up here.",
+    "emptyCta": "Start topping up",
+    "errorState": "Couldn't load your dashboard data.",
+    "retry": "Try again",
+    "checkTransaction": "Check transaction"
   },
   "FooterInformation": {
     "title": "Information",
@@ -400,7 +396,8 @@
   "ClientLayout": {
     "menu": "Menu",
     "dashboard": "Dashboard",
-    "logout": "Logout"
+    "logout": "Logout",
+    "checkTransaction": "Check transaction"
   },
   "About": {
     "badge": "About us",

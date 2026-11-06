@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, LayoutDashboard, LogIn, LogOut } from 'lucide-react'
+import { ChevronDown, LayoutDashboard, LogIn, LogOut, Search } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link } from '../../i18n/routing'
 import LogoutConfirmDialog from '../Auth/LogoutConfirmDialog'
@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
+import { PlayerAvatar } from '../ui/player-avatar'
 import { focusRing, getAvatarSrc } from './config'
 
 interface UserMenuProps {
@@ -20,6 +21,9 @@ interface UserMenuProps {
   /** Buka dialog Masuk/Daftar (Google tetap tersedia di dalam dialog). */
   onLogin: () => void
 }
+
+const menuItemClass =
+  'cursor-pointer rounded-lg py-2.5 font-medium focus:bg-primary/10 focus:text-primary [&:focus_svg]:!text-primary'
 
 export default function UserMenu({ user, onLogin }: UserMenuProps) {
   const t = useTranslations('Navigation')
@@ -49,42 +53,43 @@ export default function UserMenu({ user, onLogin }: UserMenuProps) {
           <button
             type="button"
             aria-label={t('accountMenu')}
-            className={`flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full p-0.5 pr-2 transition-colors duration-200 hover:bg-accent data-[state=open]:bg-accent ${focusRing}`}
+            className={`group flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg p-0.5 pr-1.5 transition-colors duration-200 hover:bg-accent data-[state=open]:bg-accent ${focusRing}`}
           >
-            <img
-              src={avatarSrc}
-              alt=""
+            <PlayerAvatar src={avatarSrc} size="sm" />
+            <ChevronDown
+              className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180 motion-reduce:transition-none"
               aria-hidden="true"
-              className="h-8 w-8 rounded-full border border-border bg-card object-cover"
             />
-            <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           </button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" sideOffset={8} className="w-60 rounded-xl p-1.5">
-          <DropdownMenuLabel className="flex items-center gap-3 font-normal">
-            <img
-              src={avatarSrc}
-              alt=""
-              aria-hidden="true"
-              className="h-9 w-9 shrink-0 rounded-full border border-border bg-card object-cover"
-            />
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-foreground">{user.name}</p>
+        <DropdownMenuContent align="end" sideOffset={8} className="w-64 overflow-hidden rounded-xl p-1.5">
+          {/* Mini kartu pemain — sama dengan header Dasbor */}
+          <DropdownMenuLabel className="relative -m-1.5 mb-1.5 flex items-center gap-3 overflow-hidden p-3 font-normal">
+            <span aria-hidden="true" className="bg-stripes pointer-events-none absolute inset-0" />
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-gradient-brand" />
+            <PlayerAvatar src={avatarSrc} size="md" className="relative" />
+            <div className="relative min-w-0">
+              <p className="truncate font-display text-sm font-bold text-foreground">{user.name}</p>
               <p className="truncate text-xs text-muted-foreground">{user.email}</p>
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild className="cursor-pointer py-2">
+          <DropdownMenuItem asChild className={menuItemClass}>
             <Link href="/dashboard">
               <LayoutDashboard />
               {t('dashboard')}
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild className={menuItemClass}>
+            <Link href="/check-transaction">
+              <Search />
+              {t('checkTransaction')}
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
-            className="cursor-pointer py-2"
+            className="cursor-pointer rounded-lg py-2.5"
             onSelect={() => setLogoutOpen(true)}
           >
             <LogOut />
