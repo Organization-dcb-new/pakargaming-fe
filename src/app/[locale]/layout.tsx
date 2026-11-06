@@ -12,10 +12,12 @@ import QueryProvider from '../../providers/query-provider'
 import { fontDisplay, fontSans } from '../../styles/fonts'
 
 import { Toaster } from '../../components/ui/sonner'
+import GameBackdrop from '../../components/GameBackdrop/GameBackdrop'
 import ProgressBar from '../../components/ProgressBar'
 import GlobalWhatsAppButton from '../../components/CSButton'
 import { GoogleAnalytics } from '../../components/GoogleAnalytics'
 import CryptoProvider from '../../components/CryptoProvider'
+import { AuthDialogProvider } from '../../components/Auth/AuthDialogProvider'
 import MaintenancePage from '../../components/Maintenance/MaintenancePage'
 import MaintenanceWatcher from '../../components/Maintenance/MaintenanceWatcher'
 import { getActiveMaintenance } from '../../lib/maintenance'
@@ -37,7 +39,7 @@ export default async function RootLayout({
   params,
 }: {
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
 
@@ -57,6 +59,8 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-background text-foreground" suppressHydrationWarning>
+        {/* Latar item game melayang — di luar provider karena murni dekoratif (server component) */}
+        <GameBackdrop />
         <CryptoProvider secretKey={process.env.ENCRYPT_SECRET_KEY || ""} />
         <QueryProvider>
           <ThemeProvider
@@ -70,18 +74,20 @@ export default async function RootLayout({
               {maintenance ? (
                 <MaintenancePage schedule={maintenance} />
               ) : (
-                <div className="min-h-screen">
-                  <ProgressBar />
-                  <Navigation />
-                  <main>
-                    {children}
-                    <Toaster />
-                  </main>
-                  <Footer />
+                <AuthDialogProvider>
+                  <div className="min-h-screen">
+                    <ProgressBar />
+                    <Navigation />
+                    <main>
+                      {children}
+                      <Toaster />
+                    </main>
+                    <Footer />
 
-                  <GlobalWhatsAppButton />
-                  <GoogleAnalytics />
-                </div>
+                    <GlobalWhatsAppButton />
+                    <GoogleAnalytics />
+                  </div>
+                </AuthDialogProvider>
               )}
             </NextIntlClientProvider>
           </ThemeProvider>

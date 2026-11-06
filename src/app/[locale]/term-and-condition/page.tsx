@@ -1,6 +1,8 @@
+import { useTranslations } from 'next-intl'
 import LegalDocument, { LegalSection } from '../../../components/Legal/LegalDocument'
 
-const LAST_UPDATED = '1 Juli 2026'
+/** ISO — diformat sesuai locale di LegalDocument */
+const LAST_UPDATED = '2026-07-01'
 
 const SECTIONS: LegalSection[] = [
   {
@@ -169,10 +171,12 @@ const SECTIONS: LegalSection[] = [
 ]
 
 export default function TermAndConditionPages() {
+  const t = useTranslations('Legal')
+
   return (
     <LegalDocument
-      title="Syarat & Ketentuan"
-      intro="Ketentuan penggunaan layanan PakarGaming. Dengan menggunakan layanan kami, Anda dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan di bawah ini."
+      title={t('termsTitle')}
+      intro={t('termsIntro')}
       lastUpdated={LAST_UPDATED}
       sections={SECTIONS}
     />

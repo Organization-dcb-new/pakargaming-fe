@@ -74,6 +74,7 @@ Tambahkan di `:root` dan `.dark` pada `src/styles/theme.css`, lalu daftarkan di 
 > - `shadow-glow` — glow cyan untuk hover kartu interaktif (pengganti `shadow-[...]` inline).
 > - `font-display` — Chakra Petch untuk heading, wordmark, angka. Body tetap Plus Jakarta Sans.
 > - `bg-stripes` — placeholder thumbnail game.
+> - **Latar situs** = glow logo di `body` + `<GameBackdrop>` (item game melayang: diamond, koin, gamepad, potion, dsb; dipasang sekali di layout). Intensitas diatur token `--game-item-opacity`. **Jangan** kasih wrapper halaman background opaque (`bg-white`, `bg-gradient-to-br …`, `bg-background`) karena menutupi backdrop; cukup kartu/panel yang pakai `bg-card`.
 > - Chip/filter aktif = inverse (`bg-foreground text-background`), bukan gradient.
 
 ### 2.3 Aturan pakai

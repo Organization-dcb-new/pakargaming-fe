@@ -6,11 +6,15 @@ import { Suspense, useEffect } from 'react'
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
+/** Query param berisi kredensial (JWT sesi, token reset password, kode link Google): jangan pernah dikirim ke GA. */
+const PRIVATE_PARAMS = ['token', 'user', 'google_link']
+
 function gtagConfig(pagePath: string) {
   if (!GA_ID || typeof window === 'undefined') return true
   const g = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag
   if (typeof g !== 'function') return false
-  g('config', GA_ID, { page_path: pagePath })
+  // page_location juga diisi: tanpa itu gtag mengirim URL lengkap browser, termasuk query di atas.
+  g('config', GA_ID, { page_path: pagePath, page_location: `${window.location.origin}${pagePath}` })
   return true
 }
 
@@ -20,7 +24,9 @@ function GoogleAnalyticsInner() {
 
   useEffect(() => {
     if (!GA_ID) return
-    const query = searchParams?.toString()
+    const params = new URLSearchParams(searchParams?.toString())
+    PRIVATE_PARAMS.forEach((key) => params.delete(key))
+    const query = params.toString()
     const pagePath = query ? `${pathname}?${query}` : pathname
 
     let cancelled = false

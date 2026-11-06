@@ -1,6 +1,8 @@
+import { useTranslations } from 'next-intl'
 import LegalDocument, { LegalSection } from '../../../components/Legal/LegalDocument'
 
-const LAST_UPDATED = '1 Juli 2026'
+/** ISO — diformat sesuai locale di LegalDocument */
+const LAST_UPDATED = '2026-07-01'
 
 const SECTIONS: LegalSection[] = [
   {
@@ -269,10 +271,12 @@ const SECTIONS: LegalSection[] = [
 ]
 
 export default function PolicyAndPrivacy() {
+  const t = useTranslations('Legal')
+
   return (
     <LegalDocument
-      title="Kebijakan Privasi"
-      intro="Kebijakan ini menjelaskan bagaimana PakarGaming mengumpulkan, menggunakan, dan melindungi data pribadi Anda saat menggunakan layanan kami."
+      title={t('privacyTitle')}
+      intro={t('privacyIntro')}
       lastUpdated={LAST_UPDATED}
       sections={SECTIONS}
     />

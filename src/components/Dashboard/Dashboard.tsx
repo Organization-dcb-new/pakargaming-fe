@@ -3,6 +3,7 @@
 import useAuth from '../../hooks/useAuth'
 import ClientLayout from '../ClientLayout'
 import ProfileDashboard from './components/Profile'
+import SignInMethods from './components/SignInMethods'
 import MyTransaction from './components/Transactions'
 import { useGetTransactionByEmailDashboard } from './hooks/useGetTransaction'
 
@@ -18,6 +19,7 @@ export default function DashboardPages() {
     <ClientLayout>
       <div className="space-y-6">
         <ProfileDashboard />
+        <SignInMethods token={token} />
         <MyTransaction
           DataDashboard={DataDashboard}
           isLoading={Boolean(authLoading || dataLoading)}

@@ -29,7 +29,8 @@ export default function CheckTransaction() {
   const notFound = !!trxId && !isLoading && !transaction?.id
 
   return (
-    <section className="mx-auto w-full max-w-3xl px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
+    // Tinggi = viewport − navbar (h-14 / md:h-16, lihat Navigation/LayoutTop.tsx) → konten pas di tengah layar
+    <section className="mx-auto flex min-h-[calc(100dvh-3.5rem)] w-full max-w-3xl flex-col justify-center px-4 py-10 sm:px-6 md:min-h-[calc(100dvh-4rem)]">
       <div className="flex flex-col gap-6">
         <header className="space-y-2">
           <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">

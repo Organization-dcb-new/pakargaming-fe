@@ -70,7 +70,7 @@ export default function TransactionStatusPage() {
   const config = statusConfig[status]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-purple-50/40 dark:via-purple-900/40 to-background flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md animate-fadeInUp">
         <div className="bg-white/80 dark:bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-gray-200 dark:border-white/10 shadow-xl space-y-6">
           <StatusHeader {...config} />

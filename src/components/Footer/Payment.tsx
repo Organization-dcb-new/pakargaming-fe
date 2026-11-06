@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useGetPaymentMethod } from '../../hooks/usePaymentMethod'
 import { footerHeadingClass } from './config'
@@ -10,6 +11,35 @@ const MAX_VISIBLE = 6
 function getValidImageSrc(src?: string | null) {
   const normalized = src?.trim()
   return normalized ? normalized : null
+}
+
+const chipClass =
+  'flex h-12 min-w-16 items-center justify-center rounded-md px-2 shadow-sm ring-1 ring-border transition-transform duration-200 hover:scale-105 motion-reduce:transition-none'
+
+/** Chip logo pembayaran. Gambar gagal dimuat (URL mati di bucket) → tampilkan nama metodenya (rules §10). */
+function PaymentLogo({ src, name }: { src: string; name: string }) {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) {
+    return (
+      <span className={`${chipClass} bg-muted text-xs font-semibold text-muted-foreground`}>{name}</span>
+    )
+  }
+
+  // bg-white: logo pihak ketiga dirancang untuk latar putih (rules §2.3, boleh literal)
+  return (
+    <span className={`${chipClass} bg-white`}>
+      <Image
+        src={src}
+        alt={name}
+        width={48}
+        height={48}
+        unoptimized
+        className="h-8 w-auto max-w-20 object-contain"
+        onError={() => setFailed(true)}
+      />
+    </span>
+  )
 }
 
 export default function SecurePayment() {
@@ -39,19 +69,7 @@ export default function SecurePayment() {
       ) : (
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           {visiblePayments.map((payment) => (
-            <span
-              key={payment.id}
-              className="flex h-12 min-w-16 items-center justify-center rounded-md bg-white px-2 shadow-sm ring-1 ring-border transition-transform duration-200 hover:scale-105 motion-reduce:transition-none"
-            >
-              <Image
-                src={payment.icon_url}
-                alt={payment.name}
-                width={48}
-                height={48}
-                unoptimized
-                className="h-8 w-auto max-w-20 object-contain"
-              />
-            </span>
+            <PaymentLogo key={payment.id} src={payment.icon_url} name={payment.full_name || payment.name} />
           ))}
 
           {remaining > 0 && (

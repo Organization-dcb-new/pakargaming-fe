@@ -26,10 +26,11 @@ export const FOOTER_LINKS = {
 /** Public-facing brand name (trade name, distinct from the legal entity in i18n `brandName`). */
 export const FOOTER_SITE_NAME = 'PakarGaming'
 
-/** Logo is env-driven so dev/prod buckets don't get hardcoded into the bundle. */
-export const FOOTER_LOGO_SRC =
-  process.env.NEXT_PUBLIC_FOOTER_LOGO_URL ??
-  'https://s3.nevaobjects.id/image-dev/uploads/20260121141804.png'
+/**
+ * Logo is env-driven so dev/prod buckets don't get hardcoded into the bundle.
+ * Unset → FooterLogo falls back to the local logo + wordmark (the old hardcoded dev-bucket URL now 404s).
+ */
+export const FOOTER_LOGO_SRC = process.env.NEXT_PUBLIC_FOOTER_LOGO_URL || null
 
 /** Section headings (Contact, Information, Follow us, Secure payments). */
 export const footerHeadingClass =

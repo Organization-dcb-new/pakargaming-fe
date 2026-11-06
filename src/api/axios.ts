@@ -3,6 +3,16 @@ import Cookies from 'js-cookie'
 import CryptoJS from "crypto-js";
 import { getClientSecretKey } from "@/lib/cryptoClient";
 
+declare module "axios" {
+  interface AxiosRequestConfig {
+    /**
+     * Endpoint auth publik (login, daftar, lupa/reset password): jangan kirim token sesi dan
+     * jangan auto-logout saat 401 — di sini 401 berarti "password salah", bukan sesi kedaluwarsa.
+     */
+    skipAuth?: boolean;
+  }
+}
+
 // ─── Helper: decode JWT payload tanpa library tambahan ────────────────────────
 function isTokenExpired(token: string): boolean {
   try {
@@ -34,7 +44,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = Cookies.get("token");
+    const token = config.skipAuth ? undefined : Cookies.get("token");
 
     if (token) {
       // Cek apakah token sudah expired sebelum request dikirim
@@ -62,7 +72,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !error.config?.skipAuth) {
       handleAutoLogout();
     }
     return Promise.reject(error);

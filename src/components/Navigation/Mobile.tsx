@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { LayoutDashboard, LogOut, Menu } from 'lucide-react'
+import { LayoutDashboard, LogIn, LogOut, Menu } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '../../i18n/routing'
 import { ThemeToggle } from '../ThemeToggle'
@@ -13,7 +13,8 @@ import { NAV_ITEMS, focusRing, getAvatarSrc, isNavActive } from './config'
 
 interface MobileNavProps {
   user: any
-  loginWithGoogle: () => void
+  /** Buka dialog Masuk/Daftar (Google tetap tersedia di dalam dialog). */
+  onLogin: () => void
 }
 
 const sectionLabelClass = 'px-3 text-xs font-medium uppercase tracking-wide text-muted-foreground'
@@ -22,7 +23,7 @@ const itemClass =
 const itemStateClass = (active: boolean) =>
   active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
 
-export default function MobileNavigation({ user, loginWithGoogle }: MobileNavProps) {
+export default function MobileNavigation({ user, onLogin }: MobileNavProps) {
   const t = useTranslations('Navigation')
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -123,18 +124,14 @@ export default function MobileNavigation({ user, loginWithGoogle }: MobileNavPro
             ) : (
               <button
                 type="button"
+                aria-haspopup="dialog"
                 onClick={() => {
                   closeMenu()
-                  loginWithGoogle()
+                  onLogin()
                 }}
                 className={`chamfer flex h-11 w-full cursor-pointer touch-manipulation items-center justify-center gap-2 rounded-sm bg-primary px-4 text-sm font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 ${focusRing}`}
               >
-                <img
-                  src="/icons/google.svg"
-                  alt=""
-                  aria-hidden="true"
-                  className="h-5 w-5 shrink-0 rounded-full bg-white p-0.5"
-                />
+                <LogIn className="h-4 w-4 shrink-0" aria-hidden="true" />
                 {t('login')}
               </button>
             )}

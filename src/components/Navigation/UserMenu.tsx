@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, LayoutDashboard, LogOut } from 'lucide-react'
+import { ChevronDown, LayoutDashboard, LogIn, LogOut } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link } from '../../i18n/routing'
 import LogoutConfirmDialog from '../Auth/LogoutConfirmDialog'
@@ -17,10 +17,11 @@ import { focusRing, getAvatarSrc } from './config'
 
 interface UserMenuProps {
   user: any
-  loginWithGoogle: () => void
+  /** Buka dialog Masuk/Daftar (Google tetap tersedia di dalam dialog). */
+  onLogin: () => void
 }
 
-export default function UserMenu({ user, loginWithGoogle }: UserMenuProps) {
+export default function UserMenu({ user, onLogin }: UserMenuProps) {
   const t = useTranslations('Navigation')
   const [logoutOpen, setLogoutOpen] = useState(false)
 
@@ -28,15 +29,11 @@ export default function UserMenu({ user, loginWithGoogle }: UserMenuProps) {
     return (
       <button
         type="button"
-        onClick={loginWithGoogle}
+        onClick={onLogin}
+        aria-haspopup="dialog"
         className={`chamfer inline-flex h-9 shrink-0 cursor-pointer touch-manipulation items-center gap-2 whitespace-nowrap rounded-sm bg-primary px-4 text-sm font-bold text-primary-foreground transition-colors duration-200 [--chamfer:8px] hover:bg-primary/85 active:scale-[0.98] motion-reduce:active:scale-100 ${focusRing}`}
       >
-        <img
-          src="/icons/google.svg"
-          alt=""
-          aria-hidden="true"
-          className="h-5 w-5 rounded-full bg-white p-0.5"
-        />
+        <LogIn className="h-4 w-4 shrink-0" aria-hidden="true" />
         {t('login')}
       </button>
     )

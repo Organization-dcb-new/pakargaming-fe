@@ -1,20 +1,12 @@
-import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import { FOOTER_LOGO_SRC } from './config'
+import FooterLogo from './FooterLogo'
 
 export default function BrandComponent() {
   const t = useTranslations('Footer')
 
   return (
     <div className="flex w-full max-w-sm flex-col items-center gap-4 text-center lg:max-w-none lg:items-start lg:text-left">
-      <Image
-        alt={t('brandName')}
-        src={FOOTER_LOGO_SRC}
-        width={192}
-        height={64}
-        className="h-auto w-40 object-contain sm:w-44"
-        sizes="(max-width: 640px) 160px, 176px"
-      />
+      <FooterLogo alt={t('brandName')} />
 
       <div>
         <h2 className="font-display text-base font-bold leading-snug text-foreground sm:text-lg">

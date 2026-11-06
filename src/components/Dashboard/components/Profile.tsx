@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import useAuth from '../../../hooks/useAuth'
+import { getAvatarSrc } from '../../Navigation/config'
 import { Skeleton } from '../../ui/skeleton'
 
 export default function ProfileDashboard() {
@@ -31,9 +32,11 @@ export default function ProfileDashboard() {
       />
 
       <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
+        {/* Akun email+password tidak punya foto: /avatar.png tidak ada, pakai avatar inisial seperti navbar */}
         <img
-          src={user.picture || '/avatar.png'}
-          alt={user.name}
+          src={getAvatarSrc(user)}
+          alt=""
+          aria-hidden="true"
           className="h-16 w-16 shrink-0 rounded-full border-2 border-brand/30 object-cover"
         />
 

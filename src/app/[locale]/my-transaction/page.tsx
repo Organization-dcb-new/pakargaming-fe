@@ -17,7 +17,7 @@ export default function MyTransaction() {
 
   if (loading || isLoading) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-background via-purple-50/50 dark:via-purple-900/50 to-background">
+      <div className="min-h-screen w-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-600 rounded-full animate-spin" />
           <p className="text-sm text-slate-600 dark:text-slate-400">Loading...</p>
@@ -30,7 +30,7 @@ export default function MyTransaction() {
   const meta = data?.meta
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br  justify-center  items-center from-background via-purple-50/50 dark:via-purple-900/50 to-background p-4 sm:p-5">
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 sm:p-5">
       <h1 className="text-2xl font-semibold mb-6 flex items-center justify-center w-full mt-5">
         My <span className="text-purple-600 dark:text-purple-400">Transaction</span>
       </h1>

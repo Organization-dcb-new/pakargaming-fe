@@ -1,4 +1,4 @@
-import { Mail, Phone } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 import { useTranslations } from 'next-intl'
 import { FOOTER_CONTACT, footerContactLinkClass, footerHeadingClass } from './config'
 
@@ -17,14 +17,21 @@ export default function ContactComponent() {
             rel="noopener noreferrer"
             className={footerContactLinkClass}
           >
-            <Phone className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+            {/* Nomor ini link WhatsApp → logo WhatsApp asli, bukan ikon telepon generik */}
+            <FaWhatsapp className="h-4 w-4 shrink-0 text-whatsapp" aria-hidden />
             <span className="break-all">{FOOTER_CONTACT.whatsappDisplay}</span>
           </a>
         </li>
 
         <li>
           <a href={FOOTER_CONTACT.emailUrl} className={footerContactLinkClass}>
-            <Mail className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+            {/* Email tidak punya logo brand — glyph "@" font display, selebar ikon WhatsApp di atasnya */}
+            <span
+              aria-hidden
+              className="w-4 shrink-0 text-center font-display text-base font-bold leading-none text-primary"
+            >
+              @
+            </span>
             <span className="break-all">{FOOTER_CONTACT.email}</span>
           </a>
         </li>

@@ -111,7 +111,13 @@ async function proxyRequest(
 
     const data = await response.json().catch(() => null);
 
-    return NextResponse.json(data, { status: response.status });
+    // Teruskan Retry-After (429 lockout login) supaya client bisa menampilkan sisa waktu tunggu
+    const retryAfter = response.headers.get("retry-after");
+
+    return NextResponse.json(data, {
+      status: response.status,
+      headers: retryAfter ? { "Retry-After": retryAfter } : undefined,
+    });
   } catch (error) {
     console.error("[Proxy Error]", {
       backendUrl: BACKEND_URL,

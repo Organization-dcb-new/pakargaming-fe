@@ -7,6 +7,8 @@
   --logo-cyan: #0bc1dc;
   /* Warna brand pihak ketiga (rules §2.3: boleh literal) — tombol CS WhatsApp */
   --whatsapp: #25d366;
+  /* Kilau terang di item backdrop game (GameBackdrop) — dekoratif, sama di light & dark */
+  --game-glint: color-mix(in oklab, var(--logo-cyan) 25%, white);
 }
 
 :root {
@@ -28,8 +30,8 @@
   --brand-solid: var(--logo-purple);
   --brand-solid-foreground: #ffffff;
   --gradient-brand: linear-gradient(135deg, var(--logo-purple) 0%, var(--logo-cyan) 100%);
-  /* Background "arena": grid tipis + glow logo di pojok atas (intensitas subtle) */
-  --grid-line: rgba(20, 18, 31, 0.03);
+  /* Background "arena": glow logo di pojok atas + item game melayang (GameBackdrop) */
+  --game-item-opacity: 0.2;
   --glow-purple: 10%;
   --glow-cyan: 8%;
   /* Status semantik (rules §2.2) — badge, ribbon, toast */
@@ -86,7 +88,7 @@
   /* Ungu logo (#8a35ac) terlalu gelap untuk teks di dark (≈3:1) — pakai varian terang + teks gelap */
   --brand: #c98be6;
   --brand-foreground: #0c0b14;
-  --grid-line: rgba(243, 241, 248, 0.03);
+  --game-item-opacity: 0.32;
   --glow-purple: 22%;
   --glow-cyan: 12%;
   /* Status dark: bg terang + teks sangat gelap — kontras AA aman di permukaan gelap */
@@ -256,6 +258,55 @@
   }
 }
 
+/* Bar indeterminate halaman maintenance saat belum ada perkiraan selesai (Maintenance/ScheduleInfo.tsx).
+   Elemen selebar 40% → 250% dari lebarnya sendiri = melintasi seluruh track. */
+@keyframes maintenance-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+/* Item backdrop game (GameBackdrop): melayang naik-turun & sparkle berkedip.
+   Hanya transform supaya ringan; mati saat prefers-reduced-motion (rules §7). */
+@keyframes game-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-4deg);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) rotate(4deg);
+  }
+}
+
+@keyframes game-twinkle {
+  0%,
+  100% {
+    transform: scale(0.7) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(45deg);
+  }
+}
+
+@utility game-float {
+  animation: game-float var(--float-duration, 8s) ease-in-out var(--float-delay, 0s) infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility game-twinkle {
+  animation: game-twinkle var(--float-duration, 4s) ease-in-out var(--float-delay, 0s) infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
 /* Kilau ribbon tile game — sapuan cahaya periodik (jeda di 55–100%) */
 @keyframes ribbon-shine {
   0% {
@@ -272,7 +323,8 @@
     @apply border-border outline-ring/50;
   }
 
-  /* Background "arena": glow ungu & cyan logo di pojok atas + grid tipis. Statis (tanpa animasi). */
+  /* Background "arena": glow ungu & cyan logo (pojok atas + bawah). Item game melayang dirender
+     terpisah oleh components/GameBackdrop (fixed, di belakang konten). */
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
@@ -289,14 +341,13 @@
         color-mix(in oklab, var(--logo-cyan) var(--glow-cyan), transparent),
         transparent 70%
       ),
-      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px),
-      linear-gradient(to right, var(--grid-line) 1px, transparent 1px);
-    background-size:
-      100% 100%,
-      100% 100%,
-      44px 44px,
-      44px 44px;
-    background-repeat: no-repeat, no-repeat, repeat, repeat;
+      radial-gradient(
+        64rem 28rem at 50% 115%,
+        color-mix(in oklab, var(--logo-purple) var(--glow-cyan), transparent),
+        transparent 70%
+      );
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     background-attachment: fixed;
   }
 
