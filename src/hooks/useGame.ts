@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   GetGameResponse,
-  GetGamesByCategoryResponse,
   GetGamesBySearchResponse,
   GetGamesResponse,
 } from '../types/Game'
@@ -40,18 +39,6 @@ export function useCatalogGame(letter: string) {
           letter,
         },
       })
-      return res.data
-    },
-  })
-
-  return { data, isLoading, isError, refetch }
-}
-
-export function useGetGameByCategory() {
-  const { data, isLoading, isError, refetch } = useQuery<GetGamesByCategoryResponse>({
-    queryKey: ['get-games-category'],
-    queryFn: async () => {
-      const res = await api.get('/v1/games/by-categories')
       return res.data
     },
   })

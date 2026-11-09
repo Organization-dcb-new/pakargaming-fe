@@ -3,7 +3,9 @@
 import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState, type ReactNode } from 'react'
+import { toast } from 'sonner'
 import { getGoogleAuthUrl } from '../../../lib/authUrls'
+import { startGoogleLink } from '../hooks/useAuthApi'
 import { cn } from '../../ui/utils'
 import { secondaryButtonClass, spinnerClass } from './styles'
 
@@ -17,7 +19,24 @@ interface GoogleButtonProps {
 /** Navigasi penuh ke OAuth Google di backend (bukan lewat /api/proxy). */
 export function GoogleButton({ intent, children, className }: GoogleButtonProps) {
   const t = useTranslations('AuthDialog')
+  const tRedirect = useTranslations('AuthRedirect')
   const [redirecting, setRedirecting] = useState(false)
+
+  const openGoogle = async () => {
+    setRedirecting(true)
+    if (intent !== 'link') {
+      window.location.href = getGoogleAuthUrl()
+      return
+    }
+    try {
+      // Link butuh tiket dari akun yang sedang login; tanpa itu backend menolak.
+      const ticket = await startGoogleLink()
+      window.location.href = getGoogleAuthUrl('link', ticket)
+    } catch {
+      setRedirecting(false)
+      toast.error(tRedirect('googleFailed'))
+    }
+  }
 
   // Kembali lewat tombol Back (bfcache) → tombol aktif lagi
   useEffect(() => {
@@ -31,10 +50,7 @@ export function GoogleButton({ intent, children, className }: GoogleButtonProps)
       type="button"
       disabled={redirecting}
       aria-busy={redirecting || undefined}
-      onClick={() => {
-        setRedirecting(true)
-        window.location.href = getGoogleAuthUrl(intent)
-      }}
+      onClick={openGoogle}
       className={cn(secondaryButtonClass, className)}
     >
       {redirecting ? (

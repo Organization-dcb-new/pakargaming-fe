@@ -7,7 +7,7 @@ import { Suspense, useEffect } from 'react'
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 /** Query param berisi kredensial (JWT sesi, token reset password, kode link Google): jangan pernah dikirim ke GA. */
-const PRIVATE_PARAMS = ['token', 'user', 'google_link']
+const PRIVATE_PARAMS = ['token', 'user', 'auth_code', 'google_link']
 
 function gtagConfig(pagePath: string) {
   if (!GA_ID || typeof window === 'undefined') return true

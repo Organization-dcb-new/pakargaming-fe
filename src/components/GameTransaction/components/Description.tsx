@@ -9,7 +9,6 @@ interface DescriptionProps {
 
 export default function DescriptionGame({ game }: DescriptionProps) {
   const t = useTranslations("GameCheckout");
-  const isVoucher = game?.data?.category.name === "Voucher";
 
   return (
     <section
@@ -32,36 +31,18 @@ export default function DescriptionGame({ game }: DescriptionProps) {
 
         <div>
           <h3 className="mb-2 font-display text-base font-semibold text-primary">
-            {isVoucher
-              ? t("howToRedeemTitle", { name: game.data.name })
-              : t("howToTopUpTitle", { name: game.data.name })}
+            {t("howToTopUpTitle", { name: game.data.name })}
           </h3>
           <ol className="list-inside list-decimal space-y-1 marker:font-semibold marker:text-foreground">
-            {!isVoucher ? (
-              <>
-                  <li>{t("topupStep1")}</li>
-                  <li>{t("topupStep2")}</li>
-                  <li>{t("topupStep3")}</li>
-                  <li>{t("topupStep4")}</li>
-                  <li>{t("topupStep5")}</li>
-                  <li>{t("topupStep6")}</li>
-                  <li>{t("topupStep7")}</li>
-                  <li>{t("topupStep8")}</li>
-                  <li>{t("topupStep9")}</li>
-              </>
-            ) : (
-              <>
-                  <li>{t("voucherStep1")}</li>
-                  <li>{t("voucherStep2")}</li>
-                  <li>{t("voucherStep3")}</li>
-                  <li>{t("voucherStep4")}</li>
-                  <li>{t("voucherStep5")}</li>
-                  <li>{t("voucherStep6")}</li>
-                  <li>{t("voucherStep7")}</li>
-                  <li>{t("voucherStep8")}</li>
-                  <li>{t("voucherStep9")}</li>
-              </>
-            )}
+            <li>{t("topupStep1")}</li>
+            <li>{t("topupStep2")}</li>
+            <li>{t("topupStep3")}</li>
+            <li>{t("topupStep4")}</li>
+            <li>{t("topupStep5")}</li>
+            <li>{t("topupStep6")}</li>
+            <li>{t("topupStep7")}</li>
+            <li>{t("topupStep8")}</li>
+            <li>{t("topupStep9")}</li>
           </ol>
         </div>
       </div>

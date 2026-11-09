@@ -1,17 +1,15 @@
 'use client'
 
 import { Link } from '../../i18n/routing'
-import { Search, Filter, SlidersHorizontal, Star } from 'lucide-react'
+import { Search, SlidersHorizontal, Star } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useCatalogGame, useGetGames } from '../../hooks/useGame'
-import { useGetCategory } from '../../hooks/useCategory'
 import { GameCardSkeleton } from '../GameCardSkeleton'
 
 export function Games() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [letter, setLetter] = useState('all')
   const t = useTranslations('Games')
 
@@ -22,38 +20,15 @@ export function Games() {
     refetch: refetchGames,
   } = useCatalogGame(letter)
 
-  // Data Category
-  const {
-    data: dataCategory,
-    isLoading: isLoadingCategory,
-    isError: isErrorCategories,
-    refetch: refetchCategories,
-  } = useGetCategory()
   const filteredGames = useMemo(() => {
     if (!DataCatalogGame?.data) return []
 
     return DataCatalogGame.data.filter((game) => {
       if (!game.is_show) return false
 
-      const matchesSearch = game.name.toLowerCase().includes(searchTerm.toLowerCase())
-
-      const matchesCategory = selectedCategory === 'all' || game.category.slug === selectedCategory
-
-      return matchesSearch && matchesCategory
+      return game.name.toLowerCase().includes(searchTerm.toLowerCase())
     })
-  }, [DataCatalogGame, searchTerm, selectedCategory])
-
-  const categories = useMemo(() => {
-    if (!dataCategory?.data) return []
-
-    return [
-      { label: t('allCategories'), slug: 'all' },
-      ...dataCategory.data.map((cat) => ({
-        label: cat.name,
-        slug: cat.slug,
-      })),
-    ]
-  }, [dataCategory, t])
+  }, [DataCatalogGame, searchTerm])
 
   return (
     <div className="min-h-screen mt-6 px-4 sm:px-6 lg:px-8">
@@ -75,51 +50,7 @@ export function Games() {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-gray-50 dark:bg-black/20 p-4 rounded-xl border border-purple-200 dark:border-purple-500/10">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto scrollbar-hide">
-            <Filter className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0" />
-
-            {isLoadingCategory ? (
-              <div className="flex gap-2">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-9 w-32 rounded-full bg-gray-200 dark:bg-white/10 animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : isErrorCategories ? (
-              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-red-50 dark:bg-red-500/10 text-sm">
-                <span className="text-red-600 dark:text-red-400 font-medium">
-                  Failed To Fetch Categories
-                </span>
-
-                <button
-                  onClick={() => refetchCategories()}
-                  className="inline-flex items-center gap-1 cursor-pointer text-purple-600 dark:text-purple-400 hover:underline font-medium">
-                  Retry
-                </button>
-              </div>
-            ) : categories.length === 0 ? (
-              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-gray-50 dark:bg-white/5 text-sm text-gray-500 dark:text-gray-400">
-                Categories not Available
-              </div>
-            ) : (
-              categories.map((category) => (
-                <button
-                  key={category.slug}
-                  onClick={() => setSelectedCategory(category.slug)}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap transition-all text-sm ${
-                    selectedCategory === category.slug
-                      ? "bg-purple-600 text-white shadow-lg shadow-purple-500/25"
-                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/5"
-                  }`}>
-                  {category.label}
-                </button>
-              ))
-            )}
-          </div>
-
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-end bg-gray-50 dark:bg-black/20 p-4 rounded-xl border border-purple-200 dark:border-purple-500/10">
           <div className="flex items-center gap-2 w-full md:w-auto">
             <SlidersHorizontal className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             <select
@@ -204,12 +135,6 @@ export function Games() {
               </div>
 
               <div className="p-5">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-purple-600 dark:text-purple-400 text-xs font-medium bg-purple-100 dark:bg-purple-500/10 px-2 py-1 rounded">
-                    {game.category?.name}
-                  </span>
-                </div>
-
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                   {game.name}
                 </h3>

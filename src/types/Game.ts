@@ -1,9 +1,7 @@
-import { Category } from './Category'
 import { ApiResponse } from './Global'
 
 export interface Game {
   id: string
-  category_id: string
   provider_id: string
   name: string
   slug: string
@@ -20,7 +18,6 @@ export interface Game {
   popularity_score: number
   created_at: string
   updated_at: string
-  category: Category
 }
 
 export interface GameInputOption {
@@ -59,7 +56,6 @@ export interface Price {
 
 export interface GameDetail {
   id: string
-  category_id: string
   provider_id: string
   game_id: string
   name: string
@@ -77,7 +73,6 @@ export interface GameDetail {
   popularity_score: number
   created_at: string
   updated_at: string
-  category: Category
   input: GameInput[]
   product: Price[]
 }
@@ -89,13 +84,7 @@ export interface SearchGame {
   thumbnail_url: string
 }
 
-export interface GameByCategory {
-  category_id: string
-  category_name: string
-  games: Game[]
-}
 
-export type GetGamesByCategoryResponse = ApiResponse<GameByCategory[]>
 export type GetGamesResponse = ApiResponse<Game[]>
 export type GetGameResponse = ApiResponse<GameDetail>
 export type GetGamesBySearchResponse = ApiResponse<SearchGame[]>

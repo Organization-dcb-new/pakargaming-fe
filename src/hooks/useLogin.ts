@@ -6,14 +6,14 @@ import { useTranslations } from 'next-intl'
 import Cookies from 'js-cookie'
 import { toast } from 'sonner'
 import { useAuthDialog } from '../components/Auth/AuthDialogProvider'
-import { useLinkGoogle } from '../components/Auth/hooks/useAuthApi'
+import { redeemGoogleSignIn, useLinkGoogle } from '../components/Auth/hooks/useAuthApi'
 import { parseAuthError, useAuthErrorMessage } from '../components/Auth/lib/authErrors'
 import { useRouter as useLocaleRouter } from '../i18n/routing'
 import { getGoogleAuthUrl } from '../lib/authUrls'
 import { setSession } from './useAuth'
 
 /** Query param yang dikirim backend setelah OAuth Google — dibuang dari URL setelah diproses. */
-const AUTH_REDIRECT_PARAMS = ['token', 'user', 'auth_error', 'google_link']
+const AUTH_REDIRECT_PARAMS = ['token', 'user', 'auth_code', 'auth_error', 'google_link']
 
 /**
  * Hook ini bisa ter-mount lebih dari sekali (Navigation + auth/callback) dan efeknya jalan dua kali
@@ -55,15 +55,16 @@ export default function useLoginGoogleOauth() {
     const user = searchParams.get('user')
     const authError = searchParams.get('auth_error')
     const linkCode = searchParams.get('google_link')
+    const signInCode = searchParams.get('auth_code')
 
-    // Login Google berhasil → simpan cookie sesi (alur lama, tidak berubah)
+    // Alur lama (backend sebelum ?auth_code): token langsung di URL. Dipertahankan selama transisi.
     if (token && user) {
       setSession(token, safeDecode(user))
       router.replace('/')
       return
     }
 
-    if (!authError && !linkCode) return
+    if (!authError && !linkCode && !signInCode) return
 
     const rest = new URLSearchParams(searchParams.toString())
     AUTH_REDIRECT_PARAMS.forEach((key) => rest.delete(key))
@@ -81,6 +82,21 @@ export default function useLoginGoogleOauth() {
           }
         }
         router.replace(cleanUrl, { scroll: false })
+        return
+      }
+
+      // Login Google berhasil → tukar kode sekali pakai dengan sesi
+      if (signInCode) {
+        if (!claimRedirect(`auth_code:${signInCode}`)) return
+        redeemGoogleSignIn(signInCode)
+          .then((session) => {
+            setSession(session.token, session.user)
+            router.replace('/')
+          })
+          .catch(() => {
+            toast.error(t('googleFailed'))
+            router.replace(cleanUrl, { scroll: false })
+          })
         return
       }
 

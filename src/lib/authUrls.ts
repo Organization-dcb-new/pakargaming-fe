@@ -7,10 +7,14 @@ function getApiBaseUrl() {
 
 /**
  * URL mulai OAuth Google.
- * - tanpa intent → masuk/daftar dengan Google
- * - `link` → hubungkan Google ke akun yang sedang login (backend kembali ke `/?google_link=<code>`)
+ * - tanpa intent → masuk/daftar dengan Google (backend kembali ke `/?auth_code=<code>`)
+ * - `link` + tiket dari `POST /v1/auth/google/link/start` → hubungkan Google ke akun yang sedang
+ *   login (backend kembali ke `/?google_link=<code>`). Tiket mengikat link ke akun ini, jadi kode
+ *   link milik orang lain tidak bisa dipakai di akun kita.
  */
-export function getGoogleAuthUrl(intent?: 'link') {
-  const url = `${getApiBaseUrl()}/v1/auth/google`
-  return intent ? `${url}?intent=${intent}` : url
+export function getGoogleAuthUrl(intent?: 'link', ticket?: string) {
+  const url = new URL(`${getApiBaseUrl()}/v1/auth/google`)
+  if (intent) url.searchParams.set('intent', intent)
+  if (ticket) url.searchParams.set('ticket', ticket)
+  return url.toString()
 }

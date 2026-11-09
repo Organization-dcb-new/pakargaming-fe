@@ -78,6 +78,20 @@ export function useAuthMe(token?: string | null) {
   })
 }
 
+/** Tiket sekali pakai untuk membuka Google dalam mode link, terikat ke akun yang sedang login. */
+export async function startGoogleLink(): Promise<string> {
+  const res = await api.post<ApiResponse<{ ticket: string }>>('/v1/auth/google/link/start', {})
+  return res.data.data.ticket
+}
+
+/** Tukar `?auth_code` dari redirect login Google dengan sesi (token tidak pernah lewat URL). */
+export async function redeemGoogleSignIn(code: string): Promise<AuthSession> {
+  const res = await api.post<ApiResponse<AuthSession>>('/v1/auth/google/exchange', { code }, {
+    skipAuth: true,
+  })
+  return res.data.data
+}
+
 export function useLinkGoogle() {
   const queryClient = useQueryClient()
 

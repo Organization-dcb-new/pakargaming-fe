@@ -14,7 +14,7 @@ import LayoutTop from './Navigation/LayoutTop'
 export function Navigation() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
 
-  // Selalu ter-mount: memproses redirect Google (?token, ?auth_error, ?google_link)
+  // Selalu ter-mount: memproses redirect Google (?auth_code, ?auth_error, ?google_link; ?token untuk backend lama)
   UseLoginGoogleOauth()
   const { user, loading } = useAuth()
   const { openAuthDialog } = useAuthDialog()

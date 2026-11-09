@@ -71,11 +71,6 @@ export default function OrderSummary({ data }: { data: PaymentDataWithDetailProd
       <div className="flex items-center gap-3">
         <TransactionThumb src={product?.item_image} name={product?.item_name} size="lg" />
         <div className="min-w-0 flex-1">
-          {product?.category ? (
-            <span className="chamfer inline-flex bg-brand/15 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-brand [--chamfer:5px]">
-              {product.category}
-            </span>
-          ) : null}
           <p className="mt-1 font-display text-base font-bold leading-tight text-foreground">
             {product?.item_product || '—'}
           </p>

@@ -83,6 +83,13 @@ async function proxyRequest(
       headers["X-Forwarded-Referer"] = forwarded.referer;
     }
 
+    // IP pembeli, untuk rate limit per pembeli di backend. Header sendiri, bukan
+    // X-Forwarded-For: backend memakai IP server ini untuk whitelist.
+    const clientIp =
+      req.headers.get("x-real-ip") ??
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+    if (clientIp) headers["X-Client-IP"] = clientIp;
+
     // Forward Authorization header if present
     const auth = req.headers.get("authorization");
     if (auth) headers["Authorization"] = auth;

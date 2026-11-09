@@ -63,7 +63,6 @@ export interface DetailProduct {
   item_quantity: number
   item_image: string
   email: string
-  category: string
   payment_image: string
   game_slug: string
   voucher_code: string
