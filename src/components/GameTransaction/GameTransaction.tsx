@@ -268,7 +268,7 @@ export default function GameTransaction() {
     });
   };
 
-  const sections: ReactElement[] = [
+  const sections: ReactElement<{ step?: number }>[] = [
     ...(inputs.length > 0
       ? [
           <AccountComponent

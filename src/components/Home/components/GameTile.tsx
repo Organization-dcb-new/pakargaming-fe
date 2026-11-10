@@ -11,13 +11,15 @@ interface GameTileProps {
   game: ShowGame
   /** Ribbon animasi (kilau) sesuai flag show: popular / new / hot */
   badge?: ShowBadgeVariant | null
+  /** true untuk tile yang kelihatan tanpa scroll (above the fold) — jangan di-lazy-load biar LCP cepat */
+  eager?: boolean
 }
 
 /**
  * Kartu game fluid (mengikuti kolom grid, bukan pixel mati) dengan hover lift + glow cyan,
  * glare sweep, ribbon animasi, dan fallback saat thumbnail kosong/gagal dimuat.
  */
-export function GameTile({ game, badge }: GameTileProps) {
+export function GameTile({ game, badge, eager = false }: GameTileProps) {
   const [imageFailed, setImageFailed] = useState(false)
   const showFallback = !game.thumbnail_url || imageFailed
 
@@ -42,6 +44,7 @@ export function GameTile({ game, badge }: GameTileProps) {
             alt={game.name}
             fill
             unoptimized
+            loading={eager ? 'eager' : 'lazy'}
             sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 20vw, 16vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             onError={() => setImageFailed(true)}

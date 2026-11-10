@@ -28,7 +28,7 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
 
   return (
     <>
-      {shows.map((show) => {
+      {shows.map((show, showIndex) => {
         const isExpanded = expanded[show.id] ?? false
         const hasManyGames = show.games.length > limit
 
@@ -49,7 +49,8 @@ export default function ShowSectionGames({ shows }: ShowSectionProps) {
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4 md:grid-cols-5 lg:grid-cols-6">
               {games.map((game, i) => (
                 <Reveal key={game.id} delay={(i % 6) * 0.04} className="h-full">
-                  <GameTile game={game} badge={badge} />
+                  {/* Baris pertama show pertama ada di atas fold (apalagi kalau banner kosong) → eager */}
+                  <GameTile game={game} badge={badge} eager={showIndex === 0 && i < limit} />
                 </Reveal>
               ))}
             </div>

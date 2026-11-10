@@ -16,6 +16,7 @@ export function BrandMark() {
         alt=""
         width={32}
         height={32}
+        loading="eager"
         className="h-8 w-8 shrink-0 object-contain"
       />
       <span className="truncate font-display text-lg font-bold uppercase tracking-wider text-foreground">

@@ -1,5 +1,6 @@
 'use client'
 
+import type { JSX } from 'react'
 import { useParams } from 'next/navigation'
 import { CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { formatPrice } from '../../../../utils/format_price'

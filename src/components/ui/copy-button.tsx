@@ -21,7 +21,7 @@ interface CopyButtonProps {
 export function CopyButton({ value, successMessage, label, className, children }: CopyButtonProps) {
   const t = useTranslations('Common')
   const [copied, setCopied] = useState(false)
-  const timer = useRef<ReturnType<typeof setTimeout>>()
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useEffect(() => () => clearTimeout(timer.current), [])
 

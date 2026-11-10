@@ -15,7 +15,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let gameUrls: MetadataRoute.Sitemap = []
 
   try {
-    const { data: games } = await serverApi.get<GetGamesResponse>('/v1/games', {
+    // The storefront catalog: /v1/games is the admin panel's and answered 401 here.
+    const { data: games } = await serverApi.get<GetGamesResponse>('/v1/games/letter', {
+      params: { letter: 'all' },
       timeout: 5000,
     })
 

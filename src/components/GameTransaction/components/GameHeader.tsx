@@ -77,6 +77,7 @@ export default function GameHeader({ game }: GameHeaderProps) {
               alt=""
               width={224}
               height={224}
+              loading="eager"
               className="absolute -bottom-10 right-4 h-44 w-44 object-contain opacity-15 sm:h-56 sm:w-56 lg:right-12"
             />
           </div>
