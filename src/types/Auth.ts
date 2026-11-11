@@ -5,9 +5,11 @@ export interface AuthUser {
   picture?: string | null
 }
 
-/** `data` dari POST /v1/auth/login & /v1/auth/register. */
+/**
+ * `data` dari POST /v1/auth/login, /v1/auth/register & /v1/auth/google/exchange, setelah lewat proxy.
+ * Backend juga mengirim `token`, tapi proxy memindahkannya ke cookie HttpOnly dan membuangnya dari body.
+ */
 export interface AuthSession {
-  token: string
   user: AuthUser
 }
 

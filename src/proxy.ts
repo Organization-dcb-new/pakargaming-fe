@@ -1,17 +1,20 @@
 import createMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
 import { NextRequest, NextResponse } from 'next/server'
+import { LEGACY_TOKEN_COOKIE, SESSION_COOKIE } from './lib/session'
 
 const intlMiddleware = createMiddleware(routing)
 
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  const token = request.cookies.get('token')?.value
+  // Cookie lama tetap dihitung sampai proxy API memigrasikannya ke cookie HttpOnly
+  const hasSession =
+    request.cookies.has(SESSION_COOKIE) || request.cookies.has(LEGACY_TOKEN_COOKIE)
 
   const protectedRoute = /^\/(id|en)?\/(my-transaction|dashboard)/
 
-  if (protectedRoute.test(pathname) && !token) {
+  if (protectedRoute.test(pathname) && !hasSession) {
     const locale = pathname.startsWith('/en') ? 'en' : 'id'
 
     const redirectUrl = new URL(`/${locale}`, request.url)

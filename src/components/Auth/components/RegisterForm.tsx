@@ -17,6 +17,7 @@ import { AuthPasswordField, AuthTextField, SubmitButton } from './AuthFields'
 import FormAlert from './FormAlert'
 import { GoogleButton, OrDivider } from './GoogleButton'
 import { textLinkClass } from './styles'
+import { useTurnstile } from './Turnstile'
 
 export default function RegisterForm({
   defaultEmail,
@@ -35,16 +36,22 @@ export default function RegisterForm({
   const signUp = useRegister()
   const errorMessage = useAuthErrorMessage()
   const error = signUp.error ? parseAuthError(signUp.error) : null
+  const captcha = useTurnstile()
 
   useEmailDraft(form, onEmailChange)
 
   const onSubmit = form.handleSubmit((values) => {
-    signUp.mutate(values, {
-      onSuccess: (session) => {
-        toast.success(t('registerSuccess', { name: session.user.name }))
-        onDone()
+    if (captcha.blocked) return
+    signUp.mutate(
+      { ...values, captchaToken: captcha.token },
+      {
+        onSuccess: (session) => {
+          toast.success(t('registerSuccess', { name: session.user.name }))
+          onDone()
+        },
+        onSettled: captcha.reset,
       },
-    })
+    )
   })
 
   return (
@@ -92,9 +99,14 @@ export default function RegisterForm({
               hint={t('passwordHint', { min: AUTH_LIMITS.passwordMin, max: AUTH_LIMITS.passwordMax })}
             />
 
-            <SubmitButton pending={signUp.isPending} pendingLabel={t('processing')}>
-              {t('submitRegister')}
-            </SubmitButton>
+            {captcha.withWidget(
+              <SubmitButton
+                pending={signUp.isPending || captcha.verifying}
+                pendingLabel={signUp.isPending ? t('processing') : t('captchaVerifying')}
+              >
+                {t('submitRegister')}
+              </SubmitButton>,
+            )}
 
             <p className="text-center text-xs leading-relaxed text-muted-foreground">
               {t.rich('terms', {

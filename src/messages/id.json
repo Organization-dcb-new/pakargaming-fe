@@ -516,7 +516,10 @@
     "setPasswordViaEmail": "Lupa password",
     "goToLogin": "Masuk dengan email ini",
     "terms": "Dengan mendaftar, kamu setuju dengan <terms>Syarat & Ketentuan</terms> serta <privacy>Kebijakan Privasi</privacy>.",
-    "noticeGoogleEmailRegistered": "Email Google ini sudah terdaftar dengan password. Masuk pakai email & password dulu, lalu hubungkan Google dari Dasbor."
+    "noticeGoogleEmailRegistered": "Email Google ini sudah terdaftar dengan password. Masuk pakai email & password dulu, lalu hubungkan Google dari Dasbor.",
+    "captchaVerifying": "Memverifikasi keamanan…",
+    "captchaLoadFailed": "Verifikasi keamanan gagal dimuat. Periksa koneksi atau matikan pemblokir iklan untuk situs ini, lalu coba lagi.",
+    "captchaRetry": "Coba lagi"
   },
   "AuthValidation": {
     "nameRequired": "Nama wajib diisi.",
@@ -541,7 +544,8 @@
     "alreadyLinked": "Akunmu sudah terhubung dengan Google.",
     "validation": "Data yang kamu isi belum valid. Periksa lagi, ya.",
     "network": "Gagal terhubung ke server. Cek koneksi internet kamu.",
-    "generic": "Terjadi kesalahan. Coba lagi sebentar lagi."
+    "generic": "Terjadi kesalahan. Coba lagi sebentar lagi.",
+    "captchaFailed": "Verifikasi keamanan gagal atau kedaluwarsa. Silakan coba lagi."
   },
   "AuthRedirect": {
     "googleFailed": "Gagal masuk dengan Google, coba lagi.",

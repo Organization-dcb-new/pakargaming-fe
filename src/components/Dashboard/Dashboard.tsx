@@ -8,14 +8,14 @@ import SignInMethods from './components/SignInMethods'
 import { useGetTransactionByEmailDashboard } from './hooks/useGetTransaction'
 
 export default function DashboardPages() {
-  const { user, token, loading: authLoading } = useAuth()
+  const { user, isLoggedIn, loading: authLoading } = useAuth()
   const {
     data: DataDashboard,
     isLoading: dataLoading,
     isError,
     isFetching,
     refetch,
-  } = useGetTransactionByEmailDashboard(token)
+  } = useGetTransactionByEmailDashboard(isLoggedIn)
 
   // Only bail out once auth has resolved and there is definitely no user
   if (!authLoading && !user) return null
@@ -44,7 +44,7 @@ export default function DashboardPages() {
           isFetching={isFetching}
           onRetry={onRetry}
         />
-        <SignInMethods token={token} />
+        <SignInMethods isLoggedIn={isLoggedIn} />
       </div>
     </ClientLayout>
   )

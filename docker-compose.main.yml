@@ -10,6 +10,12 @@ services:
         NEXT_PUBLIC_ENCRYPT_KEY: ${NEXT_PUBLIC_ENCRYPT_KEY}
         ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY}
         NEXT_SITE_BASE_URL: ${NEXT_SITE_BASE_URL}
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+
+    # Rahasia runtime — sengaja bukan build arg supaya tidak tersimpan di layer image
+    environment:
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+
     networks:
       - pakargaming_network
 

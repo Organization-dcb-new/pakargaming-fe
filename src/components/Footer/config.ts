@@ -4,11 +4,11 @@
  * only needs to happen here instead of across every sub-component.
  */
 
-const WHATSAPP_NUMBER = '628131793708'
+const WHATSAPP_NUMBER = '6285111344262'
 
 export const FOOTER_CONTACT = {
   whatsappNumber: WHATSAPP_NUMBER,
-  whatsappDisplay: '+62 813-1793-708',
+  whatsappDisplay: '+62 851-1134-4262',
   whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}`,
   email: 'cs@pakargaming.id',
   emailUrl: 'mailto:cs@pakargaming.id',

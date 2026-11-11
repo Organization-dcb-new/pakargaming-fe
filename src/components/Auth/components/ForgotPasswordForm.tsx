@@ -15,6 +15,7 @@ import type { AuthFormProps } from '../types'
 import { AuthTextField, SubmitButton } from './AuthFields'
 import FormAlert from './FormAlert'
 import { secondaryButtonClass, textLinkClass } from './styles'
+import { useTurnstile } from './Turnstile'
 
 export default function ForgotPasswordForm({
   defaultEmail,
@@ -32,10 +33,14 @@ export default function ForgotPasswordForm({
   const forgot = useForgotPassword()
   const errorMessage = useAuthErrorMessage()
   const error = forgot.error ? parseAuthError(forgot.error) : null
+  const captcha = useTurnstile()
 
   useEmailDraft(form, onEmailChange)
 
-  const onSubmit = form.handleSubmit((values) => forgot.mutate(values))
+  const onSubmit = form.handleSubmit((values) => {
+    if (captcha.blocked) return
+    forgot.mutate({ ...values, captchaToken: captcha.token }, { onSettled: captcha.reset })
+  })
 
   const backToLogin = (
     <button
@@ -88,9 +93,14 @@ export default function ForgotPasswordForm({
             autoComplete="email"
           />
 
-          <SubmitButton pending={forgot.isPending} pendingLabel={t('sending')}>
-            {t('submitForgot')}
-          </SubmitButton>
+          {captcha.withWidget(
+            <SubmitButton
+              pending={forgot.isPending || captcha.verifying}
+              pendingLabel={forgot.isPending ? t('sending') : t('captchaVerifying')}
+            >
+              {t('submitForgot')}
+            </SubmitButton>,
+          )}
 
           {backToLogin}
         </fieldset>

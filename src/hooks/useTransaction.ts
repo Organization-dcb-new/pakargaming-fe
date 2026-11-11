@@ -22,26 +22,24 @@ export function useGetTransaction(id: string) {
   return { data, isLoading, refetch };
 }
 
+/** Sesi dikirim proxy dari cookie HttpOnly, jadi cukup tahu user sedang login atau tidak. */
 export function useGetTransactionByEmail(
   email?: string,
   page = 1,
-  token?: string | null,
+  isLoggedIn = false,
 ) {
   return useQuery<GetTransactionResponses>({
-    queryKey: ["transactions", email, page, token],
+    queryKey: ["transactions", email, page],
     queryFn: async () => {
       const res = await api.get("/v1/transactions/email", {
         params: {
           page,
           limit: 10,
         },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
       return res.data;
     },
-    enabled: !!email && !!token,
+    enabled: !!email && isLoggedIn,
   });
 }
 

@@ -11,6 +11,7 @@ export type AuthErrorCode =
   | 'linkCodeInvalid'
   | 'googleLinkedElsewhere'
   | 'alreadyLinked'
+  | 'captchaFailed'
   | 'validation'
   | 'network'
   | 'generic'
@@ -31,6 +32,8 @@ const MESSAGE_TO_CODE: Record<string, AuthErrorCode> = {
   'invalid or expired link code': 'linkCodeInvalid',
   'google account already linked to another user': 'googleLinkedElsewhere',
   'account already linked to google': 'alreadyLinked',
+  // Dari proxy Next.js (Turnstile), bukan backend
+  'captcha verification failed': 'captchaFailed',
 }
 
 function parseRetryAfter(value: unknown): number | undefined {

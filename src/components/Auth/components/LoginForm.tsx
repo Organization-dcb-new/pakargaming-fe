@@ -17,6 +17,7 @@ import { AuthPasswordField, AuthTextField, SubmitButton } from './AuthFields'
 import FormAlert from './FormAlert'
 import { GoogleButton, OrDivider } from './GoogleButton'
 import { textLinkClass } from './styles'
+import { useTurnstile } from './Turnstile'
 
 export default function LoginForm({
   defaultEmail,
@@ -36,16 +37,22 @@ export default function LoginForm({
   const login = useEmailLogin()
   const errorMessage = useAuthErrorMessage()
   const error = login.error ? parseAuthError(login.error) : null
+  const captcha = useTurnstile()
 
   useEmailDraft(form, onEmailChange)
 
   const onSubmit = form.handleSubmit((values) => {
-    login.mutate(values, {
-      onSuccess: (session) => {
-        toast.success(t('loginSuccess', { name: session.user.name }))
-        onDone()
+    if (captcha.blocked) return
+    login.mutate(
+      { ...values, captchaToken: captcha.token },
+      {
+        onSuccess: (session) => {
+          toast.success(t('loginSuccess', { name: session.user.name }))
+          onDone()
+        },
+        onSettled: captcha.reset,
       },
-    })
+    )
   })
 
   return (
@@ -110,9 +117,14 @@ export default function LoginForm({
               }
             />
 
-            <SubmitButton pending={login.isPending} pendingLabel={t('processing')}>
-              {t('submitLogin')}
-            </SubmitButton>
+            {captcha.withWidget(
+              <SubmitButton
+                pending={login.isPending || captcha.verifying}
+                pendingLabel={login.isPending ? t('processing') : t('captchaVerifying')}
+              >
+                {t('submitLogin')}
+              </SubmitButton>,
+            )}
           </fieldset>
         </form>
       </Form>

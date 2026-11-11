@@ -6,11 +6,11 @@ import { useState } from 'react'
 import useAuth from '../../../hooks/useAuth'
 
 export default function MyTransaction() {
-  const { user, token, loading } = useAuth()
+  const { user, isLoggedIn, loading } = useAuth()
   const email = user?.email
 
   const [page, setPage] = useState(1)
-  const { data, isLoading } = useGetTransactionByEmail(email, page, token)
+  const { data, isLoading } = useGetTransactionByEmail(email, page, isLoggedIn)
   const router = useRouter()
   const params = useParams()
   const locale = (params?.locale as string) || 'id'

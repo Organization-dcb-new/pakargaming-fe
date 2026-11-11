@@ -7,20 +7,16 @@ import ResponseStatsDashboard, {
 
 export interface GetTransactionResponsesDashboard extends ResponseStatsDashboard {}
 
-export function useGetTransactionByEmailDashboard(token?: string | null) {
+/** Sesi dikirim proxy dari cookie HttpOnly, jadi cukup tahu user sedang login atau tidak. */
+export function useGetTransactionByEmailDashboard(isLoggedIn: boolean) {
   return useQuery<GetTransactionResponsesDashboard>({
-    queryKey: ["transactions-dashboard", token],
+    queryKey: ["transactions-dashboard"],
     queryFn: async () => {
       const res = await api.get<ResponseStatsDashboard>(
         `/v1/transactions/email/dashboard`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
       );
       return res.data;
     },
-    enabled: !!token,
+    enabled: isLoggedIn,
   });
 }

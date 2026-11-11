@@ -516,7 +516,10 @@
     "setPasswordViaEmail": "Forgot password",
     "goToLogin": "Log in with this email",
     "terms": "By signing up, you agree to our <terms>Terms & Conditions</terms> and <privacy>Privacy Policy</privacy>.",
-    "noticeGoogleEmailRegistered": "This Google email is already registered with a password. Log in with your email & password first, then link Google from your Dashboard."
+    "noticeGoogleEmailRegistered": "This Google email is already registered with a password. Log in with your email & password first, then link Google from your Dashboard.",
+    "captchaVerifying": "Running security check…",
+    "captchaLoadFailed": "The security check couldn't load. Check your connection or turn off your ad blocker for this site, then try again.",
+    "captchaRetry": "Try again"
   },
   "AuthValidation": {
     "nameRequired": "Name is required.",
@@ -541,7 +544,8 @@
     "alreadyLinked": "Your account is already linked to Google.",
     "validation": "Some of the details you entered aren’t valid. Please check them again.",
     "network": "Couldn’t reach the server. Check your internet connection.",
-    "generic": "Something went wrong. Please try again shortly."
+    "generic": "Something went wrong. Please try again shortly.",
+    "captchaFailed": "Security check failed or expired. Please try again."
   },
   "AuthRedirect": {
     "googleFailed": "Couldn’t log in with Google, please try again.",

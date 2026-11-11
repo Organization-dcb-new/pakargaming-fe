@@ -3,17 +3,16 @@
 import { useCallback, useEffect } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import Cookies from 'js-cookie'
 import { toast } from 'sonner'
 import { useAuthDialog } from '../components/Auth/AuthDialogProvider'
 import { redeemGoogleSignIn, useLinkGoogle } from '../components/Auth/hooks/useAuthApi'
 import { parseAuthError, useAuthErrorMessage } from '../components/Auth/lib/authErrors'
 import { useRouter as useLocaleRouter } from '../i18n/routing'
 import { getGoogleAuthUrl } from '../lib/authUrls'
-import { setSession } from './useAuth'
+import { getAuthUser, notifyAuthChange } from './useAuth'
 
 /** Query param yang dikirim backend setelah OAuth Google — dibuang dari URL setelah diproses. */
-const AUTH_REDIRECT_PARAMS = ['token', 'user', 'auth_code', 'auth_error', 'google_link']
+const AUTH_REDIRECT_PARAMS = ['auth_code', 'auth_error', 'google_link']
 
 /**
  * Hook ini bisa ter-mount lebih dari sekali (Navigation + auth/callback) dan efeknya jalan dua kali
@@ -26,14 +25,6 @@ function claimRedirect(key: string) {
   if (handledRedirects.has(key)) return false
   handledRedirects.add(key)
   return true
-}
-
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value)
-  } catch {
-    return value
-  }
 }
 
 export default function useLoginGoogleOauth() {
@@ -51,18 +42,11 @@ export default function useLoginGoogleOauth() {
   }, [])
 
   useEffect(() => {
-    const token = searchParams.get('token')
-    const user = searchParams.get('user')
+    // `?token=&user=` (alur lama) sengaja tidak diterima lagi: siapa pun bisa membuat link yang
+    // memaksa korban login ke akun milik pembuat link.
     const authError = searchParams.get('auth_error')
     const linkCode = searchParams.get('google_link')
     const signInCode = searchParams.get('auth_code')
-
-    // Alur lama (backend sebelum ?auth_code): token langsung di URL. Dipertahankan selama transisi.
-    if (token && user) {
-      setSession(token, safeDecode(user))
-      router.replace('/')
-      return
-    }
 
     if (!authError && !linkCode && !signInCode) return
 
@@ -89,8 +73,9 @@ export default function useLoginGoogleOauth() {
       if (signInCode) {
         if (!claimRedirect(`auth_code:${signInCode}`)) return
         redeemGoogleSignIn(signInCode)
-          .then((session) => {
-            setSession(session.token, session.user)
+          .then(() => {
+            // Cookie sesi sudah ditulis proxy dari respons exchange
+            notifyAuthChange()
             router.replace('/')
           })
           .catch(() => {
@@ -102,7 +87,7 @@ export default function useLoginGoogleOauth() {
 
       if (!linkCode || !claimRedirect(`google_link:${linkCode}`)) return
 
-      if (!Cookies.get('token')) {
+      if (!getAuthUser()) {
         toast.error(t('linkNeedsLogin'))
         openAuthDialog({ mode: 'login' })
         router.replace(cleanUrl, { scroll: false })

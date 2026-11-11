@@ -1,60 +1,43 @@
 import axios from "axios";
-import Cookies from 'js-cookie'
 import CryptoJS from "crypto-js";
 import { getClientSecretKey } from "@/lib/cryptoClient";
+import { CSRF_HEADER, CSRF_HEADER_VALUE } from "@/lib/session";
+import { endSession } from "@/hooks/useAuth";
 
 declare module "axios" {
   interface AxiosRequestConfig {
     /**
-     * Endpoint auth publik (login, daftar, lupa/reset password): jangan kirim token sesi dan
-     * jangan auto-logout saat 401 — di sini 401 berarti "password salah", bukan sesi kedaluwarsa.
+     * Endpoint auth publik (login, daftar, lupa/reset password): jangan auto-logout saat 401 —
+     * di sini 401 berarti "password salah", bukan sesi kedaluwarsa. (Proxy sendiri yang memutuskan
+     * kapan cookie sesi ditempelkan; endpoint ini tidak pernah ditempeli.)
      */
     skipAuth?: boolean;
   }
 }
 
-// ─── Helper: decode JWT payload tanpa library tambahan ────────────────────────
-function isTokenExpired(token: string): boolean {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    // exp dalam detik, Date.now() dalam milidetik
-    return payload.exp * 1000 < Date.now();
-  } catch {
-    return true; // jika token tidak valid, anggap expired
-  }
-}
-
 function handleAutoLogout() {
-  Cookies.remove('token');
-  Cookies.remove('user');
-  // Redirect ke home, hindari redirect loop
-  if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-    window.location.href = '/';
-  }
+  if (typeof window === 'undefined') return;
+  void endSession().finally(() => {
+    // Redirect ke home, hindari redirect loop
+    if (!window.location.pathname.includes('/login')) {
+      window.location.href = '/';
+    }
+  });
 }
 
 // ─── Client-side API (via Next.js proxy) ─────────────────────────────────────
+// Sesi dikirim otomatis lewat cookie HttpOnly (same-origin); JS tidak pernah memegang JWT.
 export const api = axios.create({
   baseURL: "/api/proxy",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
+    [CSRF_HEADER]: CSRF_HEADER_VALUE,
   },
 });
 
 api.interceptors.request.use(
   (config) => {
-    const token = config.skipAuth ? undefined : Cookies.get("token");
-
-    if (token) {
-      // Cek apakah token sudah expired sebelum request dikirim
-      if (isTokenExpired(token)) {
-        handleAutoLogout();
-        return Promise.reject(new Error('Token expired'));
-      }
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
     const mutateMethods = ["post", "put", "patch"];
     if (config.method && mutateMethods.includes(config.method) && config.data) {
       const key = getClientSecretKey();

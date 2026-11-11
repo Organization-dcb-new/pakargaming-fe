@@ -76,10 +76,10 @@ function MethodsSkeleton() {
 }
 
 /** Kartu "Metode masuk" di Dasbor: status password & Google dari GET /v1/auth/me. */
-export default function SignInMethods({ token }: { token?: string | null }) {
+export default function SignInMethods({ isLoggedIn }: { isLoggedIn: boolean }) {
   const t = useTranslations('SignInMethods')
   const { openAuthDialog } = useAuthDialog()
-  const { data: me, isLoading, isError, isFetching, refetch } = useAuthMe(token)
+  const { data: me, isLoading, isError, isFetching, refetch } = useAuthMe(isLoggedIn)
 
   let content: ReactNode
   if (isLoading || (!me && !isError)) {

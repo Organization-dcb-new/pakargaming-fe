@@ -1,0 +1,30 @@
+/** Verifikasi Cloudflare Turnstile di server (proxy). Kunci rahasia tidak pernah sampai ke browser. */
+
+const VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
+
+/**
+ * Aktif hanya kalau kedua kunci terisi. Kalau cuma secret yang diisi, widget tidak tampil di browser
+ * sehingga semua login/daftar akan ditolak — guard ini mencegah salah konfigurasi itu.
+ */
+export function isTurnstileEnabled() {
+  return Boolean(process.env.TURNSTILE_SECRET_KEY && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
+}
+
+/** Fail-closed: kalau Cloudflare tidak bisa dihubungi, request auth ditolak (bot tidak lolos saat gangguan). */
+export async function verifyTurnstile(token: string | null, remoteIp?: string): Promise<boolean> {
+  const secret = process.env.TURNSTILE_SECRET_KEY
+  if (!secret || !token) return false
+
+  const body = new URLSearchParams({ secret, response: token })
+  if (remoteIp) body.set('remoteip', remoteIp)
+
+  try {
+    const res = await fetch(VERIFY_URL, { method: 'POST', body, signal: AbortSignal.timeout(5000) })
+    const result = (await res.json()) as { success?: boolean; 'error-codes'?: string[] }
+    if (!result.success) console.warn('[Turnstile] ditolak', result['error-codes'])
+    return result.success === true
+  } catch (error) {
+    console.error('[Turnstile] verifikasi gagal', error instanceof Error ? error.message : error)
+    return false
+  }
+}

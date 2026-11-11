@@ -14,10 +14,10 @@ const LIMIT = 5
 /** Transaksi terakhir milik akun yang login (data dashboard yang sudah ada). Guest: tidak tampil. */
 export default function RecentTransactions() {
   const t = useTranslations('CheckTransaction')
-  const { token, loading: authLoading } = useAuth()
-  const { data, isLoading, isError, refetch } = useGetTransactionByEmailDashboard(token)
+  const { isLoggedIn, loading: authLoading } = useAuth()
+  const { data, isLoading, isError, refetch } = useGetTransactionByEmailDashboard(isLoggedIn)
 
-  if (authLoading || !token) return null
+  if (authLoading || !isLoggedIn) return null
 
   const transactions = (data?.data?.transaction_detail ?? []).slice(0, LIMIT)
 

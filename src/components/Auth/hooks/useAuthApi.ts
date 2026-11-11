@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import Cookies from 'js-cookie'
 import { api } from '../../../api/axios'
-import { getAuthUser, setSession } from '../../../hooks/useAuth'
+import { notifyAuthChange } from '../../../hooks/useAuth'
+import { TURNSTILE_HEADER } from '../../../lib/session'
 import type { ApiResponse } from '../../../types/Global'
 import type {
   AuthMe,
@@ -17,38 +17,49 @@ export const AUTH_DIALOG_MUTATION_KEY = ['auth', 'dialog'] as const
 
 const AUTH_ME_KEY = 'auth-me'
 
+/** Token widget Turnstile (kosong kalau Turnstile tidak dikonfigurasi). Dikirim via header, bukan body. */
+type WithCaptcha<T> = T & { captchaToken?: string | null }
+
+function captchaHeaders(captchaToken?: string | null) {
+  return captchaToken ? { [TURNSTILE_HEADER]: captchaToken } : undefined
+}
+
 export function useEmailLogin() {
   return useMutation({
     mutationKey: [...AUTH_DIALOG_MUTATION_KEY, 'login'],
-    mutationFn: async (payload: LoginPayload) => {
+    mutationFn: async ({ captchaToken, ...payload }: WithCaptcha<LoginPayload>) => {
       const res = await api.post<ApiResponse<AuthSession>>('/v1/auth/login', payload, {
         skipAuth: true,
+        headers: captchaHeaders(captchaToken),
       })
       return res.data.data
     },
-    onSuccess: (session) => setSession(session.token, session.user),
+    // Cookie sesi sudah ditulis proxy dari respons ini
+    onSuccess: () => notifyAuthChange(),
   })
 }
 
 export function useRegister() {
   return useMutation({
     mutationKey: [...AUTH_DIALOG_MUTATION_KEY, 'register'],
-    mutationFn: async (payload: RegisterPayload) => {
+    mutationFn: async ({ captchaToken, ...payload }: WithCaptcha<RegisterPayload>) => {
       const res = await api.post<ApiResponse<AuthSession>>('/v1/auth/register', payload, {
         skipAuth: true,
+        headers: captchaHeaders(captchaToken),
       })
       return res.data.data
     },
-    onSuccess: (session) => setSession(session.token, session.user),
+    onSuccess: () => notifyAuthChange(),
   })
 }
 
 export function useForgotPassword() {
   return useMutation({
     mutationKey: [...AUTH_DIALOG_MUTATION_KEY, 'forgot-password'],
-    mutationFn: async (payload: ForgotPasswordPayload) => {
+    mutationFn: async ({ captchaToken, ...payload }: WithCaptcha<ForgotPasswordPayload>) => {
       const res = await api.post<ApiResponse<unknown>>('/v1/auth/forgot-password', payload, {
         skipAuth: true,
+        headers: captchaHeaders(captchaToken),
       })
       return res.data
     },
@@ -67,14 +78,14 @@ export function useResetPassword() {
   })
 }
 
-export function useAuthMe(token?: string | null) {
+export function useAuthMe(isLoggedIn: boolean) {
   return useQuery<AuthMe>({
-    queryKey: [AUTH_ME_KEY, token],
+    queryKey: [AUTH_ME_KEY],
     queryFn: async () => {
       const res = await api.get<ApiResponse<AuthMe>>('/v1/auth/me')
       return res.data.data
     },
-    enabled: !!token,
+    enabled: isLoggedIn,
   })
 }
 
@@ -106,12 +117,8 @@ export function useLinkGoogle() {
       queryClient.setQueriesData<AuthMe>({ queryKey: [AUTH_ME_KEY] }, me)
       queryClient.invalidateQueries({ queryKey: [AUTH_ME_KEY] })
 
-      // Akun email belum punya foto; setelah link, backend mengisinya dari Google → perbarui avatar navbar
-      const user = getAuthUser()
-      const token = Cookies.get('token')
-      if (token && user && !user.picture && me.avatar_url) {
-        setSession(token, { ...user, picture: me.avatar_url })
-      }
+      // Akun email belum punya foto; proxy sudah mengisi cookie profil dari avatar Google → navbar baca ulang
+      notifyAuthChange()
     },
   })
 }
