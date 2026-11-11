@@ -49,7 +49,7 @@ export default function SecurePayment() {
 
   const categories = dataPaymentMethods?.data ?? []
   const allPayments = categories
-    .flatMap((category) => category.payment_method ?? [])
+    .flatMap((category) => category.methods ?? [])
     .filter((payment) => getValidImageSrc(payment.icon_url))
 
   const visiblePayments = allPayments.slice(0, MAX_VISIBLE)
@@ -70,7 +70,7 @@ export default function SecurePayment() {
       ) : (
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           {visiblePayments.map((payment) => (
-            <PaymentLogo key={payment.id} src={payment.icon_url} name={payment.full_name || payment.name} />
+            <PaymentLogo key={payment.id} src={payment.icon_url} name={payment.name} />
           ))}
 
           {remaining > 0 && (

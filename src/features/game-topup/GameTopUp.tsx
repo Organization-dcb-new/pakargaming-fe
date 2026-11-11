@@ -29,29 +29,11 @@ import RegionNotice from "@/features/game-topup/components/RegionNotice";
 import { useGameRegion } from "@/features/game-topup/hooks/useGameRegion";
 import { StepStatusContext, type StepStatus } from "@/features/game-topup/components/StepCard";
 import { formatPrice } from "@/lib/formatPrice";
+import { paymentTotalLimit } from "@/features/game-topup/lib/paymentTotal";
 
-const PAYMENT_CODES_NEEDING_USER_MDN = new Set(["ovo", "smartfren_airtime"]);
-const MIN_PRODUCT_PRICE_FOR_VA = 10000;
-
+/** Aturan metode (biaya, batas total, butuh nomor HP) dikirim backend — sama dengan yang dicek checkout. */
 function paymentRequiresUserMdn(payment: PaymentMethod | null): boolean {
-  const code = payment?.code?.toLowerCase();
-  return !!code && PAYMENT_CODES_NEEDING_USER_MDN.has(code);
-}
-
-function isVirtualAccountPayment(payment: PaymentMethod | null): boolean {
-  if (!payment) return false;
-  const haystack = [
-    payment.type,
-    payment.provider,
-    payment.code,
-    payment.name,
-    payment.full_name,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  return /(^|[\s_-])va($|[\s_-])/.test(haystack) || haystack.includes("virtual");
+  return !!payment?.needs_phone;
 }
 
 function normalizeUserMdn(raw: string): string {
@@ -98,7 +80,10 @@ export default function GameTopUp() {
 
   const activeProduct = selectedPackage ?? null;
   const activePayment = selectedPayment ?? null;
-  const allowVaPayment = (activeProduct?.selling_price ?? 0) > MIN_PRODUCT_PRICE_FOR_VA;
+  const productPrice = activeProduct?.selling_price ?? 0;
+  /** Metode terpilih menolak total untuk produk ini (di bawah min. / di atas maks. metode). */
+  const selectedPaymentLimit =
+    selectedPayment && activeProduct ? paymentTotalLimit(selectedPayment, productPrice) : null;
 
   const inputs = dataGameDetail?.data?.input || [];
 
@@ -129,11 +114,11 @@ export default function GameTopUp() {
   }, [selectedPayment]);
 
   useEffect(() => {
-    if (selectedPayment && !allowVaPayment && isVirtualAccountPayment(selectedPayment)) {
+    if (selectedPayment && selectedPaymentLimit) {
       setSelectedPayment(null);
-      toast.error(t("toastVaMinAmount"));
+      toast.error(t("toastMethodAmount", { method: selectedPayment.name }));
     }
-  }, [allowVaPayment, selectedPayment, t]);
+  }, [selectedPaymentLimit, selectedPayment, t]);
 
   // Mengedit ID akun TIDAK lagi mengosongkan produk & pembayaran yang sudah dipilih: langkahnya
   // hanya terkunci sampai ID lolos cek ulang (validasi sebelum pesan tetap mewajibkan akun valid).
@@ -160,11 +145,7 @@ export default function GameTopUp() {
 
   const needsUserMdn = paymentRequiresUserMdn(selectedPayment);
   const hasUserMdn = userMdn.trim().length > 0;
-  const isVaAllowedForSelection = !(
-    selectedPayment &&
-    isVirtualAccountPayment(selectedPayment) &&
-    !allowVaPayment
-  );
+  const isPaymentAllowedForSelection = !selectedPaymentLimit;
 
   const lockProductStep = !isAccountStepCompleted;
   const lockPaymentStep = !isAccountStepCompleted || !isProductStepCompleted;
@@ -190,8 +171,8 @@ export default function GameTopUp() {
     {
       id: "payment-method-section",
       label: t("stepLabelPayment"),
-      ok: isPaymentStepCompleted && isVaAllowedForSelection,
-      message: isPaymentStepCompleted ? t("validationVaMinAmount") : t("toastSelectPayment"),
+      ok: isPaymentStepCompleted && isPaymentAllowedForSelection,
+      message: isPaymentStepCompleted ? t("validationMethodAmount") : t("toastSelectPayment"),
     },
     { id: "contact-section", label: t("stepLabelContact"), ok: contactMessage === null, message: contactMessage },
   ];
@@ -218,19 +199,24 @@ export default function GameTopUp() {
     return true;
   };
 
-  const vaMinNote = t("vaMinNote", { amount: formatPrice(MIN_PRODUCT_PRICE_FOR_VA) });
-  const paymentMethodsWithVaRules = dataPaymentMethods
+  // Metode yang tidak menerima total produk terpilih tampil nonaktif, dengan alasannya di kartu
+  // (bukan dipilih lalu dibatalkan + toast). Sebelum produk dipilih, semua metode tersedia apa adanya.
+  const paymentMethodsForProduct = dataPaymentMethods
     ? {
         ...dataPaymentMethods,
         data: (dataPaymentMethods.data ?? []).map((category) => ({
           ...category,
-          payment_method: (category.payment_method ?? []).map((payment) => {
-            const blockedByVaMin = !allowVaPayment && isVirtualAccountPayment(payment);
+          methods: (category.methods ?? []).map((payment) => {
+            const limit = activeProduct ? paymentTotalLimit(payment, productPrice) : null;
             return {
               ...payment,
-              is_active: payment.is_active && !blockedByVaMin,
-              // Alasan nonaktif ditulis di kartu metode (bukan dipilih lalu dibatalkan + toast)
-              disabled_note: payment.is_active && blockedByVaMin ? vaMinNote : undefined,
+              available: payment.available && !limit,
+              disabled_note:
+                payment.available && limit
+                  ? t(limit === "min" ? "methodMinNote" : "methodMaxNote", {
+                      amount: formatPrice(limit === "min" ? payment.min_total : payment.max_total),
+                    })
+                  : undefined,
             };
           }),
         })),
@@ -291,7 +277,7 @@ export default function GameTopUp() {
     <PaymentMethodList
       ActiveProduct={activeProduct}
       setSelectedPaymentMethod={setSelectedPayment}
-      PaymentMethod={paymentMethodsWithVaRules}
+      PaymentMethod={paymentMethodsForProduct}
       activePayment={activePayment}
       selectedPackage={selectedPackage}
       isLocked={lockPaymentStep}

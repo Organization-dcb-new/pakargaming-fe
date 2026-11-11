@@ -1,43 +1,32 @@
 import { ApiResponse } from "./api";
 
-export interface PaymentConfig {
-  note: string;
-}
-
+/**
+ * Metode pembayaran seperti yang ditawarkan checkout (GET /v1/payment-categories/client). Backend
+ * hanya mengirim yang dilihat pembeli dan yang akan ditagih checkout — bukan cara metode diatur.
+ */
 export interface PaymentMethod {
+  /** Dikirim balik sebagai payment_method_id saat checkout. */
   id: string;
   name: string;
-  code: string;
-  type: string;
-  provider: string;
   icon_url: string;
-  fee_percentage: number;
+  /** Total = harga + harga × fee_percent / 100 + fee_fixed (salah satunya 0). */
+  fee_percent: number;
   fee_fixed: number;
-  min_amount: number;
-  max_amount: number;
-  full_name: string;
-  sort_order: number;
-  config: PaymentConfig;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  category_id: string;
-  /** Khusus UI (tidak dikirim ke backend): alasan metode nonaktif, mis. "Min. pembelian Rp 10.000" */
+  /** Total yang diterima checkout; 0 = tanpa batas. */
+  min_total: number;
+  max_total: number;
+  /** Tagihan dikirim ke HP pembeli (OVO): checkout minta nomor HP. */
+  needs_phone: boolean;
+  /** false: metode sedang tidak bisa dipakai (tampil abu-abu). */
+  available: boolean;
+  /** Khusus UI (tidak dari backend): alasan metode tidak bisa dipilih untuk nominal ini. */
   disabled_note?: string;
 }
 
-export interface PaymentMethodCategoryWithPaymentMethodResponse {
-  id: string;
+export interface PaymentCategory {
   name: string;
-  slug: string;
   icon_url: string;
-  payment_method: PaymentMethod[];
-  full_name: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  methods: PaymentMethod[];
 }
 
-export type GetPaymentMethodResponse = ApiResponse<
-  PaymentMethodCategoryWithPaymentMethodResponse[]
->;
+export type GetPaymentMethodResponse = ApiResponse<PaymentCategory[]>;

@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import StepCard from './StepCard'
 import { canOptimize } from '@/lib/image'
+import { paymentTotal } from '@/features/game-topup/lib/paymentTotal'
 
 interface PaymentMethodProps {
   PaymentMethod: GetPaymentMethodResponse
@@ -21,19 +22,10 @@ interface PaymentMethodProps {
   onLockedAction?: () => void
 }
 
+/** Total yang dibayar dengan metode ini, sudah diformat; biaya mengikuti aturan checkout dari backend. */
 export const calculateTotalPrice = (payment: PaymentMethod, ActiveProduct: Price) => {
-  if (!ActiveProduct) return null
-
-  const base = ActiveProduct?.selling_price || 0
-  const code = payment?.code || ''
-  const useFixedFee =
-    code.startsWith('va') ||
-    ['alfamart_otc', 'indomaret_otc'].includes(code)
-  const fee = useFixedFee
-    ? payment?.fee_fixed || 0
-    : base * (payment?.fee_percentage / 100) || 0
-  const total = base + fee
-  return formatPrice(Math.round(total))
+  if (!ActiveProduct || !payment) return null
+  return formatPrice(paymentTotal(payment, ActiveProduct.selling_price || 0))
 }
 
 function getValidImageSrc(src?: string | null) {
@@ -89,10 +81,10 @@ export default function PaymentMethodList({
       <div className="space-y-3">
         {categories.map((category, index) => {
           const isOpen = activeIndexes.includes(index)
-          const panelId = `payment-category-${category.id}`
+          const panelId = `payment-category-${index}`
 
           return (
-            <div key={category.id} className="overflow-hidden rounded-xl border border-border">
+            <div key={`${index}-${category.name}`} className="overflow-hidden rounded-xl border border-border">
               {/* HEADER */}
               <button
                 type="button"
@@ -111,7 +103,7 @@ export default function PaymentMethodList({
 
                 {/* ICON LIST — logo pihak ketiga di atas plat putih supaya terbaca di dark */}
                 <span className="hidden items-center gap-1.5 sm:flex">
-                  {category.payment_method?.slice(0, 4).map((payment) => {
+                  {category.methods?.slice(0, 4).map((payment) => {
                     const iconSrc = getValidImageSrc(payment.icon_url)
                     return iconSrc ? (
                       <span
@@ -147,9 +139,9 @@ export default function PaymentMethodList({
                 }`}
               >
                 <div className="flex flex-col gap-2 px-3 pb-3">
-                  {category.payment_method?.map((payment) => {
+                  {category.methods?.map((payment) => {
                     const isSelected = activePayment?.id === payment.id
-                    const isDisabled = !payment.is_active
+                    const isDisabled = !payment.available
                     const totalPrice = calculateTotalPrice(payment, ActiveProduct)
                     const iconSrc = getValidImageSrc(payment.icon_url)
 
@@ -189,7 +181,7 @@ export default function PaymentMethodList({
                         </span>
 
                         <span className="line-clamp-2 flex-1 text-sm font-semibold leading-snug text-foreground">
-                          {payment.full_name}
+                          {payment.name}
                         </span>
 
                         {isDisabled && payment.disabled_note ? (

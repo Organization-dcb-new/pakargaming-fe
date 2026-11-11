@@ -37,7 +37,7 @@ export default function OrderSummary({
     { label: t('orderGame'), value: gameName },
     { label: t('orderAccount'), value: accountName },
     { label: t('orderPackage'), value: Product?.name },
-    { label: t('orderPayment'), value: Payment?.full_name },
+    { label: t('orderPayment'), value: Payment?.name },
   ]
 
   return (

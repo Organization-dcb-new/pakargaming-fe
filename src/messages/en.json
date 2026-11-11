@@ -59,11 +59,9 @@
     "socialWhatsappAria": "PakarGaming on WhatsApp"
   },
   "GameCheckout": {
-    "toastVaMinAmount": "Virtual account is only available for purchases above Rp 10,000.",
     "toastFillAccount": "Fill in and validate your account details first.",
     "toastSelectProduct": "Select a product first.",
     "toastSelectPayment": "Select a payment method first.",
-    "validationVaMinAmount": "Virtual account is only available for purchases above Rp 10,000.",
     "validationEmailRequired": "Email is required",
     "validationEmailInvalid": "Invalid email format",
     "validationPhoneRequired": "Phone number is required",
@@ -173,7 +171,10 @@
     "confirmAccount": "Account",
     "confirmEmail": "Email",
     "confirmPhone": "Phone number",
-    "vaMinNote": "Min. purchase Rp {amount}"
+    "toastMethodAmount": "{method} can't be used for this total, pick another method",
+    "validationMethodAmount": "This method can't be used for this total, pick another method",
+    "methodMinNote": "Min. payment Rp {amount}",
+    "methodMaxNote": "Max. payment Rp {amount}"
   },
   "CheckTransaction": {
     "inputLabel": "Invoice number",

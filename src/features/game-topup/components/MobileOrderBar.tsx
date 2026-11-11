@@ -50,7 +50,7 @@ export default function MobileOrderBar({ Product, handleConfirm, Payment, steps 
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-xs text-muted-foreground">
             {allDone
-              ? Payment?.full_name || Product?.name || t('mobileTotal')
+              ? Payment?.name || Product?.name || t('mobileTotal')
               : t('stepsProgress', { done: doneCount, total: steps.length })}
           </span>
           <span className="font-display text-xl font-bold text-primary">

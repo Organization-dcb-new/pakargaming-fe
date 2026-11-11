@@ -59,11 +59,9 @@
     "socialWhatsappAria": "PakarGaming di WhatsApp"
   },
   "GameCheckout": {
-    "toastVaMinAmount": "Metode VA hanya untuk produk di atas 10.000",
     "toastFillAccount": "Isi dan validasi data akun dulu",
     "toastSelectProduct": "Pilih produk dulu",
     "toastSelectPayment": "Pilih metode pembayaran dulu",
-    "validationVaMinAmount": "Metode VA hanya untuk produk di atas 10.000",
     "validationEmailRequired": "Email belum diisi",
     "validationEmailInvalid": "Format email tidak valid",
     "validationPhoneRequired": "Nomor telepon belum diisi",
@@ -173,7 +171,10 @@
     "confirmAccount": "Akun",
     "confirmEmail": "Email",
     "confirmPhone": "No. HP",
-    "vaMinNote": "Min. pembelian Rp {amount}"
+    "toastMethodAmount": "{method} tidak bisa dipakai untuk total ini, pilih metode lain",
+    "validationMethodAmount": "Metode ini tidak bisa dipakai untuk total ini, pilih metode lain",
+    "methodMinNote": "Min. bayar Rp {amount}",
+    "methodMaxNote": "Maks. bayar Rp {amount}"
   },
   "CheckTransaction": {
     "inputLabel": "Nomor Invoice",

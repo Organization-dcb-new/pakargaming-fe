@@ -97,7 +97,7 @@ export default function ConfirmModal({
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-muted-foreground">{t('confirmPayment')}</dt>
-            <dd className="text-right font-semibold text-foreground">{Payment?.full_name || '-'}</dd>
+            <dd className="text-right font-semibold text-foreground">{Payment?.name || '-'}</dd>
           </div>
           <div className="flex items-baseline justify-between gap-3 border-t border-border pt-2.5">
             <dt className="font-semibold text-foreground">{t('confirmTotal')}</dt>
