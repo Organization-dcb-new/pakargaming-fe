@@ -1,5 +1,5 @@
 'use client'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { GameDetail, GameInput } from '@/types/game'
@@ -7,6 +7,7 @@ import { useCheckID } from '@/features/game-topup/api/useCheckID'
 import { Check, Loader2 } from 'lucide-react'
 import StepCard from './StepCard'
 import { fieldInputClass, fieldLabelClass } from '@/styles/formField'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 type DynamicAccount = Record<string, any>
 
@@ -34,8 +35,10 @@ export default function AccountCard({
 
   const { mutate, isPending } = useCheckID()
 
-  const { register, watch } = useForm<Record<string, string>>({
+  const { register, watch, control } = useForm<Record<string, string>>({
     mode: 'onChange',
+    // Semua field mulai dari '' (sama seperti <select>/<input> bawaan) supaya isi game_data tidak berubah
+    defaultValues: Object.fromEntries(gameData.map((g) => [g.key, ''])),
   })
 
   const values = watch()
@@ -104,18 +107,31 @@ export default function AccountCard({
               </span>
 
               {input.input_type === 'dropdown' ? (
-                <select
-                  {...register(input.key, { required: input.required })}
-                  aria-required={input.required}
-                  className={`${fieldInputClass} cursor-pointer`}
-                >
-                  <option value="">{input.placeholder}</option>
-                  {input.Options?.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.name}
-                    </option>
-                  ))}
-                </select>
+                <Controller
+                  name={input.key}
+                  control={control}
+                  rules={{ required: input.required }}
+                  render={({ field }) => (
+                    <Select value={field.value ?? ''} onValueChange={field.onChange} name={field.name}>
+                      <SelectTrigger
+                        ref={field.ref}
+                        onBlur={field.onBlur}
+                        aria-required={input.required}
+                        className={fieldInputClass}
+                      >
+                        <SelectValue placeholder={input.placeholder} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* Data backend kadang memuat opsi "Pilih Server" sendiri → jangan dobel dengan placeholder */}
+                        {input.Options?.filter((opt) => opt.value && opt.name !== input.placeholder).map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               ) : (
                 <input
                   {...register(input.key, { required: input.required })}
