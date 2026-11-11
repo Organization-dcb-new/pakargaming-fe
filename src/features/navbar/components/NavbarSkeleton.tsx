@@ -14,12 +14,12 @@ export default function NavbarSkeleton() {
 
       {/* Desktop: search di tengah */}
       <div className="hidden min-w-0 flex-1 justify-center lg:flex">
-        <div className={`h-10 w-full max-w-xl rounded-lg ${bone}`} />
+        <div className={`h-10 w-full max-w-xl -skew-x-12 rounded-sm ${bone}`} />
       </div>
 
       <div className="flex min-w-0 flex-1 items-center justify-end gap-1 lg:flex-none">
         {/* Mobile: ikon/bar search */}
-        <div className={`h-10 w-12 rounded-lg sm:w-full sm:max-w-md lg:hidden ${bone}`} />
+        <div className={`h-10 w-12 -skew-x-12 rounded-sm sm:w-full sm:max-w-md lg:hidden ${bone}`} />
         {/* Desktop: Cek Transaksi + pengaturan */}
         <div className="hidden items-center gap-1 lg:flex">
           <div className={`h-10 w-28 rounded-lg ${bone}`} />

@@ -98,13 +98,13 @@ export default function GameSearch({
           }
         }}
         className={[
-          'group flex h-10 w-full items-center rounded-lg border border-transparent bg-muted/70 px-2.5 transition-colors duration-200 min-[400px]:px-3 hover:bg-muted focus-within:border-primary focus-within:bg-card focus-within:ring-2 focus-within:ring-ring/30 motion-reduce:transition-none',
+          'group flex h-10 w-full -skew-x-12 items-center rounded-sm border border-transparent bg-muted/70 px-2.5 transition-colors duration-200 min-[400px]:px-3 hover:bg-muted focus-within:border-primary focus-within:bg-card focus-within:ring-2 focus-within:ring-ring/30 motion-reduce:transition-none',
           effectiveOpen ? '' : 'cursor-pointer',
         ].join(' ')}
       >
         <button
           type="button"
-          className="inline-flex shrink-0 cursor-pointer touch-manipulation rounded-md text-muted-foreground outline-none transition-colors duration-200 group-focus-within:text-primary focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex shrink-0 skew-x-12 cursor-pointer touch-manipulation rounded-md text-muted-foreground outline-none transition-colors duration-200 group-focus-within:text-primary focus-visible:ring-2 focus-visible:ring-ring"
           aria-expanded={effectiveOpen}
           aria-label={effectiveOpen ? t('collapseSearch') : t('searchPlaceholder')}
           onMouseDown={(e) => e.preventDefault()}
@@ -145,14 +145,14 @@ export default function GameSearch({
           placeholder={t('searchPlaceholder')}
           aria-keyshortcuts={isDesktopNav ? 'Meta+K Control+K' : undefined}
           className={[
-            'ml-2 min-w-0 flex-1 cursor-text bg-transparent text-sm text-foreground outline-none transition-opacity duration-200 placeholder:text-muted-foreground',
+            'ml-2 min-w-0 flex-1 skew-x-12 cursor-text bg-transparent text-sm text-foreground outline-none transition-opacity duration-200 placeholder:text-muted-foreground',
             effectiveOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
           ].join(' ')}
         />
         {isDesktopNav && shortcutLabel && !keyword && (
           <kbd
             aria-hidden="true"
-            className="ml-2 inline-flex shrink-0 items-center rounded-md border border-border bg-background px-1.5 py-0.5 font-sans text-xs font-medium text-muted-foreground"
+            className="ml-2 inline-flex shrink-0 skew-x-12 items-center rounded-sm border border-border bg-background px-1.5 py-0.5 font-sans text-xs font-medium text-muted-foreground"
           >
             {shortcutLabel}
           </kbd>
