@@ -46,16 +46,18 @@ export default function FaqPanel({ id, title, items, className }: FaqPanelProps)
         {items.map((item, index) => {
           const isOpen = activeIndex === index;
           return (
-            // Dua lapis: luar = warna garis (clip-path memotong border biasa), dalam = isi kartu
+            // Dua lapis: luar = warna garis (clip-path memotong border biasa), dalam = isi kartu.
+            // Lapis dalam WAJIB bg-card solid — warna transparan di sini membuat warna garis tembus ke seluruh kartu.
+            // Sorotan item terbuka = gradient tipis lewat background-image di atas bg-card.
             <div
               key={index}
               className={`chamfer p-px transition-colors duration-200 [--chamfer:12px] motion-reduce:transition-none ${
-                isOpen ? "bg-primary/70" : "bg-border hover:bg-primary/40"
+                isOpen ? "bg-primary/50" : "bg-border hover:bg-primary/40"
               }`}
             >
               <div
-                className={`chamfer relative transition-colors duration-200 [--chamfer:11.6px] motion-reduce:transition-none ${
-                  isOpen ? "bg-primary/5" : "bg-card"
+                className={`chamfer relative bg-card [--chamfer:11.6px] ${
+                  isOpen ? "bg-linear-to-r from-primary/10 to-transparent to-60%" : ""
                 }`}
               >
                 <span
