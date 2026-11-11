@@ -1,9 +1,6 @@
-// hooks/useGetTransactionByEmail.ts
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./client";
-import ResponseStatsDashboard, {
-  TransactionResponseDetail,
-} from "@/types/dashboard";
+import ResponseStatsDashboard from "@/types/dashboard";
 
 export interface GetTransactionResponsesDashboard extends ResponseStatsDashboard {}
 

@@ -4,9 +4,7 @@ import { useState } from 'react'
 import { Loader2, RotateCw, Search, SearchX } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
-
-const focusRing =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+import { focusRing } from '@/styles/focusRing'
 
 /**
  * Transaksi tidak ditemukan (dipakai detail-trx & transaction/[order_id]).

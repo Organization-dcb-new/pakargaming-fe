@@ -1,15 +1,15 @@
 'use client'
 
-import { CircleCheck, CircleDashed, KeyRound, RotateCw, TriangleAlert } from 'lucide-react'
+import { CircleCheck, CircleDashed, KeyRound, TriangleAlert } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 import { useAuthDialog } from '@/features/auth/components/AuthDialogProvider'
 import { GoogleButton } from '@/features/auth/components/GoogleButton'
 import { textLinkClass } from '@/features/auth/styles'
 import { useAuthMe } from '@/features/auth/api/auth'
-import { focusRing } from '@/styles/focusRing'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/cn'
+import RetryButton from './RetryButton'
 
 const badgeClass = 'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold'
 
@@ -97,21 +97,9 @@ export default function SignInMethods({ isLoggedIn }: { isLoggedIn: boolean }) {
       >
         <TriangleAlert className="size-5 shrink-0 text-destructive" aria-hidden="true" />
         <p className="flex-1 text-sm text-foreground">{t('error')}</p>
-        <button
-          type="button"
-          onClick={() => refetch()}
-          disabled={isFetching}
-          className={cn(
-            'inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
-            focusRing,
-          )}
-        >
-          <RotateCw
-            className={cn('size-4', isFetching && 'animate-spin motion-reduce:animate-none')}
-            aria-hidden="true"
-          />
+        <RetryButton onClick={() => refetch()} isFetching={isFetching}>
           {t('retry')}
-        </button>
+        </RetryButton>
       </div>
     )
   } else {

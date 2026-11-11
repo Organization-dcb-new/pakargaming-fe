@@ -95,8 +95,9 @@ export default function ForgotPasswordForm({
 
           {captcha.withWidget(
             <SubmitButton
-              pending={forgot.isPending || captcha.verifying}
-              pendingLabel={forgot.isPending ? t('sending') : t('captchaVerifying')}
+              pending={forgot.isPending}
+              pendingLabel={t('sending')}
+              verifying={captcha.verifying}
             >
               {t('submitForgot')}
             </SubmitButton>,

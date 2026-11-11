@@ -5,7 +5,7 @@ import { Download, Maximize2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { isHttpUrl } from '@/features/transactions/lib/paymentView'
-import { btnSecondary, focusRing } from '@/features/transactions/styles'
+import { btnSecondary, focusRingOnCard } from '@/features/transactions/styles'
 
 interface QrPaymentProps {
   src: string
@@ -36,7 +36,7 @@ export default function QrPayment({ src, title, channel }: QrPaymentProps) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t('enlargeQrHint')}
-        className={`group relative cursor-zoom-in rounded-2xl border border-border bg-white p-3 transition-transform duration-200 hover:scale-[1.02] motion-reduce:transition-none motion-reduce:hover:scale-100 ${focusRing}`}
+        className={`group relative cursor-zoom-in rounded-2xl border border-border bg-white p-3 transition-transform duration-200 hover:scale-[1.02] motion-reduce:transition-none motion-reduce:hover:scale-100 ${focusRingOnCard}`}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- QR bisa berupa data: URL dari gateway */}
         <img src={src} alt={t('qrAlt')} className="h-52 w-52 object-contain sm:h-56 sm:w-56" />

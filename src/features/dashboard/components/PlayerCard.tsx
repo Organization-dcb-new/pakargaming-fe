@@ -1,15 +1,15 @@
 'use client'
 
-import { CheckCircle2, Clock, RotateCw, TriangleAlert, XCircle, type LucideIcon } from 'lucide-react'
+import { CheckCircle2, Clock, TriangleAlert, XCircle, type LucideIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 import { formatPrice } from '@/lib/formatPrice'
-import { focusRing } from '@/styles/focusRing'
 import { getAvatarSrc } from '@/lib/avatar'
 import { PlayerAvatar } from '@/components/ui/player-avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/cn'
 import type { TransactionResponseDetail } from '@/types/dashboard'
+import RetryButton from './RetryButton'
 
 interface PlayerCardProps {
   user: { name?: string; email?: string; picture?: string } | null
@@ -108,21 +108,9 @@ export default function PlayerCard({ user, stats, isLoading, isError, isFetching
           >
             <TriangleAlert className="size-5 shrink-0 text-destructive" aria-hidden="true" />
             <p className="flex-1 text-sm text-foreground">{t('errorState')}</p>
-            <button
-              type="button"
-              onClick={onRetry}
-              disabled={isFetching}
-              className={cn(
-                'inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
-                focusRing,
-              )}
-            >
-              <RotateCw
-                className={cn('size-4', isFetching && 'animate-spin motion-reduce:animate-none')}
-                aria-hidden="true"
-              />
+            <RetryButton onClick={onRetry} isFetching={isFetching}>
               {t('retry')}
-            </button>
+            </RetryButton>
           </div>
         ) : (
           <div className="space-y-5" aria-busy={isLoading || undefined}>

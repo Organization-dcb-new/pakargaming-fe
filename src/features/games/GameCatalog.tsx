@@ -1,11 +1,11 @@
 'use client'
 
 import { Link } from '@/i18n/routing'
-import { Search, SlidersHorizontal, Star } from 'lucide-react'
+import { Search, SlidersHorizontal } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { useCatalogGame, useGetGames } from '@/api/games'
+import { useCatalogGame } from '@/api/games'
 import { GameCardSkeleton } from '@/features/games/components/GameCardSkeleton'
 
 export function GameCatalog() {

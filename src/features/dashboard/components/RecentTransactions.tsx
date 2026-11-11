@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronRight, Gamepad2, RotateCw, TriangleAlert } from 'lucide-react'
+import { ChevronRight, Gamepad2, TriangleAlert } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { formatPrice } from '@/lib/formatPrice'
@@ -9,6 +9,7 @@ import { focusRing } from '@/styles/focusRing'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { cn } from '@/lib/cn'
 import type { PaymentResponseDetail } from '@/types/dashboard'
+import RetryButton from './RetryButton'
 
 interface RecentTransactionsProps {
   transactions: PaymentResponseDetail[]
@@ -69,18 +70,9 @@ export default function RecentTransactions({
       <div role="alert" className="flex flex-col items-start gap-3 p-5 sm:flex-row sm:items-center">
         <TriangleAlert className="size-5 shrink-0 text-destructive" aria-hidden="true" />
         <p className="flex-1 text-sm text-foreground">{t('errorState')}</p>
-        <button
-          type="button"
-          onClick={onRetry}
-          disabled={isFetching}
-          className={cn(
-            'inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
-            focusRing,
-          )}
-        >
-          <RotateCw className={cn('size-4', isFetching && 'animate-spin motion-reduce:animate-none')} aria-hidden="true" />
+        <RetryButton onClick={onRetry} isFetching={isFetching}>
           {t('retry')}
-        </button>
+        </RetryButton>
       </div>
     )
   } else if (transactions.length === 0) {

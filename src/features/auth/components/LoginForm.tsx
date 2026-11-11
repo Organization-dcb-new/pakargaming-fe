@@ -119,8 +119,9 @@ export default function LoginForm({
 
             {captcha.withWidget(
               <SubmitButton
-                pending={login.isPending || captcha.verifying}
-                pendingLabel={login.isPending ? t('processing') : t('captchaVerifying')}
+                pending={login.isPending}
+                pendingLabel={t('processing')}
+                verifying={captcha.verifying}
               >
                 {t('submitLogin')}
               </SubmitButton>,

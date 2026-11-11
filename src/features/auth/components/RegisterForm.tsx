@@ -101,8 +101,9 @@ export default function RegisterForm({
 
             {captcha.withWidget(
               <SubmitButton
-                pending={signUp.isPending || captcha.verifying}
-                pendingLabel={signUp.isPending ? t('processing') : t('captchaVerifying')}
+                pending={signUp.isPending}
+                pendingLabel={t('processing')}
+                verifying={captcha.verifying}
               >
                 {t('submitRegister')}
               </SubmitButton>,

@@ -2,6 +2,7 @@
 
 import { Loader2 } from 'lucide-react'
 import type { HTMLInputAutoCompleteAttribute, ReactNode } from 'react'
+import { useTranslations } from 'next-intl'
 import { useFormContext } from 'react-hook-form'
 import {
   FormControl,
@@ -98,20 +99,28 @@ export function AuthPasswordField({
   )
 }
 
-/** Tombol submit utama (chamfer). Disabled lewat <fieldset disabled> induknya saat pending. */
+/**
+ * Tombol submit utama (chamfer). Disabled lewat <fieldset disabled> induknya saat pending.
+ * `verifying`: Turnstile belum memberi token → spinner + label "Memverifikasi keamanan…".
+ */
 export function SubmitButton({
   pending,
   pendingLabel,
+  verifying = false,
   children,
 }: {
   pending: boolean
   pendingLabel: string
+  verifying?: boolean
   children: ReactNode
 }) {
+  const t = useTranslations('AuthDialog')
+  const busy = pending || verifying
+
   return (
-    <button type="submit" aria-busy={pending || undefined} className={primaryButtonClass}>
-      {pending && <Loader2 className={spinnerClass} aria-hidden="true" />}
-      {pending ? pendingLabel : children}
+    <button type="submit" aria-busy={busy || undefined} className={primaryButtonClass}>
+      {busy && <Loader2 className={spinnerClass} aria-hidden="true" />}
+      {pending ? pendingLabel : verifying ? t('captchaVerifying') : children}
     </button>
   )
 }

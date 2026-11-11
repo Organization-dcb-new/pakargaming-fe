@@ -24,8 +24,7 @@ import ConfirmModal from "@/features/game-topup/components/ConfirmModal";
 import { useGetCategoryProduct } from "@/features/game-topup/api/useGetCategoryProduct";
 import GameDescription from "@/features/game-topup/components/GameDescription";
 import FAQSection from "@/features/game-topup/components/FAQSection";
-import GameMaintenance from "@/features/game-topup/components/GameMaintenance";
-import GameNotFound from "@/features/game-topup/components/GameNotFound";
+import GameUnavailable from "@/features/game-topup/components/GameUnavailable";
 
 const PAYMENT_CODES_NEEDING_USER_MDN = new Set(["ovo", "smartfren_airtime"]);
 const MIN_PRODUCT_PRICE_FOR_VA = 10000;
@@ -146,7 +145,7 @@ export default function GameTopUp() {
   if (!dataGameDetail?.data) {
     return (
       <TopUpLayout>
-        <GameNotFound />
+        <GameUnavailable reason="not-found" />
       </TopUpLayout>
     );
   }
@@ -154,7 +153,7 @@ export default function GameTopUp() {
   if (dataGameDetail?.data && !dataGameDetail.data.is_active) {
     return (
       <TopUpLayout>
-        <GameMaintenance gameName={dataGameDetail.data.name} />
+        <GameUnavailable reason="maintenance" gameName={dataGameDetail.data.name} />
       </TopUpLayout>
     );
   }
