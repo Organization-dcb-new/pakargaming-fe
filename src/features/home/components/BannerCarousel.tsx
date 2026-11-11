@@ -11,6 +11,7 @@ import BannerError from './BannerError'
 import BannerEmpty from './BannerEmpty'
 import BannerFrame from './BannerFrame'
 import { BANNER_IMAGE_HEIGHT, BANNER_IMAGE_WIDTH } from '@/features/home/lib/bannerDimensions'
+import { canOptimize } from '@/lib/image'
 
 const AUTOPLAY_DELAY = 5000
 
@@ -82,7 +83,7 @@ export default function BannerCarousel() {
                   fill
                   priority={i === 0}
                   className="object-cover"
-                  unoptimized={true}
+                  unoptimized={!canOptimize(banner.image || "/placeholder.png")}
                   sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1280px) calc(100vw - 4rem), 1216px"
                 />
               </a>
@@ -92,7 +93,7 @@ export default function BannerCarousel() {
 
         {/* Bottom scrim: keeps dots legible on bright imagery */}
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-24 bg-gradient-to-t from-black/55 via-black/20 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24 bg-gradient-to-t from-black/55 via-black/20 to-transparent"
           aria-hidden
         />
 
@@ -103,7 +104,7 @@ export default function BannerCarousel() {
               type="button"
               onClick={prev}
               aria-label={t('prevSlide')}
-              className="absolute left-2 top-1/2 z-[2] flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 motion-reduce:transition-none hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:left-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
+              className="absolute left-2 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 motion-reduce:transition-none hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:left-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
               <ChevronLeft className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
             </button>
 
@@ -111,12 +112,12 @@ export default function BannerCarousel() {
               type="button"
               onClick={next}
               aria-label={t('nextSlide')}
-              className="absolute right-2 top-1/2 z-[2] flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 motion-reduce:transition-none hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:right-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
+              className="absolute right-2 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 motion-reduce:transition-none hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:right-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
               <ChevronRight className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
             </button>
 
             {/* DOTS */}
-            <div className="absolute bottom-4 left-1/2 z-[2] flex -translate-x-1/2 gap-2.5 px-2">
+            <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2.5 px-2">
               {banners.map((_, i) => (
                 <button
                   type="button"

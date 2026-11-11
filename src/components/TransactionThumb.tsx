@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { getInitials } from '@/lib/initials'
+import { canOptimize } from '@/lib/image'
 
 interface TransactionThumbProps {
   src?: string | null
@@ -22,7 +23,7 @@ export default function TransactionThumb({ src, name, size = 'md' }: Transaction
           src={src}
           alt=""
           fill
-          unoptimized
+          unoptimized={!canOptimize(src)}
           sizes="48px"
           className="object-cover"
           onError={() => setFailed(true)}

@@ -50,7 +50,7 @@ export default function MobileNav({ user, onLogin }: MobileNavProps) {
 
         <SheetContent
           side="left"
-          className="z-[100] flex w-[min(100%,18rem)] flex-col gap-0 border-border p-0 [&>button]:right-4 [&>button]:top-5"
+          className="flex w-[min(100%,18rem)] flex-col gap-0 border-border p-0 [&>button]:right-4 [&>button]:top-5"
         >
           <SheetHeader className="h-14 flex-row items-center border-b border-border px-4 py-0">
             <BrandMark />

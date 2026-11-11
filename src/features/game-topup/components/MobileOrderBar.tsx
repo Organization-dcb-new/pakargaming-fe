@@ -40,7 +40,7 @@ export default function MobileOrderBar({ Product, handleConfirm, Payment }: Orde
     <div
       ref={rootRef}
       id="mobile-order-bar"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-2xl backdrop-blur-md lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-2xl backdrop-blur-md lg:hidden"
     >
       <div className="mx-auto flex max-w-3xl items-center gap-4">
         <div className="flex min-w-0 flex-1 flex-col">

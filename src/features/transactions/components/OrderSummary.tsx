@@ -9,6 +9,7 @@ import { formatDateTime } from '@/lib/formatDate'
 import { formatPrice } from '@/lib/formatPrice'
 import TransactionThumb from '@/components/TransactionThumb'
 import { CopyButton } from '@/components/ui/copy-button'
+import { canOptimize } from '@/lib/image'
 
 function Row({ label, children, className = '' }: { label: string; children: ReactNode; className?: string }) {
   return (
@@ -97,7 +98,7 @@ export default function OrderSummary({ data }: { data: PaymentDataWithDetailProd
                   alt=""
                   width={40}
                   height={16}
-                  unoptimized
+                  unoptimized={!canOptimize(product.payment_image)}
                   className="h-4 w-auto object-contain"
                 />
               </span>

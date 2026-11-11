@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { BrandMark } from '@/components/Logo'
 import { SITE_LOGO_SRC } from '@/config/site'
+import { canOptimize } from '@/lib/image'
 
 /**
  * Logo footer dari env (NEXT_PUBLIC_FOOTER_LOGO_URL). Kalau env kosong atau gambarnya gagal dimuat
@@ -18,6 +19,7 @@ export default function FooterLogo({ alt }: { alt: string }) {
     <Image
       alt={alt}
       src={SITE_LOGO_SRC}
+      unoptimized={!canOptimize(SITE_LOGO_SRC)}
       width={192}
       height={64}
       className="h-auto w-40 object-contain sm:w-44"

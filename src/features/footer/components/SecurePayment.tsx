@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useGetPaymentMethod } from '@/api/useGetPaymentMethod'
 import { footerHeadingClass } from '@/features/footer/styles'
+import { canOptimize } from '@/lib/image'
 
 const MAX_VISIBLE = 6
 
@@ -34,7 +35,7 @@ function PaymentLogo({ src, name }: { src: string; name: string }) {
         alt={name}
         width={48}
         height={48}
-        unoptimized
+        unoptimized={!canOptimize(src)}
         className="h-8 w-auto max-w-20 object-contain"
         onError={() => setFailed(true)}
       />

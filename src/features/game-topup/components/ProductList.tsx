@@ -8,6 +8,7 @@ import { CategoryProductListResponse } from "@/features/game-topup/types/categor
 import { ReactNode, useState } from "react";
 import { useTranslations } from "next-intl";
 import StepCard from "./StepCard";
+import { canOptimize } from "@/lib/image"
 
 interface ProductComponentProps {
   productGame: GetGameResponse;
@@ -175,9 +176,6 @@ export function ProductList({
 
 const PACKAGE_GRID = "grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3";
 
-const FALLBACK_PACKAGE_IMAGE =
-  "https://s3.nevaobjects.id/image-dev/uploads/20260123164455.webp";
-
 interface PackageCardProps {
   pkg: Price;
   label: ReactNode;
@@ -209,14 +207,19 @@ function PackageCard({ pkg, label, selected, onSelect }: PackageCardProps) {
       </span>
 
       <span className="mt-auto flex items-center justify-between gap-2">
-        <Image
-          src={pkg.image || FALLBACK_PACKAGE_IMAGE}
-          alt=""
-          width={28}
-          height={28}
-          unoptimized={true}
-          className="h-7 w-7 shrink-0 object-contain"
-        />
+        {pkg.image ? (
+          <Image
+            src={pkg.image}
+            alt=""
+            width={28}
+            height={28}
+            unoptimized={!canOptimize(pkg.image)}
+            className="h-7 w-7 shrink-0 object-contain"
+          />
+        ) : (
+          // Tanpa gambar: ruang kosong seukuran ikon supaya harga tetap rata kanan
+          <span aria-hidden className="h-7 w-7 shrink-0" />
+        )}
         <span className="text-sm font-bold text-primary">
           Rp {formatPrice(Math.round(pkg.selling_price))}
         </span>

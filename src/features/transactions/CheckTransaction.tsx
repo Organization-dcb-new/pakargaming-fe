@@ -82,7 +82,7 @@ export default function CheckTransaction() {
             <p id="invoice-hint" className="text-xs text-muted-foreground">
               {t('exampleHint')}{' '}
               <code className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
-                PAY-1770XXXXXXXXXXX
+                {t('exampleFormat')}
               </code>
             </p>
           )}

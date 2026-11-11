@@ -6,6 +6,7 @@ import { Link } from '@/i18n/routing'
 import type { ShowGame } from '@/features/home/types/show'
 import { ShowBadge, ShowBadgeVariant } from './ShowBadge'
 import { getInitials } from '@/lib/initials'
+import { canOptimize } from '@/lib/image'
 
 interface GameTileProps {
   game: ShowGame
@@ -43,7 +44,7 @@ export function GameTile({ game, badge, eager = false }: GameTileProps) {
             src={game.thumbnail_url}
             alt={game.name}
             fill
-            unoptimized
+            unoptimized={!canOptimize(game.thumbnail_url)}
             loading={eager ? 'eager' : 'lazy'}
             sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 20vw, 16vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"

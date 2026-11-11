@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
+import { OPTIMIZED_IMAGE_HOSTS } from './src/config/images'
 
 const withNextIntl = createNextIntlPlugin()
 
@@ -86,36 +87,8 @@ const nextConfig: NextConfig = {
     ]
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 's3.nevaobjects.id',
-      },
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-      },
-      {
-        protocol: 'https',
-        hostname: 'api.dicebear.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'media.licdn.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'instagram.fcgk3-2.fna.fbcdn.net',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-    ],
+    // Satu sumber dengan canOptimize() — lihat src/config/images.ts
+    remotePatterns: OPTIMIZED_IMAGE_HOSTS.map((hostname) => ({ protocol: 'https' as const, hostname })),
   },
 }
 

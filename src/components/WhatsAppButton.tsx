@@ -64,7 +64,7 @@ export default function WhatsAppButton() {
   return (
     <div
       className="
-        fixed isolate z-[55]
+        fixed isolate z-45
         right-4 sm:right-5 md:right-6
         max-lg:bottom-[calc(0.625rem+env(safe-area-inset-bottom,0px)+max(3.25rem,var(--mobile-order-bar-height,0px)))]
         lg:bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px))]

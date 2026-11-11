@@ -5,8 +5,9 @@
 :root {
   --logo-purple: #8a35ac;
   --logo-cyan: #0bc1dc;
-  /* Warna brand pihak ketiga (rules §2.3: boleh literal) — tombol CS WhatsApp */
+  /* Warna brand pihak ketiga (rules §2.3: boleh literal) — tombol CS WhatsApp & ikon sosial footer */
   --whatsapp: #25d366;
+  --instagram: oklch(59.2% 0.249 0.584); /* = pink-600 Tailwind, warna ikon Instagram di footer */
   /* Kilau terang di item backdrop game (GameBackdrop) — dekoratif, sama di light & dark */
   --game-glint: color-mix(in oklab, var(--logo-cyan) 25%, white);
 }
@@ -150,6 +151,7 @@
   --color-brand-solid: var(--brand-solid);
   --color-brand-solid-foreground: var(--brand-solid-foreground);
   --color-whatsapp: var(--whatsapp);
+  --color-instagram: var(--instagram);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
@@ -407,5 +409,19 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
+  }
+}
+
+/* Reduced motion global (rules §7, §12): animasi & transisi berhenti / instan untuk user yang memintanya —
+   termasuk animate-in/out Radix (dialog, sheet, dropdown), animate-pulse/spin, dan komponen baru nanti,
+   tanpa perlu `motion-reduce:` di tiap elemen. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

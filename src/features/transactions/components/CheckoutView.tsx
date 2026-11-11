@@ -12,6 +12,7 @@ import InvoiceChip from './InvoiceChip'
 import OrderSummary from './OrderSummary'
 import PaymentInstructions from './PaymentInstructions'
 import StatusTimeline from './StatusTimeline'
+import { canOptimize } from '@/lib/image'
 
 /** Layout PENDING (referensi "checkout"): panel bayar dominan di kiri, detail pesanan + progres di kanan. */
 export default function CheckoutView({ data }: { data: PaymentDataWithDetailProduct }) {
@@ -50,7 +51,7 @@ export default function CheckoutView({ data }: { data: PaymentDataWithDetailProd
                   alt=""
                   width={48}
                   height={18}
-                  unoptimized
+                  unoptimized={!canOptimize(product.payment_image)}
                   className="h-[18px] w-auto object-contain"
                 />
               </span>

@@ -1,23 +1,19 @@
 {
   "Navigation": {
     "home": "Home",
-    "games": "Browse Games",
     "login": "Login",
-    "transaction": "Transaksi",
     "dashboard": "Dashboard",
     "logout": "Logout",
     "searchPlaceholder": "Search game...",
     "collapseSearch": "Minimize search",
     "searching": "Searching...",
     "gameNotFound": "Game not found",
-    "logoAlt": "Pakar Gaming",
     "menu": "Menu",
     "openMenu": "Open menu",
     "languageAndTheme": "Language & theme",
     "checkTransaction": "Check Transaction",
     "mainNav": "Main navigation",
     "accountMenu": "Account menu",
-    "brand": "Pakar Gaming",
     "wordmark": "Pakar<accent>Gaming</accent>",
     "language": "Language",
     "region": "Account region",
@@ -26,16 +22,6 @@
     "regionHint": "Games and top-ups shown follow your game account region."
   },
   "Home": {
-    "heroTitle": "Level Up Your Gaming",
-    "heroSubtitle": "Get the best games at the best prices. Thousands of games waiting to be played!",
-    "browseGames": "Browse Games",
-    "viewPromo": "View Promo",
-    "specialPromo": "Special Promo This Month",
-    "trending": "Trending",
-    "popularGames": "Popular Games",
-    "viewAll": "View All",
-    "buy": "Buy",
-    "showMoreGames": "Show more",
     "showLessGames": "Show less",
     "showMoreCount": "Show {count} more",
     "gamesCount": "{count, plural, =1 {# game} other {# games}}",
@@ -57,7 +43,6 @@
   },
   "Footer": {
     "about": "Trusted platform to buy digital games with best prices and instant delivery.",
-    "links": "Quick Links",
     "contact": "Contact us",
     "rights": "All rights reserved.",
     "navLabel": "Footer navigation",
@@ -72,41 +57,6 @@
     "securityPrivacy": "Security & privacy",
     "socialInstagramAria": "PakarGaming on Instagram",
     "socialWhatsappAria": "PakarGaming on WhatsApp"
-  },
-  "Cart": {
-    "title": "Shopping Cart",
-    "empty": "Your cart is empty",
-    "checkout": "Checkout",
-    "total": "Total",
-    "subtotal": "Subtotal",
-    "tax": "Tax (10%)",
-    "continue": "Continue Shopping",
-    "items": "{count} items in cart"
-  },
-  "GameDetail": {
-    "back": "Back",
-    "description": "Description",
-    "systemSpecs": "System Specifications",
-    "minimum": "Minimum",
-    "recommended": "Recommended",
-    "addToCart": "Add to Cart",
-    "buyNow": "Buy Now",
-    "relatedGames": "Related Games",
-    "emailHeading": "Email",
-    "emailStepDesc": "We use your email to send payment proof and transaction status.",
-    "emailPlaceholder": "you@example.com"
-  },
-  "Payment": {
-    "title": "Payment Checkout",
-    "orderDetail": "OrderDetail",
-    "totalPayment": "Total Payment",
-    "paymentMethod": "Payment Method",
-    "buyerInfo": "Buyer Information",
-    "fullName": "Full Name",
-    "email": "Email",
-    "payNow": "Pay Now",
-    "processing": "Processing...",
-    "backToCart": "Back to Cart"
   },
   "GameCheckout": {
     "toastVaMinAmount": "Virtual account is only available for purchases above Rp 10,000.",
@@ -142,7 +92,6 @@
     "orderTotal": "Total",
     "orderBuy": "Buy Now",
     "mobileTotal": "Total",
-    "mobilePayment": "Payment",
     "mobileBuyNow": "Buy now",
     "confirmTitle": "Double-check your order",
     "confirmSubtitle": "Review your order before continuing.",
@@ -224,6 +173,7 @@
   "CheckTransaction": {
     "inputLabel": "Invoice number",
     "exampleHint": "Example format:",
+    "exampleFormat": "PAY-1770XXXXXXXXXXX",
     "formatError": "Format must be PAY- followed by digits",
     "btnSearch": "Search",
     "btnSearching": "Searching...",
@@ -361,12 +311,6 @@
     "checkTransaction": "Check transaction",
     "blog": "Blog"
   },
-  "Newsletter": {
-    "title": "Newsletter",
-    "description": "Get promo updates and new games.",
-    "placeholder": "Email address",
-    "subscribe": "Subscribe"
-  },
   "LogoutDialog": {
     "title": "Log out of your account?",
     "description": "You'll be signed out of PakarGaming and will need to log in again to access your dashboard.",
@@ -434,7 +378,8 @@
     "statusPending": "Pending",
     "statusFailed": "Failed",
     "notifications": "Notifications",
-    "closeNotification": "Close notification"
+    "closeNotification": "Close notification",
+    "close": "Close"
   },
   "Maintenance": {
     "title": "Server upgrade in progress",

@@ -1,23 +1,19 @@
 {
   "Navigation": {
     "home": "Beranda",
-    "games": "Jelajahi Game",
     "login": "Masuk",
-    "transaction": "Transaksi",
     "dashboard": "Dasbor",
     "logout": "Keluar",
     "searchPlaceholder": "Cari game...",
     "collapseSearch": "Ciutkan pencarian",
     "searching": "Mencari...",
     "gameNotFound": "Game tidak ditemukan",
-    "logoAlt": "Pakar Gaming",
     "menu": "Menu",
     "openMenu": "Buka menu",
     "languageAndTheme": "Bahasa & tema",
     "checkTransaction": "Cek Transaksi",
     "mainNav": "Navigasi utama",
     "accountMenu": "Menu akun",
-    "brand": "Pakar Gaming",
     "wordmark": "Pakar<accent>Gaming</accent>",
     "language": "Bahasa",
     "region": "Region akun",
@@ -26,16 +22,6 @@
     "regionHint": "Game dan nominal yang tampil mengikuti region akun game-mu."
   },
   "Home": {
-    "heroTitle": "Tingkatkan Skill Gaming Anda",
-    "heroSubtitle": "Dapatkan game terbaik dengan harga terbaik. Ribuan game menanti untuk dimainkan!",
-    "browseGames": "Jelajahi Game",
-    "viewPromo": "Lihat Promo",
-    "specialPromo": "Promo Spesial Bulan Ini",
-    "trending": "Sedang Tren",
-    "popularGames": "Game Populer",
-    "viewAll": "Lihat Semua",
-    "buy": "Beli",
-    "showMoreGames": "Tampilkan lebih banyak",
     "showLessGames": "Tampilkan lebih sedikit",
     "showMoreCount": "Tampilkan {count} lagi",
     "gamesCount": "{count} game",
@@ -57,7 +43,6 @@
   },
   "Footer": {
     "about": "Platform terpercaya untuk membeli game digital dengan harga terbaik dan pengiriman instan.",
-    "links": "Tautan Cepat",
     "contact": "Hubungi Kami",
     "rights": "Hak cipta dilindungi.",
     "navLabel": "Navigasi footer",
@@ -72,41 +57,6 @@
     "securityPrivacy": "Keamanan & privasi",
     "socialInstagramAria": "PakarGaming di Instagram",
     "socialWhatsappAria": "PakarGaming di WhatsApp"
-  },
-  "Cart": {
-    "title": "Keranjang Belanja",
-    "empty": "Keranjang Anda kosong",
-    "checkout": "Pembayaran",
-    "total": "Total",
-    "subtotal": "Subtotal",
-    "tax": "Pajak (10%)",
-    "continue": "Lanjut Belanja",
-    "items": "{count} game dalam keranjang"
-  },
-  "GameDetail": {
-    "back": "Kembali",
-    "description": "Deskripsi",
-    "systemSpecs": "Spesifikasi System",
-    "minimum": "Minimum",
-    "recommended": "Recommended",
-    "addToCart": "Masukkan Keranjang",
-    "buyNow": "Beli Sekarang",
-    "relatedGames": "Game Serupa",
-    "emailHeading": "Email",
-    "emailStepDesc": "Email digunakan untuk mengirimkan bukti pembayaran & status transaksi.",
-    "emailPlaceholder": "contoh@email.com"
-  },
-  "Payment": {
-    "title": "Checkout Pembayaran",
-    "orderDetail": "Detail Pesanan",
-    "totalPayment": "Total Pembayaran",
-    "paymentMethod": "Metode Pembayaran",
-    "buyerInfo": "Informasi Pembeli",
-    "fullName": "Nama Lengkap",
-    "email": "Email",
-    "payNow": "Bayar Sekarang",
-    "processing": "Memproses...",
-    "backToCart": "Kembali ke Keranjang"
   },
   "GameCheckout": {
     "toastVaMinAmount": "Metode VA hanya untuk produk di atas 10.000",
@@ -142,7 +92,6 @@
     "orderTotal": "Total",
     "orderBuy": "Beli Sekarang",
     "mobileTotal": "Total",
-    "mobilePayment": "Pembayaran",
     "mobileBuyNow": "Beli Sekarang",
     "confirmTitle": "Cek lagi pesananmu",
     "confirmSubtitle": "Periksa kembali pesanan sebelum melanjutkan.",
@@ -224,6 +173,7 @@
   "CheckTransaction": {
     "inputLabel": "Nomor Invoice",
     "exampleHint": "Contoh format:",
+    "exampleFormat": "PAY-1770XXXXXXXXXXX",
     "formatError": "Format harus PAY- diikuti angka",
     "btnSearch": "Cari",
     "btnSearching": "Mencari...",
@@ -361,12 +311,6 @@
     "checkTransaction": "Cek Transaksi",
     "blog": "Blog"
   },
-  "Newsletter": {
-    "title": "Newsletter",
-    "description": "Dapatkan info promo dan game terbaru.",
-    "placeholder": "Alamat email",
-    "subscribe": "Berlangganan"
-  },
   "LogoutDialog": {
     "title": "Keluar dari akun?",
     "description": "Anda akan keluar dari akun PakarGaming dan perlu masuk kembali untuk mengakses dashboard.",
@@ -434,7 +378,8 @@
     "statusPending": "Menunggu",
     "statusFailed": "Gagal",
     "notifications": "Notifikasi",
-    "closeNotification": "Tutup notifikasi"
+    "closeNotification": "Tutup notifikasi",
+    "close": "Tutup"
   },
   "Maintenance": {
     "title": "Server lagi di-upgrade",

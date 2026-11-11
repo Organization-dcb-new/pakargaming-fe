@@ -8,6 +8,7 @@ import { formatPrice } from '@/lib/formatPrice'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import StepCard from './StepCard'
+import { canOptimize } from '@/lib/image'
 
 interface PaymentMethodProps {
   PaymentMethod: GetPaymentMethodResponse
@@ -122,7 +123,7 @@ export default function PaymentMethodList({
                           alt=""
                           width={32}
                           height={20}
-                          unoptimized={true}
+                          unoptimized={!canOptimize(iconSrc)}
                           className="max-h-4 w-auto object-contain"
                         />
                       </span>
@@ -181,7 +182,7 @@ export default function PaymentMethodList({
                               alt=""
                               width={48}
                               height={28}
-                              unoptimized={true}
+                              unoptimized={!canOptimize(iconSrc)}
                               className="max-h-6 w-auto object-contain"
                             />
                           ) : null}

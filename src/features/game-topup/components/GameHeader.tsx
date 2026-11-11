@@ -9,6 +9,7 @@ import { GameDetail } from '@/types/game'
 import { getInitials } from '@/lib/initials'
 import { HOME_REGION } from '@/lib/region'
 import { regionName } from '@/lib/regionName'
+import { canOptimize } from '@/lib/image'
 
 interface GameHeaderProps {
   game: GameDetail
@@ -69,7 +70,7 @@ export default function GameHeader({ game }: GameHeaderProps) {
               src={game.banner_url}
               alt=""
               fill
-              unoptimized
+              unoptimized={!canOptimize(game.banner_url)}
               priority
               sizes="(max-width: 1280px) 100vw, 1216px"
               className="object-cover"
@@ -113,7 +114,7 @@ export default function GameHeader({ game }: GameHeaderProps) {
               src={game.thumbnail_url}
               alt={game.name}
               fill
-              unoptimized
+              unoptimized={!canOptimize(game.thumbnail_url)}
               priority
               sizes="96px"
               className="object-cover"

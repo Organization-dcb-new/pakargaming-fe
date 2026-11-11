@@ -18,7 +18,7 @@ export default function SocialMedia() {
           href={SOCIAL_LINKS.instagram}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${socialLinkClass} text-pink-600`}
+          className={`${socialLinkClass} text-instagram`}
           aria-label={t('socialInstagramAria')}
         >
           <FaInstagram className="h-6 w-6" aria-hidden />
