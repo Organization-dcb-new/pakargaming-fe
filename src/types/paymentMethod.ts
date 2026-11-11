@@ -22,6 +22,8 @@ export interface PaymentMethod {
   created_at: string;
   updated_at: string;
   category_id: string;
+  /** Khusus UI (tidak dikirim ke backend): alasan metode nonaktif, mis. "Min. pembelian Rp 10.000" */
+  disabled_note?: string;
 }
 
 export interface PaymentMethodCategoryWithPaymentMethodResponse {

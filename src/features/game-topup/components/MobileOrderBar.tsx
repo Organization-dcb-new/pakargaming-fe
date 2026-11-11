@@ -10,13 +10,17 @@ interface OrderMobileProps {
   handleConfirm: () => void
   Product: Price
   Payment: PaymentMethod
+  /** Status tiap langkah — selama belum lengkap, baris atas menampilkan progres */
+  steps: { label: string; done: boolean }[]
 }
 
 const ORDER_BAR_CSS_VAR = '--mobile-order-bar-height'
 
-export default function MobileOrderBar({ Product, handleConfirm, Payment }: OrderMobileProps) {
+export default function MobileOrderBar({ Product, handleConfirm, Payment, steps }: OrderMobileProps) {
   const t = useTranslations('GameCheckout')
   const totalPrice = calculateTotalPrice(Payment, Product)
+  const doneCount = steps.filter((step) => step.done).length
+  const allDone = doneCount === steps.length
   const rootRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
@@ -45,7 +49,9 @@ export default function MobileOrderBar({ Product, handleConfirm, Payment }: Orde
       <div className="mx-auto flex max-w-3xl items-center gap-4">
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-xs text-muted-foreground">
-            {Payment?.full_name || Product?.name || t('mobileTotal')}
+            {allDone
+              ? Payment?.full_name || Product?.name || t('mobileTotal')
+              : t('stepsProgress', { done: doneCount, total: steps.length })}
           </span>
           <span className="font-display text-xl font-bold text-primary">
             {totalPrice !== null ? `Rp ${totalPrice}` : '—'}

@@ -192,7 +192,11 @@ export default function PaymentMethodList({
                           {payment.full_name}
                         </span>
 
-                        {ActiveProduct?.selling_price && (
+                        {isDisabled && payment.disabled_note ? (
+                          <span className="shrink-0 whitespace-nowrap text-xs font-semibold text-foreground">
+                            {payment.disabled_note}
+                          </span>
+                        ) : ActiveProduct?.selling_price && (
                           <span
                             className={`shrink-0 whitespace-nowrap font-display text-sm font-semibold ${
                               isSelected ? 'text-primary' : 'text-foreground'

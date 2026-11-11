@@ -115,6 +115,7 @@ export function ProductList({
                   <PackageCard
                     key={pkg.id}
                     pkg={pkg}
+                    fallbackImage={productGame?.data?.thumbnail_url}
                     label={pkg.name.split("(").map((part, idx, arr) => (
                       <span key={idx}>
                         {idx > 0 ? "(" : ""}
@@ -143,6 +144,7 @@ export function ProductList({
                 <PackageCard
                   key={pkg.id}
                   pkg={pkg}
+                  fallbackImage={productGame?.data?.thumbnail_url}
                   label={pkg.name}
                   selected={activeProduct?.id === pkg.id}
                   onSelect={() => handleSelect(pkg)}
@@ -178,13 +180,16 @@ const PACKAGE_GRID = "grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3";
 
 interface PackageCardProps {
   pkg: Price;
+  /** Thumbnail game — pengganti gambar paket yang kosong */
+  fallbackImage?: string;
   label: ReactNode;
   selected: boolean;
   onSelect: () => void;
 }
 
 /** Kartu nominal: nama (font display) + ikon item + harga cyan; terpilih = border & tint primary. */
-function PackageCard({ pkg, label, selected, onSelect }: PackageCardProps) {
+function PackageCard({ pkg, fallbackImage, label, selected, onSelect }: PackageCardProps) {
+  const image = pkg.image || fallbackImage;
   return (
     <button
       type="button"
@@ -207,17 +212,18 @@ function PackageCard({ pkg, label, selected, onSelect }: PackageCardProps) {
       </span>
 
       <span className="mt-auto flex items-center justify-between gap-2">
-        {pkg.image ? (
+        {image ? (
           <Image
-            src={pkg.image}
+            src={image}
             alt=""
             width={28}
             height={28}
-            unoptimized={!canOptimize(pkg.image)}
-            className="h-7 w-7 shrink-0 object-contain"
+            unoptimized={!canOptimize(image)}
+            // Thumbnail game (fallback) berbentuk persegi foto → sudut membulat; ikon item paket tetap apa adanya
+            className={`h-7 w-7 shrink-0 ${pkg.image ? "object-contain" : "rounded-md object-cover"}`}
           />
         ) : (
-          // Tanpa gambar: ruang kosong seukuran ikon supaya harga tetap rata kanan
+          // Tanpa gambar sama sekali: ruang kosong seukuran ikon supaya harga tetap rata kanan
           <span aria-hidden className="h-7 w-7 shrink-0" />
         )}
         <span className="text-sm font-bold text-primary">

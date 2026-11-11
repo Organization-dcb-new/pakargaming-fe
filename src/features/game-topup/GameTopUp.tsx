@@ -27,6 +27,8 @@ import FAQSection from "@/features/game-topup/components/FAQSection";
 import GameUnavailable from "@/features/game-topup/components/GameUnavailable";
 import RegionNotice from "@/features/game-topup/components/RegionNotice";
 import { useGameRegion } from "@/features/game-topup/hooks/useGameRegion";
+import { StepStatusContext, type StepStatus } from "@/features/game-topup/components/StepCard";
+import { formatPrice } from "@/lib/formatPrice";
 
 const PAYMENT_CODES_NEEDING_USER_MDN = new Set(["ovo", "smartfren_airtime"]);
 const MIN_PRODUCT_PRICE_FOR_VA = 10000;
@@ -91,6 +93,8 @@ export default function GameTopUp() {
   const { data: categoryProduct } = useGetCategoryProduct(gameId);
 
   const { mutate, isPending } = useCreateTransaction();
+  /** Langkah yang sedang ditunjuk karena belum lengkap (setelah klik "Beli" / langkah terkunci). */
+  const [flaggedStep, setFlaggedStep] = useState<string | null>(null);
 
   const activeProduct = selectedPackage ?? null;
   const activePayment = selectedPayment ?? null;
@@ -167,90 +171,87 @@ export default function GameTopUp() {
   const lockContactStep =
     !isAccountStepCompleted || !isProductStepCompleted || !isPaymentStepCompleted;
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  const contactMessage = !hasEmail
+    ? t("validationEmailRequired")
+    : !isEmailValid
+      ? t("validationEmailInvalid")
+      : needsUserMdn && !hasUserMdn
+        ? t("validationPhoneRequired")
+        : needsUserMdn && !isValidUserMdn(userMdn)
+          ? t("validationPhoneInvalid")
+          : null;
+
+  /** Urutan langkah + syarat lengkapnya — sumber badge status, pesan inline, dan ringkasan pesanan. */
+  const stepChecks = [
+    ...(requiresAccountInput
+      ? [{ id: "account-section", label: t("stepLabelAccount"), ok: isAccountStepCompleted, message: t("toastFillAccount") }]
+      : []),
+    { id: "product-section", label: t("stepLabelProduct"), ok: isProductStepCompleted, message: t("toastSelectProduct") },
+    {
+      id: "payment-method-section",
+      label: t("stepLabelPayment"),
+      ok: isPaymentStepCompleted && isVaAllowedForSelection,
+      message: isPaymentStepCompleted ? t("validationVaMinAmount") : t("toastSelectPayment"),
+    },
+    { id: "contact-section", label: t("stepLabelContact"), ok: contactMessage === null, message: contactMessage },
+  ];
+  const firstIncomplete = stepChecks.find((step) => !step.ok);
+
+  // Error hanya di langkah yang ditunjuk & hilang sendiri begitu langkah itu lengkap (tidak "loncat" ke langkah berikut)
+  const stepStatuses: Record<string, StepStatus> = Object.fromEntries(
+    stepChecks.map((step) => [
+      step.id,
+      { done: step.ok, error: flaggedStep === step.id && !step.ok ? step.message : null },
+    ]),
+  );
+  const stepSummary = stepChecks.map(({ label, ok }) => ({ label, done: ok }));
+
+  /** Scroll + fokus ke langkah pertama yang belum lengkap dan tampilkan pesannya. true = ada yang kurang. */
+  const revealFirstIncompleteStep = () => {
+    if (!firstIncomplete) return false;
+    setFlaggedStep(firstIncomplete.id);
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document
+      .getElementById(firstIncomplete.id)
+      ?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+    document.getElementById(`${firstIncomplete.id}-title`)?.focus({ preventScroll: true });
+    return true;
   };
 
-  const handleBlockedProductAction = () => {
-    toast.error(t("toastFillAccount"));
-    scrollToSection("account-section");
-  };
-
-  const handleBlockedPaymentAction = () => {
-    if (!isAccountStepCompleted) {
-      toast.error(t("toastFillAccount"));
-      scrollToSection("account-section");
-      return;
-    }
-    toast.error(t("toastSelectProduct"));
-    scrollToSection("product-section");
-  };
-
-  const handleBlockedContactAction = () => {
-    if (!isAccountStepCompleted) {
-      toast.error(t("toastFillAccount"));
-      scrollToSection("account-section");
-      return;
-    }
-    if (!isProductStepCompleted) {
-      toast.error(t("toastSelectProduct"));
-      scrollToSection("product-section");
-      return;
-    }
-    toast.error(t("toastSelectPayment"));
-    scrollToSection("payment-method-section");
-  };
-
+  const vaMinNote = t("vaMinNote", { amount: formatPrice(MIN_PRODUCT_PRICE_FOR_VA) });
   const paymentMethodsWithVaRules = dataPaymentMethods
     ? {
         ...dataPaymentMethods,
         data: (dataPaymentMethods.data ?? []).map((category) => ({
           ...category,
-          payment_method: (category.payment_method ?? []).map((payment) => ({
-            ...payment,
-            is_active: payment.is_active && (allowVaPayment || !isVirtualAccountPayment(payment)),
-          })),
+          payment_method: (category.payment_method ?? []).map((payment) => {
+            const blockedByVaMin = !allowVaPayment && isVirtualAccountPayment(payment);
+            return {
+              ...payment,
+              is_active: payment.is_active && !blockedByVaMin,
+              // Alasan nonaktif ditulis di kartu metode (bukan dipilih lalu dibatalkan + toast)
+              disabled_note: payment.is_active && blockedByVaMin ? vaMinNote : undefined,
+            };
+          }),
         })),
       }
     : dataPaymentMethods;
 
   const handleOpenConfirm = () => {
-    const validations = [
-      ...(inputs.length > 0
-        ? [
-            { value: hasInputAccount, message: t("validationEnterAccount") },
-            { value: isAccountValid, message: t("validationAccountNotFound") },
-          ]
-        : []),
-      { value: selectedPackage, message: t("validationSelectProduct") },
-      { value: selectedPayment, message: t("validationSelectPayment") },
-      {
-        value: isVaAllowedForSelection,
-        message: t("validationVaMinAmount"),
-      },
-      { value: hasEmail, message: t("validationEmailRequired") },
-      { value: isEmailValid, message: t("validationEmailInvalid") },
-      ...(needsUserMdn
-        ? [
-            { value: hasUserMdn, message: t("validationPhoneRequired") },
-            {
-              value: isValidUserMdn(userMdn),
-              message: t("validationPhoneInvalid"),
-            },
-          ]
-        : []),
-    ];
-    for (const v of validations) {
-      if (!v.value) {
-        toast.error(v.message);
-        return;
-      }
-    }
+    if (revealFirstIncompleteStep()) return;
     setOpenModalConfirm(true);
   };
+
+  /** Isian akun untuk dicek ulang di modal konfirmasi (nilai dropdown ditampilkan dengan namanya). */
+  const accountFields = account
+    ? inputs
+        .map((input) => {
+          const raw = String(account[input.key] ?? "");
+          const option = input.Options?.find((opt) => opt.value === raw);
+          return { label: input.label, value: option?.name ?? raw };
+        })
+        .filter((field) => field.value)
+    : [];
 
   const handleCreateOrder = () => {
     mutate({
@@ -284,7 +285,7 @@ export default function GameTopUp() {
       product={categoryProduct}
       activeProduct={activeProduct}
       isLocked={lockProductStep}
-      onLockedAction={handleBlockedProductAction}
+      onLockedAction={revealFirstIncompleteStep}
     />,
 
     <PaymentMethodList
@@ -294,7 +295,7 @@ export default function GameTopUp() {
       activePayment={activePayment}
       selectedPackage={selectedPackage}
       isLocked={lockPaymentStep}
-      onLockedAction={handleBlockedPaymentAction}
+      onLockedAction={revealFirstIncompleteStep}
     />,
 
     <ContactForm
@@ -306,7 +307,7 @@ export default function GameTopUp() {
       referralCode={referralCode}
       setReferralCode={setReferralCode}
       isLocked={lockContactStep}
-      onLockedAction={handleBlockedContactAction}
+      onLockedAction={revealFirstIncompleteStep}
     />,
   ];
 
@@ -322,14 +323,16 @@ export default function GameTopUp() {
         />
       )}
       <TopUpGrid>
-        <div className="flex min-w-0 flex-col gap-4">
-          {sections.map((Section, i) =>
-            cloneElement(Section, {
-              step: i + 1,
-              key: `section-${i}`,
-            }),
-          )}
-        </div>
+        <StepStatusContext.Provider value={stepStatuses}>
+          <div className="flex min-w-0 flex-col gap-4">
+            {sections.map((Section, i) =>
+              cloneElement(Section, {
+                step: i + 1,
+                key: `section-${i}`,
+              }),
+            )}
+          </div>
+        </StepStatusContext.Provider>
 
         <aside className="flex flex-col gap-4 lg:sticky lg:top-20">
           <OrderTransactionComponent
@@ -337,6 +340,8 @@ export default function GameTopUp() {
             Payment={activePayment}
             Product={activeProduct}
             gameName={dataGameDetail.data.name}
+            accountName={accountName}
+            steps={stepSummary}
           />
           <HelpCard />
         </aside>
@@ -351,6 +356,7 @@ export default function GameTopUp() {
         Payment={activePayment}
         Product={activeProduct}
         handleConfirm={handleOpenConfirm}
+        steps={stepSummary}
       />
       <ConfirmModal
         open={openModalConfirm}
@@ -359,6 +365,10 @@ export default function GameTopUp() {
         Product={activeProduct}
         onConfirm={handleCreateOrder}
         loading={isPending}
+        accountName={accountName}
+        accountFields={accountFields}
+        email={email}
+        phone={needsUserMdn ? userMdn : undefined}
       />
     </TopUpLayout>
   );

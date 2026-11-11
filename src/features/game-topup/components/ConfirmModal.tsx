@@ -19,6 +19,13 @@ interface ConfirmModalProps {
   Payment: PaymentMethod
   setOpen: (value: boolean) => void
   open: boolean
+  /** Nickname hasil cek ID — paling penting dicek ulang supaya tidak salah kirim */
+  accountName?: string | null
+  /** Isian akun (User ID, Zone, Server, …) dengan label dari data game */
+  accountFields?: { label: string; value: string }[]
+  email?: string | null
+  /** Hanya untuk metode yang butuh nomor HP (OVO, Smartfren) */
+  phone?: string
 }
 
 /** Modal konfirmasi pesanan — Dialog ui/ (focus trap, Esc, aria-modal; rules §7). */
@@ -29,6 +36,10 @@ export default function ConfirmModal({
   open,
   Product,
   Payment,
+  accountName,
+  accountFields = [],
+  email,
+  phone,
 }: ConfirmModalProps) {
   const t = useTranslations('GameCheckout')
   const finalPrice = calculateTotalPrice(Payment, Product)
@@ -50,6 +61,34 @@ export default function ConfirmModal({
             {t('confirmSubtitle')}
           </DialogDescription>
         </DialogHeader>
+
+        {/* Tujuan top-up dulu: kesalahan di sini tidak bisa dibatalkan setelah dibayar */}
+        <dl className="flex flex-col gap-2.5 rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
+          {accountName && (
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">{t('confirmAccount')}</dt>
+              <dd className="truncate text-right font-display text-base font-bold text-foreground">{accountName}</dd>
+            </div>
+          )}
+          {accountFields.map((field) => (
+            <div key={field.label} className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">{field.label}</dt>
+              <dd className="break-all text-right font-semibold text-foreground">{field.value}</dd>
+            </div>
+          ))}
+          {email && (
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">{t('confirmEmail')}</dt>
+              <dd className="break-all text-right font-semibold text-foreground">{email}</dd>
+            </div>
+          )}
+          {phone && (
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">{t('confirmPhone')}</dt>
+              <dd className="text-right font-semibold text-foreground">{phone}</dd>
+            </div>
+          )}
+        </dl>
 
         <dl className="flex flex-col gap-2.5 rounded-xl bg-muted p-4 text-sm">
           <div className="flex justify-between gap-3">

@@ -11,16 +11,31 @@ interface OrderProps {
   handleConfirm: () => void
   /** Nama game — baris pertama ringkasan */
   gameName?: string
+  /** Nickname hasil cek ID (null bila belum terverifikasi) */
+  accountName?: string | null
+  /** Status tiap langkah, untuk progres & daftar yang belum lengkap */
+  steps: { label: string; done: boolean }[]
 }
 
 const EMPTY = '—'
 
-export default function OrderSummary({ Payment, Product, handleConfirm, gameName }: OrderProps) {
+export default function OrderSummary({
+  Payment,
+  Product,
+  handleConfirm,
+  gameName,
+  accountName,
+  steps,
+}: OrderProps) {
   const t = useTranslations('GameCheckout')
   const totalPrice = calculateTotalPrice(Payment, Product)
+  const doneCount = steps.filter((step) => step.done).length
+  const allDone = doneCount === steps.length
+  const missing = steps.filter((step) => !step.done)
 
   const rows = [
     { label: t('orderGame'), value: gameName },
+    { label: t('orderAccount'), value: accountName },
     { label: t('orderPackage'), value: Product?.name },
     { label: t('orderPayment'), value: Payment?.full_name },
   ]
@@ -30,9 +45,14 @@ export default function OrderSummary({ Payment, Product, handleConfirm, gameName
       aria-labelledby="order-summary-title"
       className="hidden flex-col gap-4 rounded-2xl border border-border bg-card p-5 lg:flex"
     >
-      <h2 id="order-summary-title" className="font-display text-lg font-semibold text-foreground">
-        {t('orderSummaryTitle')}
-      </h2>
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 id="order-summary-title" className="font-display text-lg font-semibold text-foreground">
+          {t('orderSummaryTitle')}
+        </h2>
+        <span className={`text-xs font-semibold ${allDone ? 'text-success' : 'text-muted-foreground'}`}>
+          {t('stepsProgress', { done: doneCount, total: steps.length })}
+        </span>
+      </div>
 
       <dl className="flex flex-col gap-2.5 text-sm">
         {rows.map(({ label, value }) => (
@@ -62,6 +82,20 @@ export default function OrderSummary({ Payment, Product, handleConfirm, gameName
         <ShoppingCart className="h-4 w-4" aria-hidden />
         {t('orderBuy')}
       </button>
+
+      {!allDone && (
+        <div className="text-xs text-muted-foreground">
+          <p className="font-semibold">{t('checklistIncomplete')}</p>
+          <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+            {missing.map((step) => (
+              <li key={step.label} className="flex items-center gap-1.5">
+                <span aria-hidden className="size-1.5 rounded-full bg-muted-foreground/60" />
+                {step.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   )
 }
