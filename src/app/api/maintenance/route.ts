@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getActiveMaintenance } from '@/lib/maintenance'
+import { getActiveMaintenance } from '@/features/maintenance/lib/maintenance'
 
 export const dynamic = 'force-dynamic'
 

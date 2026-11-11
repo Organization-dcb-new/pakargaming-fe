@@ -1,6 +1,6 @@
 'use client'
 
-import useLoginGoogleOauth from "../../../../hooks/useLogin"
+import useLoginGoogleOauth from "@/features/auth/hooks/useLoginGoogleOauth"
 import { useTranslations } from 'next-intl'
 
 export default function GoogleCallbackPage() {

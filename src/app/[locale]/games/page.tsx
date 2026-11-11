@@ -1,5 +1,5 @@
-import { Games } from '../../../components/Home/Games'
+import { GameCatalog } from '@/features/games/GameCatalog'
 
 export default function GamesPage() {
-  return <Games />
+  return <GameCatalog />
 }

@@ -1,5 +1,5 @@
 import type { NextRequest, NextResponse } from 'next/server'
-import type { AuthUser } from '../types/Auth'
+import type { AuthUser } from '@/types/auth'
 import { LEGACY_TOKEN_COOKIE, SESSION_COOKIE, USER_COOKIE } from './session'
 
 /** Khusus server (route handler / proxy). Browser tidak pernah memegang JWT sesi. */

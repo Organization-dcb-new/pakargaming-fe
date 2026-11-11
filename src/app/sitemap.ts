@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
-import { routing } from '../i18n/routing'
-import { serverApi } from '../api/axios'
-import { GetGamesResponse } from '../types/Game'
+import { routing } from '@/i18n/routing'
+import { serverApi } from '@/api/client'
+import { GetGamesResponse } from '@/types/game'
 
 const pages = [
   '', // homepage

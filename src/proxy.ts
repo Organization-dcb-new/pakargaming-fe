@@ -1,7 +1,7 @@
 import createMiddleware from 'next-intl/middleware'
-import { routing } from './i18n/routing'
+import { routing } from '@/i18n/routing'
 import { NextRequest, NextResponse } from 'next/server'
-import { LEGACY_TOKEN_COOKIE, SESSION_COOKIE } from './lib/session'
+import { LEGACY_TOKEN_COOKIE, SESSION_COOKIE } from '@/lib/session'
 
 const intlMiddleware = createMiddleware(routing)
 

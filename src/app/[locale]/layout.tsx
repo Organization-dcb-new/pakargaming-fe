@@ -1,26 +1,26 @@
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import { routing } from '../../i18n/routing'
+import { routing } from '@/i18n/routing'
 import '../globals.css'
-import { Navigation } from '../../components/Navigation'
-import { Footer } from '../../components/Footer/Footer'
+import { Navbar } from '@/features/navbar/Navbar'
+import { Footer } from '@/features/footer/Footer'
 // @wrksz/themes/next: script anti-flash disuntik via useServerInsertedHTML — tanpa warning
 // "Encountered a script tag" dari React 19 (next-themes merender <script> di komponen)
 import { ThemeProvider } from '@wrksz/themes/next'
-import QueryProvider from '../../providers/query-provider'
-import { fontDisplay, fontSans } from '../../styles/fonts'
+import QueryProvider from '@/providers/QueryProvider'
+import { fontDisplay, fontSans } from '@/styles/fonts'
 
-import { Toaster } from '../../components/ui/sonner'
-import GameBackdrop from '../../components/GameBackdrop/GameBackdrop'
-import ProgressBar from '../../components/ProgressBar'
-import GlobalWhatsAppButton from '../../components/CSButton'
-import { GoogleAnalytics } from '../../components/GoogleAnalytics'
-import CryptoProvider from '../../components/CryptoProvider'
-import { AuthDialogProvider } from '../../components/Auth/AuthDialogProvider'
-import MaintenancePage from '../../components/Maintenance/MaintenancePage'
-import MaintenanceWatcher from '../../components/Maintenance/MaintenanceWatcher'
-import { getActiveMaintenance } from '../../lib/maintenance'
+import { Toaster } from '@/components/ui/sonner'
+import GameBackdrop from '@/components/game-backdrop/GameBackdrop'
+import ProgressBar from '@/components/ProgressBar'
+import WhatsAppButton from '@/components/WhatsAppButton'
+import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+import CryptoProvider from '@/providers/CryptoProvider'
+import { AuthDialogProvider } from '@/features/auth/components/AuthDialogProvider'
+import MaintenancePage from '@/features/maintenance/MaintenancePage'
+import MaintenanceWatcher from '@/features/maintenance/MaintenanceWatcher'
+import { getActiveMaintenance } from '@/features/maintenance/lib/maintenance'
 
 export const metadata = {
   title: 'Pakar Gaming - Ahlinya Top Up Game Murah, Instan & Terpercaya',
@@ -77,14 +77,14 @@ export default async function RootLayout({
                 <AuthDialogProvider>
                   <div className="min-h-screen">
                     <ProgressBar />
-                    <Navigation />
+                    <Navbar />
                     <main>
                       {children}
                       <Toaster />
                     </main>
                     <Footer />
 
-                    <GlobalWhatsAppButton />
+                    <WhatsAppButton />
                     <GoogleAnalytics />
                   </div>
                 </AuthDialogProvider>

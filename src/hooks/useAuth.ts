@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
-import { CSRF_HEADER, CSRF_HEADER_VALUE, LEGACY_TOKEN_COOKIE, USER_COOKIE } from '../lib/session'
-import type { AuthUser } from '../types/Auth'
+import { CSRF_HEADER, CSRF_HEADER_VALUE, LEGACY_TOKEN_COOKIE, USER_COOKIE } from '@/lib/session'
+import type { AuthUser } from '@/types/auth'
 
 export type { AuthUser }
 

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import GameTransaction from "../../../../components/GameTransaction/GameTransaction";
-import { GetGameResponse } from "../../../../types/Game";
+import GameTopUp from "@/features/game-topup/GameTopUp";
+import { GetGameResponse } from "@/types/game";
 
 export async function generateMetadata({
   params,
@@ -50,5 +50,5 @@ export async function generateMetadata({
 }
 
 export default function GamePage() {
-  return <GameTransaction />;
+  return <GameTopUp />;
 }

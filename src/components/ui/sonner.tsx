@@ -3,7 +3,7 @@
 import { CircleCheck, CircleX, Info, LoaderCircle, TriangleAlert, X, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
-import { cn } from "./utils";
+import { cn } from "@/lib/cn";
 
 type Tone = "success" | "error" | "warning" | "info" | "loading";
 

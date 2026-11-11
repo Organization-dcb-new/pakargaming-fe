@@ -1,9 +1,9 @@
 'use client'
 
 import { useLocale, useTranslations } from 'next-intl'
-import { usePathname, useRouter } from '../i18n/routing'
+import { usePathname, useRouter } from '@/i18n/routing'
 import { useTransition } from 'react'
-import { setEntranceSuppressed, startPageTransition, waitForDocumentLang } from '../lib/pageTransition'
+import { setEntranceSuppressed, startPageTransition, waitForDocumentLang } from '@/lib/pageTransition'
 
 const locales = [
   { code: 'en', label: 'EN' },

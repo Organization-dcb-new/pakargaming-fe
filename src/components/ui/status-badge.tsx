@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Clock, XCircle, type LucideIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { cn } from './utils'
+import { cn } from '@/lib/cn'
 
 type StatusKey = 'paid' | 'pending' | 'failed'
 

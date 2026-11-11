@@ -1,0 +1,361 @@
+"use client";
+import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useGetGamesBySlug } from "@/api/games";
+import GameTopUpSkeleton from "@/features/game-topup/components/GameTopUpSkeleton";
+import TopUpLayout from "@/features/game-topup/components/TopUpLayout";
+import GameHeader from "@/features/game-topup/components/GameHeader";
+import AccountComponent from "@/features/game-topup/components/AccountCard";
+import TopUpGrid from "@/features/game-topup/components/TopUpGrid";
+import { cloneElement, ReactElement, useEffect, useState } from "react";
+import { ProductList } from "@/features/game-topup/components/ProductList";
+import { Price } from "@/types/game";
+import { PaymentMethod } from "@/types/paymentMethod";
+import { useGetPaymentMethod } from "@/api/useGetPaymentMethod";
+import PaymentMethodList from "@/features/game-topup/components/PaymentMethodList";
+import ContactForm from "@/features/game-topup/components/ContactForm";
+import OrderTransactionComponent from "@/features/game-topup/components/OrderSummary";
+import HelpCard from "@/features/game-topup/components/HelpCard";
+import MobileOrderBar from "@/features/game-topup/components/MobileOrderBar";
+import { useCreateTransaction } from "@/features/game-topup/api/useCreateTransaction";
+import { toast } from "sonner";
+import useAuth from "@/hooks/useAuth";
+import ConfirmModal from "@/features/game-topup/components/ConfirmModal";
+import { useGetCategoryProduct } from "@/features/game-topup/api/useGetCategoryProduct";
+import GameDescription from "@/features/game-topup/components/GameDescription";
+import FAQSection from "@/features/game-topup/components/FAQSection";
+import GameMaintenance from "@/features/game-topup/components/GameMaintenance";
+import GameNotFound from "@/features/game-topup/components/GameNotFound";
+
+const PAYMENT_CODES_NEEDING_USER_MDN = new Set(["ovo", "smartfren_airtime"]);
+const MIN_PRODUCT_PRICE_FOR_VA = 10000;
+
+function paymentRequiresUserMdn(payment: PaymentMethod | null): boolean {
+  const code = payment?.code?.toLowerCase();
+  return !!code && PAYMENT_CODES_NEEDING_USER_MDN.has(code);
+}
+
+function isVirtualAccountPayment(payment: PaymentMethod | null): boolean {
+  if (!payment) return false;
+  const haystack = [
+    payment.type,
+    payment.provider,
+    payment.code,
+    payment.name,
+    payment.full_name,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return /(^|[\s_-])va($|[\s_-])/.test(haystack) || haystack.includes("virtual");
+}
+
+function normalizeUserMdn(raw: string): string {
+  const d = raw.replace(/\D/g, "");
+  if (d.startsWith("62")) return d;
+  if (d.startsWith("0")) return `62${d.slice(1)}`;
+  if (d.startsWith("8")) return `62${d}`;
+  return d;
+}
+
+function isValidUserMdn(raw: string): boolean {
+  const n = normalizeUserMdn(raw);
+  return n.length >= 11 && n.length <= 15 && n.startsWith("62");
+}
+
+export default function GameTopUp() {
+  const t = useTranslations("GameCheckout");
+  const { slug } = useParams<{ slug: string }>();
+  const [selectedPackage, setSelectedPackage] = useState<Price | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(null);
+  const [email, setSelectedEmail] = useState<string>(null);
+  const { user } = useAuth();
+  const [account, setSelectedAccount] = useState<Record<string, any> | null>(
+    null,
+  );
+  const [openModalConfirm, setOpenModalConfirm] = useState<boolean>(false);
+  const [userMdn, setUserMdn] = useState("");
+  const [referralCode, setReferralCode] = useState("");
+
+  const { data: dataPaymentMethods } = useGetPaymentMethod();
+  const { data: dataGameDetail, isLoading: isLoadingGameDetail } =
+    useGetGamesBySlug(slug);
+
+  const gameId = dataGameDetail?.data?.id;
+
+  const { data: categoryProduct } = useGetCategoryProduct(gameId);
+
+  const { mutate, isPending } = useCreateTransaction();
+
+  const activeProduct = selectedPackage ?? null;
+  const activePayment = selectedPayment ?? null;
+  const allowVaPayment = (activeProduct?.selling_price ?? 0) > MIN_PRODUCT_PRICE_FOR_VA;
+
+  const inputs = dataGameDetail?.data?.input || [];
+
+  const safeValues = account ?? {};
+
+  const hasInputAccount = Object.values(safeValues).some(Boolean);
+  const isAccountValid = !!account;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const hasEmail = !!email;
+  const isEmailValid = hasEmail && emailRegex.test(email);
+  const requiresAccountInput = inputs.length > 0;
+  const isAccountStepCompleted = !requiresAccountInput || (hasInputAccount && isAccountValid);
+  const isProductStepCompleted = !!activeProduct;
+  const isPaymentStepCompleted = !!activePayment;
+
+  useEffect(() => {
+    if (user?.email) {
+      setSelectedEmail(user.email);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!paymentRequiresUserMdn(selectedPayment)) {
+      setUserMdn("");
+    }
+  }, [selectedPayment]);
+
+  useEffect(() => {
+    if (selectedPayment && !allowVaPayment && isVirtualAccountPayment(selectedPayment)) {
+      setSelectedPayment(null);
+      toast.error(t("toastVaMinAmount"));
+    }
+  }, [allowVaPayment, selectedPayment, t]);
+
+  useEffect(() => {
+    if (!isAccountStepCompleted && selectedPackage) {
+      setSelectedPackage(null);
+    }
+  }, [isAccountStepCompleted, selectedPackage]);
+
+  useEffect(() => {
+    if ((!isAccountStepCompleted || !selectedPackage) && selectedPayment) {
+      setSelectedPayment(null);
+    }
+  }, [isAccountStepCompleted, selectedPackage, selectedPayment]);
+
+  if (isLoadingGameDetail) {
+    return <GameTopUpSkeleton />;
+  }
+
+  if (!dataGameDetail?.data) {
+    return (
+      <TopUpLayout>
+        <GameNotFound />
+      </TopUpLayout>
+    );
+  }
+
+  if (dataGameDetail?.data && !dataGameDetail.data.is_active) {
+    return (
+      <TopUpLayout>
+        <GameMaintenance gameName={dataGameDetail.data.name} />
+      </TopUpLayout>
+    );
+  }
+
+  const needsUserMdn = paymentRequiresUserMdn(selectedPayment);
+  const hasUserMdn = userMdn.trim().length > 0;
+  const isVaAllowedForSelection = !(
+    selectedPayment &&
+    isVirtualAccountPayment(selectedPayment) &&
+    !allowVaPayment
+  );
+
+  const lockProductStep = !isAccountStepCompleted;
+  const lockPaymentStep = !isAccountStepCompleted || !isProductStepCompleted;
+  const lockContactStep =
+    !isAccountStepCompleted || !isProductStepCompleted || !isPaymentStepCompleted;
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const handleBlockedProductAction = () => {
+    toast.error(t("toastFillAccount"));
+    scrollToSection("account-section");
+  };
+
+  const handleBlockedPaymentAction = () => {
+    if (!isAccountStepCompleted) {
+      toast.error(t("toastFillAccount"));
+      scrollToSection("account-section");
+      return;
+    }
+    toast.error(t("toastSelectProduct"));
+    scrollToSection("product-section");
+  };
+
+  const handleBlockedContactAction = () => {
+    if (!isAccountStepCompleted) {
+      toast.error(t("toastFillAccount"));
+      scrollToSection("account-section");
+      return;
+    }
+    if (!isProductStepCompleted) {
+      toast.error(t("toastSelectProduct"));
+      scrollToSection("product-section");
+      return;
+    }
+    toast.error(t("toastSelectPayment"));
+    scrollToSection("payment-method-section");
+  };
+
+  const paymentMethodsWithVaRules = dataPaymentMethods
+    ? {
+        ...dataPaymentMethods,
+        data: (dataPaymentMethods.data ?? []).map((category) => ({
+          ...category,
+          payment_method: (category.payment_method ?? []).map((payment) => ({
+            ...payment,
+            is_active: payment.is_active && (allowVaPayment || !isVirtualAccountPayment(payment)),
+          })),
+        })),
+      }
+    : dataPaymentMethods;
+
+  const handleOpenConfirm = () => {
+    const validations = [
+      ...(inputs.length > 0
+        ? [
+            { value: hasInputAccount, message: t("validationEnterAccount") },
+            { value: isAccountValid, message: t("validationAccountNotFound") },
+          ]
+        : []),
+      { value: selectedPackage, message: t("validationSelectProduct") },
+      { value: selectedPayment, message: t("validationSelectPayment") },
+      {
+        value: isVaAllowedForSelection,
+        message: t("validationVaMinAmount"),
+      },
+      { value: hasEmail, message: t("validationEmailRequired") },
+      { value: isEmailValid, message: t("validationEmailInvalid") },
+      ...(needsUserMdn
+        ? [
+            { value: hasUserMdn, message: t("validationPhoneRequired") },
+            {
+              value: isValidUserMdn(userMdn),
+              message: t("validationPhoneInvalid"),
+            },
+          ]
+        : []),
+    ];
+    for (const v of validations) {
+      if (!v.value) {
+        toast.error(v.message);
+        return;
+      }
+    }
+    setOpenModalConfirm(true);
+  };
+
+  const handleCreateOrder = () => {
+    mutate({
+      email: email,
+      payment_method_id: selectedPayment.id,
+      game_data: account,
+      product_id: selectedPackage.id,
+      ...(needsUserMdn ? { user_mdn: normalizeUserMdn(userMdn) } : {}),
+      referral_code: referralCode ? referralCode.trim() : undefined,
+    });
+  };
+
+  const sections: ReactElement<{ step?: number }>[] = [
+    ...(inputs.length > 0
+      ? [
+          <AccountComponent
+            account={account}
+            setAccount={setSelectedAccount}
+            game={dataGameDetail.data}
+            key="account"
+            gameData={inputs}
+          />,
+        ]
+      : []),
+
+    <ProductList
+      productGame={dataGameDetail}
+      setSelectedPackage={setSelectedPackage}
+      key="product"
+      product={categoryProduct}
+      activeProduct={activeProduct}
+      isLocked={lockProductStep}
+      onLockedAction={handleBlockedProductAction}
+    />,
+
+    <PaymentMethodList
+      ActiveProduct={activeProduct}
+      setSelectedPaymentMethod={setSelectedPayment}
+      PaymentMethod={paymentMethodsWithVaRules}
+      activePayment={activePayment}
+      selectedPackage={selectedPackage}
+      isLocked={lockPaymentStep}
+      onLockedAction={handleBlockedPaymentAction}
+    />,
+
+    <ContactForm
+      setSelectedEmail={setSelectedEmail}
+      email={email}
+      requiresPhone={needsUserMdn}
+      userMdn={userMdn}
+      setUserMdn={setUserMdn}
+      referralCode={referralCode}
+      setReferralCode={setReferralCode}
+      isLocked={lockContactStep}
+      onLockedAction={handleBlockedContactAction}
+    />,
+  ];
+
+  return (
+    <TopUpLayout>
+      <GameHeader game={dataGameDetail.data} />
+      <TopUpGrid>
+        <div className="flex min-w-0 flex-col gap-4">
+          {sections.map((Section, i) =>
+            cloneElement(Section, {
+              step: i + 1,
+              key: `section-${i}`,
+            }),
+          )}
+        </div>
+
+        <aside className="flex flex-col gap-4 lg:sticky lg:top-20">
+          <OrderTransactionComponent
+            handleConfirm={handleOpenConfirm}
+            Payment={activePayment}
+            Product={activeProduct}
+            gameName={dataGameDetail.data.name}
+          />
+          <HelpCard />
+        </aside>
+      </TopUpGrid>
+      <div className="mt-8 flex flex-col gap-5">
+        <GameDescription game={dataGameDetail} />
+        <FAQSection />
+      </div>
+      {/* Spacer setinggi bar order mobile (diukur MobileOrderBar) supaya konten bawah tidak tertutup */}
+      <div aria-hidden className="h-[var(--mobile-order-bar-height,0px)] lg:hidden" />
+      <MobileOrderBar
+        Payment={activePayment}
+        Product={activeProduct}
+        handleConfirm={handleOpenConfirm}
+      />
+      <ConfirmModal
+        open={openModalConfirm}
+        setOpen={setOpenModalConfirm}
+        Payment={activePayment}
+        Product={activeProduct}
+        onConfirm={handleCreateOrder}
+        loading={isPending}
+      />
+    </TopUpLayout>
+  );
+}

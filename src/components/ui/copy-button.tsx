@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { cn } from './utils'
+import { cn } from '@/lib/cn'
 
 interface CopyButtonProps {
   value: string

@@ -1,4 +1,4 @@
-import CheckTransaction from "../../../components/Check-Transaction/CheckTransaction";
+import CheckTransaction from "@/features/transactions/CheckTransaction";
 
 export default function CheckTransactionPage() {
   return <CheckTransaction />;

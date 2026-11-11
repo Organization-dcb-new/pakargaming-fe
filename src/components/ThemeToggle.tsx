@@ -4,9 +4,9 @@ import { Moon, Sun } from 'lucide-react'
 import { useTheme } from '@wrksz/themes/client'
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { Button } from './ui/button'
+import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
-import { startPageTransition } from '../lib/pageTransition'
+import { startPageTransition } from '@/lib/pageTransition'
 
 export function ThemeToggle() {
   const t = useTranslations('Theme')
