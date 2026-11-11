@@ -42,11 +42,14 @@ export function ShowBadge({ variant, animated = false }: ShowBadgeProps) {
   }[variant]
 
   return (
+    // Tag jajar genjang seperti chip kategori; isi dimiringkan balik supaya tegak
     <span
-      className={`chamfer relative inline-flex items-center gap-1 overflow-hidden px-2 py-0.5 font-display text-xs font-bold uppercase tracking-wider shadow-sm [--chamfer:5px] ${VARIANT_CLASS[variant]}`}
+      className={`relative inline-flex -skew-x-12 items-center overflow-hidden rounded-sm px-2 py-0.5 shadow-sm ${VARIANT_CLASS[variant]}`}
     >
-      <Icon className="h-3 w-3" aria-hidden />
-      {label}
+      <span className="inline-flex skew-x-12 items-center gap-1 font-display text-xs font-bold uppercase tracking-wider">
+        <Icon className="h-3 w-3" aria-hidden />
+        {label}
+      </span>
       {animated && (
         <span
           aria-hidden

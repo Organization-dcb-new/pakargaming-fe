@@ -17,7 +17,7 @@ export function GamesByShowSkeleton() {
       {/* Baris chip navigasi show — overflow-hidden: jumlah chip melebihi lebar mobile */}
       <div className="flex gap-2 md:gap-4 justify-start md:justify-center overflow-hidden px-4 py-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-8 w-24 shrink-0 rounded-full bg-muted" />
+          <div key={i} className="h-8 w-24 shrink-0 -skew-x-12 rounded-sm bg-muted" />
         ))}
       </div>
 
@@ -34,9 +34,13 @@ export function GamesByShowSkeleton() {
             {/* Grid tile */}
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4 md:grid-cols-5 lg:grid-cols-6">
               {Array.from({ length: 6 }).map((_, j) => (
-                <div key={j} className="rounded-2xl border border-border bg-card p-2 sm:p-2.5">
-                  <div className="aspect-square w-full rounded-xl bg-muted" />
-                  <div className="mx-0.5 mt-2.5 h-4 w-3/4 rounded bg-muted" />
+                <div key={j} className="chamfer bg-border p-px [--chamfer:14px]">
+                  <div className="chamfer bg-card [--chamfer:13.6px]">
+                    <div className="aspect-square w-full bg-muted" />
+                    <div className="border-t border-border px-2.5 py-2.5 sm:px-3">
+                      <div className="h-4 w-3/4 rounded-sm bg-muted" />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
