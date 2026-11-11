@@ -59,7 +59,7 @@ export default function ShowNav({
           flex-shrink-0
           px-3 md:px-4
           py-1.5 md:py-2
-          rounded-full
+          -skew-x-12 rounded-sm
           text-xs md:text-sm
           font-semibold
           transition-colors duration-200 motion-reduce:transition-none
@@ -76,11 +76,12 @@ export default function ShowNav({
               <motion.span
                 layoutId="show-chip-active"
                 aria-hidden
-                className="absolute inset-0 rounded-full bg-foreground shadow-md"
+                className="absolute inset-0 rounded-sm bg-foreground shadow-md"
                 transition={chipTransition}
               />
             )}
-            <span className="relative z-10">{show.name}</span>
+            {/* Kotak dimiringkan jadi jajar genjang; teks dimiringkan balik supaya tetap tegak */}
+            <span className="relative z-10 inline-block skew-x-12">{show.name}</span>
           </button>
         )
       })}
