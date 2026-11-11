@@ -9,7 +9,7 @@ import { redeemGoogleSignIn, useLinkGoogle } from '@/features/auth/api/auth'
 import { parseAuthError, useAuthErrorMessage } from '@/features/auth/lib/authErrors'
 import { useRouter as useLocaleRouter } from '@/i18n/routing'
 import { getGoogleAuthUrl } from '@/features/auth/lib/authUrls'
-import { getAuthUser, notifyAuthChange } from '@/hooks/useAuth'
+import { getAuthUser, notifyAuthChange } from '@/lib/sessionClient'
 
 /** Query param yang dikirim backend setelah OAuth Google — dibuang dari URL setelah diproses. */
 const AUTH_REDIRECT_PARAMS = ['auth_code', 'auth_error', 'google_link']

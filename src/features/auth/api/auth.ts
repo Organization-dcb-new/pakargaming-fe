@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/api/client'
-import { notifyAuthChange } from '@/hooks/useAuth'
+import { notifyAuthChange } from '@/lib/sessionClient'
 import { TURNSTILE_HEADER } from '@/lib/session'
 import type { ApiResponse } from '@/types/api'
 import type {

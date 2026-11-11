@@ -2,7 +2,7 @@ import axios from "axios";
 import CryptoJS from "crypto-js";
 import { getClientSecretKey } from "@/lib/cryptoClient";
 import { CSRF_HEADER, CSRF_HEADER_VALUE } from "@/lib/session";
-import { endSession } from "@/hooks/useAuth";
+import { endSession } from "@/lib/sessionClient";
 
 declare module "axios" {
   interface AxiosRequestConfig {
@@ -61,11 +61,3 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export const serverApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
-});

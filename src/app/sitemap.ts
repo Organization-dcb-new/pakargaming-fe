@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { routing } from '@/i18n/routing'
-import { serverApi } from '@/api/client'
+import { serverApi } from '@/api/serverClient'
 import { GetGamesResponse } from '@/types/game'
 
 const pages = [

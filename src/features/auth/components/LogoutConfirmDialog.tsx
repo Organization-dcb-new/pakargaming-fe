@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
-import { logout } from '@/hooks/useAuth'
+import { logout } from '@/lib/sessionClient'
 
 interface LogoutConfirmDialogProps {
   open: boolean
