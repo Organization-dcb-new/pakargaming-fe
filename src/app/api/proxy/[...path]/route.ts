@@ -30,7 +30,7 @@ const ALLOWED_ROUTES: ReadonlyArray<readonly [Method, RegExp]> = [
   ["GET", /^v1\/payment-categories\/client$/],
   ["GET", /^v1\/referral-codes\/code\/[^/]+$/],
   ["POST", /^v1\/transactions(\/check-id)?$/],
-  ["GET", /^v1\/transactions\/email(\/dashboard)?$/],
+  ["GET", /^v1\/transactions\/email\/dashboard$/],
   ["GET", /^v1\/transactions\/detail-trx\/[^/]+$/],
   ["GET", /^v1\/transactions\/[^/]+$/],
   ["POST", /^v1\/auth\/(login|register|forgot-password|reset-password)$/],

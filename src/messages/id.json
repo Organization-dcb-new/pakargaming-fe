@@ -427,22 +427,7 @@
     "notFoundDesc": "Order ID tidak valid atau transaksi sudah tidak tersedia.",
     "notFoundCheck": "Cek transaksi",
     "notFoundRetry": "Coba lagi",
-    "notFoundHome": "Kembali ke Beranda",
-    "pagePendingTitle": "Menunggu Pembayaran",
-    "pagePendingDesc": "Selesaikan pembayaran sesuai metode yang dipilih",
-    "pagePendingBtn": "Cek Status Pembayaran",
-    "pagePaidTitle": "Pembayaran Berhasil",
-    "pagePaidDesc": "Top up berhasil dan item sudah masuk ke akun kamu",
-    "pagePaidBtn": "Kembali ke Beranda",
-    "pageFailedTitle": "Pembayaran Gagal",
-    "pageFailedDesc": "Transaksi gagal atau telah kedaluwarsa",
-    "pageFailedBtn": "Ulangi Transaksi",
-    "pageContinuePayment": "Lanjutkan Pembayaran",
-    "pageRowOrderId": "Order ID",
-    "pageRowPaymentNo": "Payment No",
-    "pageRowMethod": "Metode",
-    "pageScanQr": "Scan QR menggunakan aplikasi e-wallet kamu",
-    "pageTotal": "Total"
+    "notFoundHome": "Kembali ke Beranda"
   },
   "Common": {
     "loading": "Memuat...",

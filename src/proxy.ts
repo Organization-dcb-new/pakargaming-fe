@@ -12,7 +12,7 @@ export default function proxy(request: NextRequest) {
   const hasSession =
     request.cookies.has(SESSION_COOKIE) || request.cookies.has(LEGACY_TOKEN_COOKIE)
 
-  const protectedRoute = /^\/(id|en)?\/(my-transaction|dashboard)/
+  const protectedRoute = /^\/(id|en)?\/dashboard/
 
   if (protectedRoute.test(pathname) && !hasSession) {
     const locale = pathname.startsWith('/en') ? 'en' : 'id'

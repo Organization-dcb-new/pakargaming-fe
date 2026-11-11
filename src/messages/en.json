@@ -427,22 +427,7 @@
     "notFoundDesc": "The order ID is invalid or the transaction is no longer available.",
     "notFoundCheck": "Check transaction",
     "notFoundRetry": "Try again",
-    "notFoundHome": "Back to home",
-    "pagePendingTitle": "Waiting for payment",
-    "pagePendingDesc": "Complete payment using your selected method.",
-    "pagePendingBtn": "Check payment status",
-    "pagePaidTitle": "Payment successful",
-    "pagePaidDesc": "Top-up succeeded and items have been delivered to your account.",
-    "pagePaidBtn": "Back to home",
-    "pageFailedTitle": "Payment failed",
-    "pageFailedDesc": "The transaction failed or has expired.",
-    "pageFailedBtn": "Retry transaction",
-    "pageContinuePayment": "Continue to payment",
-    "pageRowOrderId": "Order ID",
-    "pageRowPaymentNo": "Payment No",
-    "pageRowMethod": "Method",
-    "pageScanQr": "Scan the QR with your e-wallet app",
-    "pageTotal": "Total"
+    "notFoundHome": "Back to home"
   },
   "Common": {
     "loading": "Loading...",

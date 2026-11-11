@@ -53,6 +53,18 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  /**
+   * Halaman lama yang sudah digantikan. Redirect permanen supaya link lama (bookmark, email,
+   * return URL payment gateway) tetap jalan. Query string ikut terbawa otomatis.
+   */
+  async redirects() {
+    return [
+      { source: '/:locale(id|en)/transaction/:id', destination: '/:locale/detail-trx/:id', permanent: true },
+      { source: '/transaction/:id', destination: '/detail-trx/:id', permanent: true },
+      { source: '/:locale(id|en)/my-transaction', destination: '/:locale/dashboard', permanent: true },
+      { source: '/my-transaction', destination: '/dashboard', permanent: true },
+    ]
+  },
   async headers() {
     return [
       {
