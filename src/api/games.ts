@@ -4,6 +4,7 @@ import {
   GetGamesBySearchResponse,
   GetGamesResponse,
 } from '@/types/game'
+import { useRegion } from '@/hooks/useRegion'
 import { api } from './client'
 
 export function useGetGames() {
@@ -30,13 +31,16 @@ export function useGetGamesBySlug(slug: string) {
   return { data, isLoading }
 }
 
+/** Katalog A–Z: game tampil untuk region pilihan pembeli (useRegion). */
 export function useCatalogGame(letter: string) {
+  const { region } = useRegion()
   const { data, isLoading, isError, refetch } = useQuery<GetGamesResponse>({
-    queryKey: ['get-games-catalog', letter],
+    queryKey: ['get-games-catalog', letter, region],
     queryFn: async () => {
       const res = await api.get('/v1/games/letter', {
         params: {
           letter,
+          region,
         },
       })
       return res.data
@@ -46,13 +50,15 @@ export function useCatalogGame(letter: string) {
   return { data, isLoading, isError, refetch }
 }
 
+/** Pencarian navbar: hanya game region pilihan pembeli (useRegion). */
 export function useGetGameBySearch(search: string) {
+  const { region } = useRegion()
   return useQuery<GetGamesBySearchResponse>({
-    queryKey: ['games-search', search],
+    queryKey: ['games-search', search, region],
     enabled: !!search,
     queryFn: async () => {
       const res = await api.get('/v1/games/search', {
-        params: { search },
+        params: { search, region },
       })
       return res.data
     },

@@ -10,6 +10,7 @@ import LogoutConfirmDialog from '@/features/auth/components/LogoutConfirmDialog'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { BrandMark } from '@/components/Logo'
 import { NAV_ITEMS, isNavActive } from '@/features/navbar/config'
+import RegionSwitcher from '@/features/navbar/components/RegionSwitcher'
 import { focusRing } from '@/styles/focusRing'
 import { getAvatarSrc } from '@/lib/avatar'
 
@@ -75,6 +76,8 @@ export default function MobileNav({ user, onLogin }: MobileNavProps) {
                 )
               })}
             </nav>
+
+            <RegionSwitcher variant="mobile" labelClassName={sectionLabelClass} />
 
             <div className="space-y-2">
               <p className={sectionLabelClass}>{t('languageAndTheme')}</p>

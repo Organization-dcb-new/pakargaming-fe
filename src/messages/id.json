@@ -19,7 +19,11 @@
     "accountMenu": "Menu akun",
     "brand": "Pakar Gaming",
     "wordmark": "Pakar<accent>Gaming</accent>",
-    "language": "Bahasa"
+    "language": "Bahasa",
+    "region": "Region akun",
+    "regionMenu": "Pilih region akun game",
+    "regionCurrent": "Region akun: {name}. Ganti region",
+    "regionHint": "Game dan nominal yang tampil mengikuti region akun game-mu."
   },
   "Home": {
     "heroTitle": "Tingkatkan Skill Gaming Anda",
@@ -221,7 +225,12 @@
     "gameNotFoundTitle": "Game tidak ditemukan",
     "gameNotFoundDesc": "Game yang kamu cari tidak tersedia atau gagal dimuat. Coba pilih game lain dari beranda.",
     "toastAccountNotFound": "Akun tidak ditemukan",
-    "toastCheckIdFailed": "Gagal cek ID, coba lagi"
+    "toastCheckIdFailed": "Gagal cek ID, coba lagi",
+    "regionChip": "Region {region}",
+    "regionUnavailableTitle": "{game} tidak tersedia untuk region {region}",
+    "regionUnavailableDesc": "Top up di halaman ini untuk akun region {region}.",
+    "regionSwitchTo": "Pakai region {region}",
+    "regionBrowse": "Lihat game region {region}"
   },
   "CheckTransaction": {
     "inputLabel": "Nomor Invoice",

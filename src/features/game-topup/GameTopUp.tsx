@@ -25,6 +25,8 @@ import { useGetCategoryProduct } from "@/features/game-topup/api/useGetCategoryP
 import GameDescription from "@/features/game-topup/components/GameDescription";
 import FAQSection from "@/features/game-topup/components/FAQSection";
 import GameUnavailable from "@/features/game-topup/components/GameUnavailable";
+import RegionNotice from "@/features/game-topup/components/RegionNotice";
+import { useGameRegion } from "@/features/game-topup/hooks/useGameRegion";
 
 const PAYMENT_CODES_NEEDING_USER_MDN = new Set(["ovo", "smartfren_airtime"]);
 const MIN_PRODUCT_PRICE_FOR_VA = 10000;
@@ -82,6 +84,7 @@ export default function GameTopUp() {
     useGetGamesBySlug(slug);
 
   const gameId = dataGameDetail?.data?.id;
+  const { gameRegion, regionMismatch, switchToGameRegion } = useGameRegion(dataGameDetail?.data);
 
   const { data: categoryProduct } = useGetCategoryProduct(gameId);
 
@@ -316,6 +319,14 @@ export default function GameTopUp() {
   return (
     <TopUpLayout>
       <GameHeader game={dataGameDetail.data} />
+      {regionMismatch && (
+        <RegionNotice
+          gameName={dataGameDetail.data.name}
+          region={regionMismatch}
+          gameRegion={gameRegion}
+          onSwitchToGameRegion={switchToGameRegion}
+        />
+      )}
       <TopUpGrid>
         <div className="flex min-w-0 flex-col gap-4">
           {sections.map((Section, i) =>

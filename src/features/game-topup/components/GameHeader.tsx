@@ -2,20 +2,23 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { ChevronRight, Gauge, Headset, ShieldCheck } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { ChevronRight, Gauge, Globe, Headset, ShieldCheck } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { GameDetail } from '@/types/game'
 import { getInitials } from '@/lib/initials'
+import { HOME_REGION } from '@/lib/region'
+import { regionName } from '@/lib/regionName'
 
 interface GameHeaderProps {
   game: GameDetail
 }
 
-/** Header halaman top-up: breadcrumb + strip banner art + ikon game (menindih) + nama + chip keunggulan. */
+/** Header halaman top-up: breadcrumb + strip banner art + ikon game (menindih) + nama + chip region & keunggulan. */
 export default function GameHeader({ game }: GameHeaderProps) {
   const t = useTranslations('GameCheckout')
   const tNav = useTranslations('Navigation')
+  const locale = useLocale()
   const [imageFailed, setImageFailed] = useState(false)
   const [bannerFailed, setBannerFailed] = useState(false)
   const showFallback = !game.thumbnail_url || imageFailed
@@ -27,6 +30,16 @@ export default function GameHeader({ game }: GameHeaderProps) {
     { icon: Headset, label: t('bannerFeature2'), tone: 'border-brand/40 bg-brand/10', iconTone: 'text-brand' },
     { icon: ShieldCheck, label: t('bannerFeature3'), tone: 'border-success/30 bg-success/10', iconTone: 'text-success' },
   ]
+  // Region akun hanya disebut bila game ini punya versi region lain (atau memang bukan region toko).
+  const gameRegion = game.region || HOME_REGION
+  if ((game.regions?.length ?? 0) > 1 || gameRegion !== HOME_REGION) {
+    features.unshift({
+      icon: Globe,
+      label: t('regionChip', { region: regionName(gameRegion, locale) }),
+      tone: 'border-border bg-card',
+      iconTone: 'text-muted-foreground',
+    })
+  }
 
   return (
     <header className="mb-6">

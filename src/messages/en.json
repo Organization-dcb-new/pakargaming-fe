@@ -19,7 +19,11 @@
     "accountMenu": "Account menu",
     "brand": "Pakar Gaming",
     "wordmark": "Pakar<accent>Gaming</accent>",
-    "language": "Language"
+    "language": "Language",
+    "region": "Account region",
+    "regionMenu": "Choose your game account region",
+    "regionCurrent": "Account region: {name}. Change region",
+    "regionHint": "Games and top-ups shown follow your game account region."
   },
   "Home": {
     "heroTitle": "Level Up Your Gaming",
@@ -221,7 +225,12 @@
     "gameNotFoundTitle": "Game not found",
     "gameNotFoundDesc": "The game you're looking for isn't available or failed to load. Try another game from the home page.",
     "toastAccountNotFound": "Account not found",
-    "toastCheckIdFailed": "Couldn't check the ID, try again"
+    "toastCheckIdFailed": "Couldn't check the ID, try again",
+    "regionChip": "{region} region",
+    "regionUnavailableTitle": "{game} is not available for {region}",
+    "regionUnavailableDesc": "Top-ups on this page are for {region} accounts.",
+    "regionSwitchTo": "Use {region} region",
+    "regionBrowse": "Browse {region} games"
   },
   "CheckTransaction": {
     "inputLabel": "Invoice number",

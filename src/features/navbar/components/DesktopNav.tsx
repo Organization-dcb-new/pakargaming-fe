@@ -2,6 +2,7 @@ import GameSearch from './GameSearch'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import UserMenu from './UserMenu'
+import RegionSwitcher from './RegionSwitcher'
 
 interface DesktopNavProps {
   user: any
@@ -16,6 +17,7 @@ export default function DesktopNav({ user, onLogin }: DesktopNavProps) {
         <div className="w-52 xl:w-72">
           <GameSearch variant="desktop" />
         </div>
+        <RegionSwitcher variant="desktop" />
         <LanguageSwitcher />
         <ThemeToggle />
         <div aria-hidden="true" className="mx-1 h-6 w-px bg-border" />
