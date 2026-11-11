@@ -28,7 +28,7 @@ export default function SocialMedia() {
           href={SOCIAL_LINKS.whatsapp}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${socialLinkClass} text-green-600`}
+          className={`${socialLinkClass} text-whatsapp`}
           aria-label={t('socialWhatsappAria')}
         >
           <FaWhatsapp className="h-6 w-6" aria-hidden />

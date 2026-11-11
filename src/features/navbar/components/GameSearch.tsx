@@ -7,6 +7,9 @@ import { useGetGameBySearch } from '@/api/games'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { Link } from '@/i18n/routing'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
+import { canOptimize } from '@/lib/image'
+import { getInitials } from '@/lib/initials'
 
 export type SearchNavVariant = 'mobile' | 'desktop'
 
@@ -176,23 +179,22 @@ export default function GameSearch({
                 >
                   <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-muted ring-2 ring-border transition-all group-hover:ring-primary">
                     {game.thumbnail_url ? (
-                      <img
+                      <Image
                         src={game.thumbnail_url}
                         alt={game.name}
-                        className="h-full w-full object-cover"
-                        loading="lazy"
+                        fill
+                        sizes="48px"
+                        unoptimized={!canOptimize(game.thumbnail_url)}
+                        className="object-cover"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <svg className="h-6 w-6 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                          <path
-                            fillRule="evenodd"
-                            d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
+                      // Tanpa thumbnail: inisial nama game, sama seperti GameTile & TransactionThumb
+                      <span
+                        aria-hidden
+                        className="flex h-full w-full items-center justify-center font-display text-sm font-bold text-muted-foreground"
+                      >
+                        {getInitials(game.name)}
+                      </span>
                     )}
                   </div>
 
