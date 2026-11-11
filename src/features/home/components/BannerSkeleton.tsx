@@ -12,9 +12,10 @@ export function BannerSkeleton() {
       aria-busy="true"
       className="w-full animate-pulse motion-reduce:animate-none">
       <span className="sr-only">{t('loading')}</span>
-      <div className="relative w-full overflow-hidden rounded-2xl border border-border">
+      {/* Bentuk sama dengan BannerFrame (chamfer bergaris) supaya tidak ada pergeseran saat data datang */}
+      <div className="chamfer bg-border p-0.5 [--chamfer:14px] sm:[--chamfer:22px]">
         <div
-          className="w-full bg-muted"
+          className="chamfer w-full bg-muted [--chamfer:13px] sm:[--chamfer:21px]"
           style={{
             aspectRatio: `${BANNER_IMAGE_WIDTH} / ${BANNER_IMAGE_HEIGHT}`,
           }}

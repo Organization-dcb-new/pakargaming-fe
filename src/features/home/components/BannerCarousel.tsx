@@ -91,33 +91,21 @@ export default function BannerCarousel() {
           ))}
         </div>
 
-        {/* Bottom scrim: keeps dots legible on bright imagery */}
+        {/* Scrim bawah-kanan: kontrol HUD tetap terbaca di atas gambar terang */}
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24 bg-gradient-to-t from-black/55 via-black/20 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-black/50 via-black/15 to-transparent sm:h-24"
           aria-hidden
         />
 
-        {/* NAVIGATION — tidak relevan saat banner cuma satu */}
+        {/* KONTROL HUD (pojok kanan bawah) — tidak relevan saat banner cuma satu */}
         {total > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={prev}
-              aria-label={t('prevSlide')}
-              className="absolute left-2 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 motion-reduce:transition-none hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:left-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
-              <ChevronLeft className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
-            </button>
+          <div className="absolute bottom-2 right-3 z-20 flex items-center gap-2.5 sm:bottom-4 sm:right-6 sm:gap-4">
+            <span aria-hidden className="font-display text-xs font-bold tabular-nums tracking-widest text-white/70">
+              <span className="text-white">{String(index + 1).padStart(2, '0')}</span> / {String(total).padStart(2, '0')}
+            </span>
 
-            <button
-              type="button"
-              onClick={next}
-              aria-label={t('nextSlide')}
-              className="absolute right-2 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/35 text-white shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 motion-reduce:transition-none hover:bg-black/50 active:scale-95 motion-reduce:active:scale-100 opacity-100 sm:right-4 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
-              <ChevronRight className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
-            </button>
-
-            {/* DOTS */}
-            <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2.5 px-2">
+            {/* Segmen jajar genjang; yang aktif terisi sesuai waktu autoplay. Area sentuh lebih besar dari visualnya. */}
+            <div className="flex items-center">
               {banners.map((_, i) => (
                 <button
                   type="button"
@@ -125,24 +113,44 @@ export default function BannerCarousel() {
                   onClick={() => setIndex(i)}
                   aria-label={t('goToSlide', { index: i + 1 })}
                   aria-current={index === i ? 'true' : undefined}
-                  className={`touch-manipulation rounded-full transition-all duration-300 ease-out motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/90 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40 ${
-                    index === i
-                      ? 'relative h-2.5 w-8 overflow-hidden bg-white/40'
-                      : 'h-2.5 w-2.5 bg-white/45 hover:bg-white/75'
-                  }`}>
-                  {index === i && (
-                    <span
-                      // isHovering ikut key: saat hover selesai, bar & timer JS sama-sama
-                      // restart dari 0 sehingga progress tetap jujur terhadap autoplay
-                      key={`p-${index}-${isHovering}`}
-                      aria-hidden
-                      className="absolute inset-0 origin-left rounded-full bg-white animate-[banner-progress_5s_linear_forwards] group-hover:[animation-play-state:paused] motion-reduce:animate-none motion-reduce:scale-x-100"
-                    />
-                  )}
+                  className="group/seg touch-manipulation px-1 py-3 focus-visible:outline-none"
+                >
+                  <span
+                    className={`relative block h-2 -skew-x-12 overflow-hidden transition-[width,background-color] duration-300 ease-out motion-reduce:transition-none group-focus-visible/seg:ring-2 group-focus-visible/seg:ring-white ${
+                      index === i ? 'w-10 bg-white/35' : 'w-5 bg-white/45 group-hover/seg:bg-white/75'
+                    }`}
+                  >
+                    {index === i && (
+                      <span
+                        // isHovering ikut key: saat hover selesai, bar & timer JS sama-sama
+                        // restart dari 0 sehingga progress tetap jujur terhadap autoplay
+                        key={`p-${index}-${isHovering}`}
+                        aria-hidden
+                        className="absolute inset-0 origin-left bg-primary animate-[banner-progress_5s_linear_forwards] group-hover:[animation-play-state:paused] motion-reduce:animate-none motion-reduce:scale-x-100"
+                      />
+                    )}
+                  </span>
                 </button>
               ))}
             </div>
-          </>
+
+            <div className="flex items-center gap-1.5">
+              {[
+                { onClick: prev, label: t('prevSlide'), Icon: ChevronLeft },
+                { onClick: next, label: t('nextSlide'), Icon: ChevronRight },
+              ].map(({ onClick, label, Icon }) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={onClick}
+                  aria-label={label}
+                  className="flex h-9 w-10 -skew-x-12 touch-manipulation items-center justify-center rounded-sm border border-white/20 bg-black/40 text-white backdrop-blur-md transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                >
+                  <Icon className="h-5 w-5 skew-x-12" strokeWidth={2.25} aria-hidden />
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </BannerFrame>
