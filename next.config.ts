@@ -63,6 +63,9 @@ const nextConfig: NextConfig = {
       { source: '/transaction/:id', destination: '/detail-trx/:id', permanent: true },
       { source: '/:locale(id|en)/my-transaction', destination: '/:locale/dashboard', permanent: true },
       { source: '/my-transaction', destination: '/dashboard', permanent: true },
+      // Katalog /games dihapus — daftar game ada di beranda. /games/[slug] (top-up) tidak terpengaruh.
+      { source: '/:locale(id|en)/games', destination: '/:locale', permanent: true },
+      { source: '/games', destination: '/', permanent: true },
     ]
   },
   async headers() {

@@ -83,17 +83,6 @@
     "continue": "Continue Shopping",
     "items": "{count} items in cart"
   },
-  "Games": {
-    "title": "Game Catalog",
-    "searchPlaceholder": "Search your favorite game...",
-    "sortBy": "Sort By",
-    "priceAsc": "Price: Low to High",
-    "priceDesc": "Price: High to Low",
-    "resetFilter": "Reset Filter",
-    "detail": "Detail",
-    "notAvailableCategories": "Failed to load categories",
-    "notAvailableGame": "Failed to load Game"
-  },
   "GameDetail": {
     "back": "Back",
     "description": "Description",

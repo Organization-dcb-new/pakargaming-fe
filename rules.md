@@ -54,7 +54,7 @@ src/
 └─ i18n/  messages/  proxy.ts
 ```
 
-Fitur saat ini: `auth`, `home`, `games` (katalog `/games`), `game-topup` (`/games/[slug]`), `transactions` (`/detail-trx`, `/check-transaction`), `dashboard`, `navbar`, `footer`, `legal`, `about`, `maintenance`, `not-found`.
+Fitur saat ini: `auth`, `home`, `game-topup` (`/games/[slug]`), `transactions` (`/detail-trx`, `/check-transaction`), `dashboard`, `navbar`, `footer`, `legal`, `about`, `maintenance`, `not-found`.
 
 - **Arah import:** `app → features → shared`. Folder shared (`api/`, `components/`, `hooks/`, `lib/`, `types/`, `config/`, `styles/`) **tidak boleh** mengimpor dari `features/`. Antar fitur boleh saling impor bila perlu (mis. `navbar` → `auth`), tapi jangan melingkar.
 - **Dipakai ≥2 fitur → pindah ke shared.** Dipakai satu fitur → tetap di fitur itu.

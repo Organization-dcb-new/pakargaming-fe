@@ -3,11 +3,8 @@ import { routing } from '@/i18n/routing'
 import { serverApi } from '@/api/serverClient'
 import { GetGamesResponse } from '@/types/game'
 
-const pages = [
-  '', // homepage
-  'top-up-ml',
-  'top-up-free-fire',
-]
+/** Halaman publik statis (tanpa /dashboard yang butuh login). Halaman top-up per game ditambahkan di bawah. */
+const pages = ['', 'check-transaction', 'about', 'policy-and-privacy', 'term-and-condition']
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_SITE_BASE_URL

@@ -108,7 +108,7 @@ export default function About() {
           </div>
 
           <Link
-            href="/games"
+            href="/"
             className={`chamfer flex h-12 shrink-0 items-center justify-center gap-2 rounded-sm bg-primary px-7 text-base font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 motion-reduce:transition-none ${focusRing}`}
           >
             {t('catalogCta')}

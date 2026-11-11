@@ -25,7 +25,7 @@ type RouteContext = { params: Promise<{ path: string[] }> };
 const ALLOWED_ROUTES: ReadonlyArray<readonly [Method, RegExp]> = [
   ["GET", /^v1\/banners$/],
   ["GET", /^v1\/shows$/],
-  ["GET", /^v1\/games(\/letter|\/search|\/regions|\/slug\/[^/]+)?$/],
+  ["GET", /^v1\/games\/(search|regions|slug\/[^/]+)$/],
   ["GET", /^v1\/category-product\/by-game\/[^/]+$/],
   ["GET", /^v1\/payment-categories\/client$/],
   ["GET", /^v1\/referral-codes\/code\/[^/]+$/],

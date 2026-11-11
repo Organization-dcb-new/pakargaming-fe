@@ -83,17 +83,6 @@
     "continue": "Lanjut Belanja",
     "items": "{count} game dalam keranjang"
   },
-  "Games": {
-    "title": "Katalog Game",
-    "searchPlaceholder": "Cari game favoritmu...",
-    "sortBy": "Urutkan",
-    "priceAsc": "Harga: Rendah ke Tinggi",
-    "priceDesc": "Harga: Tinggi ke Rendah",
-    "resetFilter": "Reset Filter",
-    "detail": "Detail",
-    "notAvailableCategories": "Gagal memuat Kategori",
-    "notAvailableGame": "Gagal memuat Game"
-  },
   "GameDetail": {
     "back": "Kembali",
     "description": "Deskripsi",
