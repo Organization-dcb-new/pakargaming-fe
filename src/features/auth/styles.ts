@@ -16,12 +16,12 @@ export const authHintClass = 'text-xs leading-relaxed text-muted-foreground'
 const cardFocusRing = cn(focusRing, 'focus-visible:ring-offset-card')
 
 export const primaryButtonClass = cn(
-  'chamfer flex h-11 w-full cursor-pointer touch-manipulation items-center justify-center gap-2 rounded-sm bg-primary px-4 text-sm font-bold text-primary-foreground transition-colors duration-200 [--chamfer:8px] hover:bg-primary/85 disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
+  'chamfer flex h-11 w-full cursor-pointer touch-manipulation items-center justify-center gap-2 rounded-sm bg-primary px-4 text-sm font-bold text-primary-foreground transition-colors duration-200 [--chamfer:12px] hover:bg-primary/85 disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
   cardFocusRing,
 )
 
 export const secondaryButtonClass = cn(
-  'flex h-11 w-full cursor-pointer touch-manipulation items-center justify-center gap-2.5 rounded-lg border border-border bg-background/40 px-4 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
+  'flex h-11 w-full cursor-pointer touch-manipulation items-center justify-center gap-2.5 rounded-sm border border-border bg-background/40 px-4 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
   cardFocusRing,
 )
 

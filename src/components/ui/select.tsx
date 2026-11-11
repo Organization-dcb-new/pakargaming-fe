@@ -40,7 +40,7 @@ function SelectContent({ className, children, ...props }: React.ComponentProps<t
         position="popper"
         sideOffset={6}
         className={cn(
-          'relative z-50 max-h-[min(var(--radix-select-content-available-height),18rem)] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-lg',
+          'relative z-50 max-h-[min(var(--radix-select-content-available-height),18rem)] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-sm border border-border bg-popover text-popover-foreground shadow-lg',
           'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
           className,
         )}
@@ -56,7 +56,7 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
   return (
     <SelectPrimitive.Item
       className={cn(
-        'relative flex min-h-10 cursor-pointer select-none items-center rounded-md py-2 pl-3 pr-9 text-sm text-foreground outline-none transition-colors duration-150',
+        'relative flex min-h-10 cursor-pointer select-none items-center rounded-sm py-2 pl-3 pr-9 text-sm text-foreground outline-none transition-colors duration-150',
         'data-[highlighted]:bg-primary/10 data-[state=checked]:font-semibold data-[state=checked]:text-primary data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         className,
       )}

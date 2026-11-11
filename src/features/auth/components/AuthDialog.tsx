@@ -27,8 +27,9 @@ interface AuthDialogProps {
   onModeChange: (mode: AuthDialogMode) => void
 }
 
+/** Tab jajar genjang seperti chip kategori; label dimiringkan balik (span skew-x-12) supaya tegak. */
 const tabTriggerClass =
-  'h-full cursor-pointer rounded-md border-0 font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm dark:text-muted-foreground dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground motion-reduce:transition-none'
+  'h-full -skew-x-12 cursor-pointer rounded-sm border border-border bg-muted/60 font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm dark:border-border dark:text-muted-foreground dark:data-[state=active]:border-primary dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground motion-reduce:transition-none'
 
 /** Dialog Masuk / Daftar / Lupa password — satu instance, dibuka lewat useAuthDialog(). */
 export default function AuthDialog({
@@ -71,7 +72,7 @@ export default function AuthDialog({
         if (!busy) onOpenChange(next)
       }}
     >
-      <DialogContent className="max-h-[calc(100dvh-2rem)] gap-5 overflow-y-auto overscroll-contain rounded-2xl border-border bg-card p-6 sm:max-w-md">
+      <DialogContent className="chamfer max-h-[calc(100dvh-2rem)] gap-5 overflow-y-auto overscroll-contain rounded-none border-0 bg-card p-6 [--chamfer:20px] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-brand sm:max-w-md">
         <DialogHeader className="pr-6">
           <DialogTitle className="font-display text-xl font-bold text-foreground">
             {heading.title}
@@ -89,12 +90,12 @@ export default function AuthDialog({
             onValueChange={(value) => onModeChange(value as AuthDialogMode)}
             className="gap-5"
           >
-            <TabsList aria-label={t('tabsLabel')} className="grid h-11 w-full grid-cols-2 rounded-lg p-1">
+            <TabsList aria-label={t('tabsLabel')} className="grid h-11 w-full grid-cols-2 gap-2 rounded-none bg-transparent p-0 px-1.5">
               <TabsTrigger value="login" disabled={busy} className={tabTriggerClass}>
-                {t('tabLogin')}
+                <span className="skew-x-12">{t('tabLogin')}</span>
               </TabsTrigger>
               <TabsTrigger value="register" disabled={busy} className={tabTriggerClass}>
-                {t('tabRegister')}
+                <span className="skew-x-12">{t('tabRegister')}</span>
               </TabsTrigger>
             </TabsList>
             <TabsContent value="login">

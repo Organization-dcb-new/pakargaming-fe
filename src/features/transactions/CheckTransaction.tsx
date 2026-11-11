@@ -59,7 +59,7 @@ export default function CheckTransaction() {
               placeholder={t('placeholder')}
               aria-invalid={showError}
               aria-describedby={showError ? 'invoice-error' : 'invoice-hint'}
-              className={`h-12 min-w-0 flex-[1_1_10rem] rounded-lg border bg-card px-4 font-display text-base font-semibold uppercase tracking-wider text-foreground outline-none transition-colors duration-200 placeholder:font-sans placeholder:font-normal placeholder:tracking-normal placeholder:text-muted-foreground focus:ring-2 motion-reduce:transition-none ${
+              className={`h-12 min-w-0 flex-[1_1_10rem] rounded-sm border bg-card px-4 font-display text-base font-semibold uppercase tracking-wider text-foreground outline-none transition-colors duration-200 placeholder:font-sans placeholder:font-normal placeholder:tracking-normal placeholder:text-muted-foreground focus:ring-2 motion-reduce:transition-none ${
                 showError
                   ? 'border-destructive focus:ring-destructive/30'
                   : 'border-border hover:border-primary/50 focus:border-primary focus:ring-ring/30'
@@ -68,7 +68,7 @@ export default function CheckTransaction() {
             <button
               type="submit"
               disabled={!isValid || isLoading}
-              className="chamfer flex h-12 flex-none cursor-pointer items-center justify-center gap-2 rounded-sm bg-primary px-7 text-base font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+              className="chamfer flex h-12 flex-none cursor-pointer items-center justify-center gap-2 rounded-sm bg-primary px-7 [--chamfer:12px] text-base font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />

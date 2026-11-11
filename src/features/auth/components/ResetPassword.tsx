@@ -10,6 +10,7 @@ import { primaryButtonClass, secondaryButtonClass } from '@/features/auth/styles
 import ResetPasswordForm from './ResetPasswordForm'
 import ResetPasswordResult from './ResetPasswordResult'
 import { STATE_GLYPH } from '@/components/ui/state-glyph'
+import { HudPanel } from '@/components/ui/hud-panel'
 
 /**
  * Halaman tujuan link email "atur password" (`/auth/reset-password?token=...`).
@@ -92,10 +93,11 @@ export default function ResetPassword({ token }: { token: string | null }) {
   }
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl justify-center px-4 py-12 sm:px-6 md:py-20 lg:px-8">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-lg sm:p-8">
+    // Setinggi layar (viewport − navbar h-14 / md:h-16, sama seperti /check-transaction); kartu di tengah
+    <section className="mx-auto flex min-h-[calc(100dvh-3.5rem)] w-full max-w-7xl items-center justify-center px-4 py-12 sm:px-6 md:min-h-[calc(100dvh-4rem)] lg:px-8">
+      <HudPanel className="w-full max-w-md" innerClassName="p-6 sm:p-8">
         {content}
-      </div>
+      </HudPanel>
     </section>
   )
 }
