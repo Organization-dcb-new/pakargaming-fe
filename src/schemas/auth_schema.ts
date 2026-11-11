@@ -49,5 +49,3 @@ export function createAuthSchemas(t: Translate) {
       }),
   }
 }
-
-export type AuthSchemas = ReturnType<typeof createAuthSchemas>

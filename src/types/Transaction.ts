@@ -75,5 +75,4 @@ export interface PaymentGuide {
 }
 export type GetTransactionResponseWithDetailProduct = ApiResponse<PaymentDataWithDetailProduct>
 
-export type GetTransactionResponse = ApiResponse<PaymentData>
 export type GetTransactionResponses = ApiResponseWithMeta<PaymentDataWithGameData[]>
