@@ -8,3 +8,5 @@ Setiap gambar karakter yang dipakai `src/config/characters.ts` wajib dicatat di 
 
 | File | Sumber | Lisensi / izin | Tanggal |
 |---|---|---|---|
+| genshin-sucrose.webp | Art resmi Genshin Impact (HoYoverse), dipotong & dikonversi ke WebP | **Belum diisi — wajib dilengkapi sebelum production** | 2026-11-11 |
+| genshin-bennett.webp | Art resmi Genshin Impact (HoYoverse), dipotong & dikonversi ke WebP | **Belum diisi — wajib dilengkapi sebelum production** | 2026-11-11 |

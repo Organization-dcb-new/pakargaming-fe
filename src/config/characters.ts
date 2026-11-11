@@ -19,4 +19,9 @@ export type BackdropCharacter = {
   games?: string[]
 }
 
-export const BACKDROP_CHARACTERS: BackdropCharacter[] = []
+export const BACKDROP_CHARACTERS: BackdropCharacter[] = [
+  // Genshin Impact (HoYoverse) — catat dasar izin pakainya di ATTRIBUTIONS.md
+  { src: '/backdrop/characters/genshin-sucrose.webp', side: 'left' },
+  // TODO: samakan slug dengan slug game Genshin di backend (/games/<slug>)
+  { src: '/backdrop/characters/genshin-bennett.webp', side: 'right', games: ['genshin-impact'] },
+]

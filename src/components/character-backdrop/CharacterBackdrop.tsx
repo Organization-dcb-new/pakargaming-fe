@@ -28,8 +28,8 @@ export function CharacterBackdrop({ gameSlug }: { gameSlug?: string }) {
           key={`${side}-${src}`}
           className={`absolute bottom-0 h-[85vh] w-[min(34vw,36rem)] opacity-(--character-opacity) ${
             side === 'left'
-              ? 'left-0 -translate-x-[10%] [mask-image:linear-gradient(to_right,black_40%,transparent)]'
-              : 'right-0 translate-x-[10%] [mask-image:linear-gradient(to_left,black_40%,transparent)]'
+              ? 'left-0 -translate-x-[10%] [mask-image:linear-gradient(to_right,black_65%,transparent)]'
+              : 'right-0 translate-x-[10%] [mask-image:linear-gradient(to_left,black_65%,transparent)]'
           }`}
         >
           <div className="relative size-full [mask-image:linear-gradient(to_top,transparent,black_20%)]">
