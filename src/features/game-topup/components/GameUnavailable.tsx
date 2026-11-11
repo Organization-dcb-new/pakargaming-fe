@@ -1,9 +1,9 @@
 "use client";
 
-import { SearchX, ShieldAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
+import { STATE_GLYPH, StateGlyph } from "@/components/ui/state-glyph";
 
 interface GameUnavailableProps {
   /** `not-found`: slug tidak ada / gagal dimuat (empty state, rules §6). `maintenance`: game sedang dirawat. */
@@ -15,7 +15,6 @@ interface GameUnavailableProps {
 export default function GameUnavailable({ reason, gameName }: GameUnavailableProps) {
   const t = useTranslations("GameCheckout");
   const maintenance = reason === "maintenance";
-  const Icon = maintenance ? ShieldAlert : SearchX;
 
   const title = maintenance
     ? gameName
@@ -31,16 +30,11 @@ export default function GameUnavailable({ reason, gameName }: GameUnavailablePro
           !maintenance && "border-dashed",
         )}
       >
-        <div
-          className={cn(
-            "mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl",
-            maintenance
-              ? "border border-warning/40 bg-warning/10 text-warning"
-              : "bg-muted text-muted-foreground",
-          )}
-        >
-          <Icon className="h-7 w-7" aria-hidden />
-        </div>
+        <StateGlyph
+          glyph={maintenance ? STATE_GLYPH.maintenance : STATE_GLYPH.notFound}
+          tone={maintenance ? "warning" : "muted"}
+          className="mb-4"
+        />
 
         <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">{title}</h1>
 

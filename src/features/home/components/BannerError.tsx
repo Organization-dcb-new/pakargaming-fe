@@ -1,7 +1,7 @@
 'use client'
 
-import { AlertTriangle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { STATE_GLYPH, StateGlyph } from '@/components/ui/state-glyph'
 
 export default function BannerError({ onRetry }: { onRetry?: () => void }) {
   const t = useTranslations('Home')
@@ -9,9 +9,7 @@ export default function BannerError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="w-full">
       <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-destructive/30 bg-card p-8 text-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-          <AlertTriangle className="h-6 w-6 text-destructive" aria-hidden />
-        </span>
+        <StateGlyph glyph={STATE_GLYPH.error} tone="destructive" />
 
         <p className="font-semibold text-foreground">{t('bannerErrorTitle')}</p>
 

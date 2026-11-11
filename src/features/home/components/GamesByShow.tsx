@@ -3,10 +3,10 @@
 import { useGetShows } from '@/features/home/api/useGetShows'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { AlertTriangle, Gamepad2 } from 'lucide-react'
 import { GamesByShowSkeleton } from './GamesByShowSkeleton'
 import ShowNav from './ShowNav'
 import ShowSection from './ShowSection'
+import { STATE_GLYPH, StateGlyph } from '@/components/ui/state-glyph'
 
 // Harus ≥ scroll-mt-36 section (144px); kalau lebih kecil, section target berhenti
 // di 144px dan tidak pernah lolos threshold — chip sebelumnya yang ikut aktif.
@@ -79,9 +79,7 @@ export default function GamesByShow() {
   if (isError) {
     return (
       <section className="max-w-7xl mx-auto px-4 py-16 flex flex-col items-center text-center gap-3">
-        <span className="rounded-full bg-destructive/10 p-3">
-          <AlertTriangle className="h-6 w-6 text-destructive" aria-hidden />
-        </span>
+        <StateGlyph glyph={STATE_GLYPH.error} tone="destructive" />
         <h2 className="text-base font-semibold text-foreground">
           {t('showsErrorTitle')}
         </h2>
@@ -102,9 +100,7 @@ export default function GamesByShow() {
   if (shows.length === 0) {
     return (
       <section className="max-w-7xl mx-auto px-4 py-16 flex flex-col items-center text-center gap-3">
-        <span className="rounded-full bg-muted p-3">
-          <Gamepad2 className="h-6 w-6 text-muted-foreground" aria-hidden />
-        </span>
+        <StateGlyph glyph={STATE_GLYPH.empty} tone="muted" />
         <p className="text-sm text-muted-foreground">{t('showsEmpty')}</p>
       </section>
     )

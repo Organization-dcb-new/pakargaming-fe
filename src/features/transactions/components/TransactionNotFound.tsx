@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, RotateCw, Search, SearchX } from 'lucide-react'
+import { Loader2, RotateCw, Search } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { focusRing } from '@/styles/focusRing'
+import { STATE_GLYPH, StateGlyph } from '@/components/ui/state-glyph'
 
 /**
  * Transaksi tidak ditemukan (dipakai detail-trx & transaction/[order_id]).
@@ -29,9 +30,7 @@ export function TransactionNotFound({ onRetry }: { onRetry?: () => unknown }) {
       aria-labelledby="trx-not-found-title"
       className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 py-16 text-center sm:px-6 md:py-24 lg:px-8"
     >
-      <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-destructive bg-destructive/15 text-destructive">
-        <SearchX className="h-8 w-8" aria-hidden />
-      </span>
+      <StateGlyph glyph={STATE_GLYPH.notFound} tone="destructive" size="xl" />
 
       <h1
         id="trx-not-found-title"

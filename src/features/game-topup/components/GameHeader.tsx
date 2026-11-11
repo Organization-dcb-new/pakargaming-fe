@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { ChevronRight, Gauge, Globe, Headset, ShieldCheck } from 'lucide-react'
+import { ChevronRight, Globe } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { GameDetail } from '@/types/game'
@@ -15,7 +15,7 @@ interface GameHeaderProps {
   game: GameDetail
 }
 
-/** Header halaman top-up: breadcrumb + strip banner art + ikon game (menindih) + nama + chip region & keunggulan. */
+/** Header halaman top-up: breadcrumb + strip banner art + ikon game (menindih) + nama + chip region. */
 export default function GameHeader({ game }: GameHeaderProps) {
   const t = useTranslations('GameCheckout')
   const tNav = useTranslations('Navigation')
@@ -26,21 +26,9 @@ export default function GameHeader({ game }: GameHeaderProps) {
   // Strip banner selalu tampil; tanpa art (kosong / gagal dimuat) → latar dekoratif bertema logo
   const showBannerArt = !!game.banner_url && !bannerFailed
 
-  const features = [
-    { icon: Gauge, label: t('bannerFeature1'), tone: 'border-primary/30 bg-primary/10', iconTone: 'text-primary' },
-    { icon: Headset, label: t('bannerFeature2'), tone: 'border-brand/40 bg-brand/10', iconTone: 'text-brand' },
-    { icon: ShieldCheck, label: t('bannerFeature3'), tone: 'border-success/30 bg-success/10', iconTone: 'text-success' },
-  ]
   // Region akun hanya disebut bila game ini punya versi region lain (atau memang bukan region toko).
   const gameRegion = game.region || HOME_REGION
-  if ((game.regions?.length ?? 0) > 1 || gameRegion !== HOME_REGION) {
-    features.unshift({
-      icon: Globe,
-      label: t('regionChip', { region: regionName(gameRegion, locale) }),
-      tone: 'border-border bg-card',
-      iconTone: 'text-muted-foreground',
-    })
-  }
+  const showRegionChip = (game.regions?.length ?? 0) > 1 || gameRegion !== HOME_REGION
 
   return (
     <header className="mb-6">
@@ -127,17 +115,12 @@ export default function GameHeader({ game }: GameHeaderProps) {
           <h1 className="text-balance font-display text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl">
             {game.name}
           </h1>
-          <ul className="flex flex-wrap gap-2">
-            {features.map(({ icon: Icon, label, tone, iconTone }) => (
-              <li
-                key={label}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold text-foreground ${tone}`}
-              >
-                <Icon className={`h-3.5 w-3.5 shrink-0 ${iconTone}`} aria-hidden />
-                {label}
-              </li>
-            ))}
-          </ul>
+          {showRegionChip && (
+            <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-semibold text-foreground">
+              <Globe className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+              {t('regionChip', { region: regionName(gameRegion, locale) })}
+            </p>
+          )}
         </div>
       </div>
     </header>

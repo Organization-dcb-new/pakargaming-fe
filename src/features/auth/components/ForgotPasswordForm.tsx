@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, MailCheck } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
@@ -16,6 +16,7 @@ import { AuthTextField, SubmitButton } from './AuthFields'
 import FormAlert from './FormAlert'
 import { secondaryButtonClass, textLinkClass } from '@/features/auth/styles'
 import { useTurnstile } from '@/features/auth/hooks/useTurnstile'
+import { STATE_GLYPH, StateGlyph } from '@/components/ui/state-glyph'
 
 export default function ForgotPasswordForm({
   defaultEmail,
@@ -57,12 +58,7 @@ export default function ForgotPasswordForm({
   if (forgot.isSuccess) {
     return (
       <div role="status" className="flex flex-col items-center gap-4 text-center">
-        <span
-          aria-hidden="true"
-          className="chamfer flex size-14 items-center justify-center bg-success/15 text-success [--chamfer:10px]"
-        >
-          <MailCheck className="size-7" />
-        </span>
+        <StateGlyph glyph={STATE_GLYPH.email} />
         <div className="space-y-2">
           <p className="font-display text-lg font-bold text-foreground">{t('forgotSentTitle')}</p>
           <p className="text-sm leading-relaxed text-muted-foreground">{t('forgotSentBody')}</p>

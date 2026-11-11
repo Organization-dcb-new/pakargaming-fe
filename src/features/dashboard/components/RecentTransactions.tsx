@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronRight, Gamepad2, TriangleAlert } from 'lucide-react'
+import { ChevronRight, TriangleAlert } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { formatPrice } from '@/lib/formatPrice'
@@ -10,6 +10,7 @@ import { StatusBadge } from '@/components/ui/status-badge'
 import { cn } from '@/lib/cn'
 import type { PaymentResponseDetail } from '@/types/dashboard'
 import RetryButton from './RetryButton'
+import { STATE_GLYPH, StateGlyph } from '@/components/ui/state-glyph'
 
 interface RecentTransactionsProps {
   transactions: PaymentResponseDetail[]
@@ -78,12 +79,7 @@ export default function RecentTransactions({
   } else if (transactions.length === 0) {
     content = (
       <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
-        <span
-          aria-hidden="true"
-          className="chamfer flex size-14 items-center justify-center bg-primary/10 text-primary [--chamfer:10px]"
-        >
-          <Gamepad2 className="size-7" />
-        </span>
+        <StateGlyph glyph={STATE_GLYPH.empty} />
         <div className="space-y-1">
           <p className="font-display text-base font-bold text-foreground">{t('emptyState')}</p>
           <p className="text-sm text-muted-foreground">{t('emptyHint')}</p>

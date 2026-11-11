@@ -1,6 +1,6 @@
 'use client'
 
-import { CircleCheck, House, KeyRound, LayoutDashboard, LogIn, TriangleAlert } from 'lucide-react'
+import { House, LayoutDashboard, LogIn } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import useAuth from '@/hooks/useAuth'
@@ -9,6 +9,7 @@ import { useAuthDialog } from './AuthDialogProvider'
 import { primaryButtonClass, secondaryButtonClass } from '@/features/auth/styles'
 import ResetPasswordForm from './ResetPasswordForm'
 import ResetPasswordResult from './ResetPasswordResult'
+import { STATE_GLYPH } from '@/components/ui/state-glyph'
 
 /**
  * Halaman tujuan link email "atur password" (`/auth/reset-password?token=...`).
@@ -33,7 +34,7 @@ export default function ResetPassword({ token }: { token: string | null }) {
   if (!token) {
     content = (
       <ResetPasswordResult
-        icon={TriangleAlert}
+        glyph={STATE_GLYPH.error}
         tone="destructive"
         title={t('missingTitle')}
         description={t('missingBody')}
@@ -50,7 +51,7 @@ export default function ResetPassword({ token }: { token: string | null }) {
     content = (
       <div role="status">
         <ResetPasswordResult
-          icon={CircleCheck}
+          glyph={STATE_GLYPH.success}
           tone="success"
           title={t('successTitle')}
           description={t('successBody')}
@@ -80,7 +81,7 @@ export default function ResetPassword({ token }: { token: string | null }) {
     )
   } else {
     content = (
-      <ResetPasswordResult icon={KeyRound} tone="primary" title={t('title')} description={t('description')}>
+      <ResetPasswordResult glyph={STATE_GLYPH.password} tone="primary" title={t('title')} description={t('description')}>
         <ResetPasswordForm
           token={token}
           onSuccess={() => setDone(true)}

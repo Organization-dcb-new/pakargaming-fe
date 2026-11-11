@@ -1,17 +1,17 @@
 'use client'
 
-import type { LucideIcon } from 'lucide-react'
 import { useEffect, useRef, type ReactNode } from 'react'
-import { cn } from '@/lib/cn'
+import { StateGlyph, type StateGlyphTone } from '@/components/ui/state-glyph'
 
 const TONE = {
-  primary: 'bg-primary/15 text-primary',
-  success: 'bg-success/15 text-success',
-  destructive: 'bg-destructive/15 text-destructive',
-} as const
+  primary: 'brand',
+  success: 'success',
+  destructive: 'destructive',
+} as const satisfies Record<string, StateGlyphTone>
 
 interface ResultPanelProps {
-  icon: LucideIcon
+  /** Lihat STATE_GLYPH, mis. STATE_GLYPH.success */
+  glyph: string
   tone: keyof typeof TONE
   title: string
   description: string
@@ -20,9 +20,9 @@ interface ResultPanelProps {
   children?: ReactNode
 }
 
-/** Kepala kartu reset password: ikon chamfer bertint + judul (h1) + deskripsi. */
+/** Kepala kartu reset password: glyph HUD + judul (h1) + deskripsi. */
 export default function ResetPasswordResult({
-  icon: Icon,
+  glyph,
   tone,
   title,
   description,
@@ -38,12 +38,7 @@ export default function ResetPasswordResult({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-4 text-center">
-        <span
-          aria-hidden="true"
-          className={cn('chamfer flex size-14 items-center justify-center [--chamfer:10px]', TONE[tone])}
-        >
-          <Icon className="size-7" />
-        </span>
+        <StateGlyph glyph={glyph} tone={TONE[tone]} />
         <div className="space-y-2">
           <h1
             ref={headingRef}
