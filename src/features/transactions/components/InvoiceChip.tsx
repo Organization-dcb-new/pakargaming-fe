@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { CopyButton } from '@/components/ui/copy-button'
 
-/** "Invoice PAY-xxxx" yang bisa diklik untuk menyalin — nomor ini yang dipakai di halaman Cek Transaksi. */
+/** "Invoice PG-261111-XXXXXXXX" yang bisa diklik untuk menyalin — nomor ini yang dipakai di halaman Cek Transaksi. */
 export default function InvoiceChip({ value, className = '' }: { value: string; className?: string }) {
   const t = useTranslations('DetailTrx')
 

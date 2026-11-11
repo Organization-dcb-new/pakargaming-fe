@@ -7,6 +7,12 @@ import { useGetTransactionByPaymentNumber } from '@/features/transactions/api/us
 import TransactionResultCard, { TransactionResultSkeleton } from '@/features/transactions/components/TransactionResultCard'
 import RecentTransactions from '@/features/transactions/components/RecentTransactions'
 
+/**
+ * Nomor invoice: PG-261111-K7Q9X2MD (tanggal WIB + 8 huruf/angka), boleh tanpa tanda strip; atau
+ * format lama PAY- dan angka. Backend yang membetulkan strip dan huruf O/I/L yang tertukar.
+ */
+const INVOICE_NUMBER = /^(PG-?\d{6}-?[0-9A-Z]{8}|PAY-\d{10,})$/
+
 export default function CheckTransaction() {
   const t = useTranslations('CheckTransaction')
   const [invoice, setInvoice] = useState('')
@@ -14,8 +20,7 @@ export default function CheckTransaction() {
 
   const { data, isLoading } = useGetTransactionByPaymentNumber(trxId)
 
-  const regex = /^PAY-\d{10,}$/
-  const isValid = regex.test(invoice)
+  const isValid = INVOICE_NUMBER.test(invoice)
   const showError = invoice.length > 0 && !isValid
 
   const handleSubmit = (e: React.FormEvent) => {

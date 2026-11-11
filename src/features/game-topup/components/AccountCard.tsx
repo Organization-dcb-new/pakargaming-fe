@@ -1,7 +1,7 @@
 'use client'
 import { useForm } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { GameDetail, GameInput } from '@/types/game'
 import { useCheckID } from '@/features/game-topup/api/useCheckID'
 import { Check, Loader2 } from 'lucide-react'
@@ -16,68 +16,76 @@ interface AccountCardProps {
   game: GameDetail
   setAccount: React.Dispatch<React.SetStateAction<DynamicAccount | null>>
   account: DynamicAccount
+  /** Nickname hasil cek ID untuk isian saat ini (null bila belum/tidak valid) — untuk ringkasan & konfirmasi. */
+  onAccountNameChange?: (name: string | null) => void
 }
+
+/** Isian yang terakhir lolos cek ID beserta nickname-nya. */
+type VerifiedAccount = { payload: string; username: string }
 
 export default function AccountCard({
   gameData,
   step = 1,
   game,
   setAccount,
-  account,
+  onAccountNameChange,
 }: AccountCardProps) {
   const t = useTranslations('GameCheckout')
-  const { mutate, isPending, data } = useCheckID()
+
+  const { mutate, isPending } = useCheckID()
 
   const { register, watch } = useForm<Record<string, string>>({
     mode: 'onChange',
   })
 
   const values = watch()
+  // String stabil dari isian — objek `values` dari watch() berganti referensi tiap render
+  const payload = JSON.stringify(values)
+  const requiredFilled = gameData.filter((g) => g.required).every((g) => values[g.key])
 
-  const hasCheckedRef = useRef(false)
-  const lastPayloadRef = useRef<string>('')
+  const [verified, setVerified] = useState<VerifiedAccount | null>(null)
+  const lastRequestedRef = useRef('')
+  const isVerified = verified?.payload === payload
 
+  /**
+   * Akun hanya valid bila isian SAMA PERSIS dengan isian yang lolos cek. Begitu ID diubah, akun
+   * dikosongkan (langkah berikut terkunci lagi) sampai lolos cek ulang — tanpa ini, pesanan bisa
+   * terkirim ke ID lama walau form menampilkan ID baru. Kembali ke ID yang sudah lolos → pulih.
+   */
   useEffect(() => {
-    if (data?.username) {
-      const newAccount = {
-        ...values,
-      }
-      setAccount(newAccount)
+    if (isVerified) {
+      setAccount(JSON.parse(payload))
+      onAccountNameChange?.(verified.username)
+    } else {
+      setAccount(null)
+      onAccountNameChange?.(null)
     }
-  }, [data])
+  }, [isVerified, payload, verified, setAccount, onAccountNameChange])
 
+  // Cek ID otomatis 500 ms setelah berhenti mengetik; isian yang sama tidak dicek dua kali
   useEffect(() => {
-    hasCheckedRef.current = false
-  }, [values])
+    if (!requiredFilled || isVerified || lastRequestedRef.current === payload) return
 
-  useEffect(() => {
-    const requiredFilled = gameData.filter((g) => g.required).every((g) => values[g.key])
-
-    if (!requiredFilled) {
-      hasCheckedRef.current = false
-      return
-    }
-
-    const payloadString = JSON.stringify(values)
-
-    if (payloadString === lastPayloadRef.current) return
-
-    if (hasCheckedRef.current) return
-
-    const t = setTimeout(() => {
-      mutate({
-        category_code: game.code,
-        game_id: game.id,
-        provider_id: game.provider_id,
-        game_data: values,
-      })
-
-      hasCheckedRef.current = true
-      lastPayloadRef.current = payloadString
+    const timer = setTimeout(() => {
+      lastRequestedRef.current = payload
+      const requested = payload
+      mutate(
+        {
+          category_code: game.code,
+          game_id: game.id,
+          provider_id: game.provider_id,
+          game_data: JSON.parse(requested),
+        },
+        {
+          onSuccess: (data) => {
+            if (data?.username) setVerified({ payload: requested, username: data.username })
+          },
+        },
+      )
     }, 500)
 
-    return () => clearTimeout(t)
-  }, [data, values, game.id, setAccount, account])
+    return () => clearTimeout(timer)
+  }, [payload, requiredFilled, isVerified, mutate, game.code, game.id, game.provider_id])
 
   return (
     <StepCard id="account-section" step={step} title={t('accountEnterTitle')}>
@@ -129,14 +137,14 @@ export default function AccountCard({
           </p>
         )}
 
-        {!isPending && data?.username && (
+        {!isPending && isVerified && (
           <div className="mt-4 flex items-center gap-3 rounded-xl border border-success/30 bg-success/10 px-3.5 py-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground">
               <Check className="h-4 w-4" strokeWidth={3} aria-hidden />
             </span>
             <span className="flex min-w-0 flex-col">
               <span className="text-xs text-muted-foreground">{t('accountFound')}</span>
-              <span className="truncate font-bold text-foreground">{data.username}</span>
+              <span className="truncate font-bold text-foreground">{verified.username}</span>
             </span>
           </div>
         )}

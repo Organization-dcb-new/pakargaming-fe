@@ -75,6 +75,8 @@ export default function GameTopUp() {
   const [account, setSelectedAccount] = useState<Record<string, any> | null>(
     null,
   );
+  /** Nickname hasil cek ID untuk isian akun saat ini (ringkasan & konfirmasi). */
+  const [accountName, setAccountName] = useState<string | null>(null);
   const [openModalConfirm, setOpenModalConfirm] = useState<boolean>(false);
   const [userMdn, setUserMdn] = useState("");
   const [referralCode, setReferralCode] = useState("");
@@ -129,17 +131,8 @@ export default function GameTopUp() {
     }
   }, [allowVaPayment, selectedPayment, t]);
 
-  useEffect(() => {
-    if (!isAccountStepCompleted && selectedPackage) {
-      setSelectedPackage(null);
-    }
-  }, [isAccountStepCompleted, selectedPackage]);
-
-  useEffect(() => {
-    if ((!isAccountStepCompleted || !selectedPackage) && selectedPayment) {
-      setSelectedPayment(null);
-    }
-  }, [isAccountStepCompleted, selectedPackage, selectedPayment]);
+  // Mengedit ID akun TIDAK lagi mengosongkan produk & pembayaran yang sudah dipilih: langkahnya
+  // hanya terkunci sampai ID lolos cek ulang (validasi sebelum pesan tetap mewajibkan akun valid).
 
   if (isLoadingGameDetail) {
     return <GameTopUpSkeleton />;
@@ -276,6 +269,7 @@ export default function GameTopUp() {
           <AccountComponent
             account={account}
             setAccount={setSelectedAccount}
+            onAccountNameChange={setAccountName}
             game={dataGameDetail.data}
             key="account"
             gameData={inputs}
