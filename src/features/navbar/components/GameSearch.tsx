@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Search } from 'lucide-react'
+import { ChevronRight, Loader2, Search } from 'lucide-react'
 import { useDebounce } from 'use-debounce'
 import { useGetGameBySearch } from '@/api/games'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { canOptimize } from '@/lib/image'
 import { getInitials } from '@/lib/initials'
+import { STATE_GLYPH, StateGlyph } from '@/components/ui/state-glyph'
 
 export type SearchNavVariant = 'mobile' | 'desktop'
 
@@ -159,80 +160,78 @@ export default function GameSearch({
         )}
       </div>
 
-      {/* PREVIEW */}
+      {/* HASIL — jajar genjang seperti kolom search (tepi sejajar); isi dimiringkan balik supaya tegak */}
       {effectiveOpen && debouncedKeyword && (
-        <div className="absolute left-0 right-0 top-11 z-50 max-h-[min(22rem,70vh)] overflow-y-auto overflow-x-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl sm:top-12">
-          {isLoading && (
-            <div className="flex items-center gap-3 p-4 text-sm text-muted-foreground">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-              <span>{t('searching')}</span>
-            </div>
-          )}
-
-          {!isLoading && games.length === 0 && (
-            <div className="p-8 text-center">
-              <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                <svg
-                  className="h-8 w-8 text-muted-foreground"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+        <div className="absolute left-0 right-0 top-12 z-50 -skew-x-12 overflow-hidden rounded-sm border border-border bg-popover text-popover-foreground shadow-xl">
+          <div aria-hidden className="h-0.5 bg-gradient-brand" />
+          <div className="max-h-[min(22rem,70vh)] overflow-y-auto overflow-x-hidden p-1.5">
+            {isLoading && (
+              <div role="status" className="flex skew-x-12 items-center gap-3 px-3 py-3 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden />
+                <span>{t('searching')}</span>
               </div>
-              <p className="text-sm text-muted-foreground">{t('gameNotFound')}</p>
-            </div>
-          )}
+            )}
 
-          {!isLoading && games.length > 0 && (
-            <div className="max-h-96 overflow-y-auto">
-              {games.slice(0, 5).map((game) => (
-                <Link
-                  onClick={() => {
-                    setKeyword('')
-                    setOpen(false)
-                  }}
-                  onMouseDown={(e) => e.preventDefault()}
-                  key={game.id}
-                  href={`/games/${game.slug}`}
-                  className="group flex items-center gap-3 border-b border-border px-4 py-3 transition-colors duration-200 last:border-b-0 hover:bg-muted"
-                >
-                  <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-muted ring-2 ring-border transition-all group-hover:ring-primary">
-                    {game.thumbnail_url ? (
-                      <Image
-                        src={game.thumbnail_url}
-                        alt={game.name}
-                        fill
-                        sizes="48px"
-                        unoptimized={!canOptimize(game.thumbnail_url)}
-                        className="object-cover"
-                      />
-                    ) : (
-                      // Tanpa thumbnail: inisial nama game, sama seperti GameTile & TransactionThumb
+            {!isLoading && games.length === 0 && (
+              <div role="status" className="flex skew-x-12 flex-col items-center gap-2 px-4 py-6 text-center">
+                <StateGlyph glyph={STATE_GLYPH.notFound} tone="muted" size="md" />
+                <p className="text-sm text-muted-foreground">{t('gameNotFound')}</p>
+              </div>
+            )}
+
+            {!isLoading && games.length > 0 && (
+              <ul className="flex flex-col gap-0.5">
+                {games.slice(0, 5).map((game) => (
+                  <li key={game.id}>
+                    <Link
+                      onClick={() => {
+                        setKeyword('')
+                        setOpen(false)
+                      }}
+                      onMouseDown={(e) => e.preventDefault()}
+                      href={`/games/${game.slug}`}
+                      className="group relative flex items-center gap-3 rounded-sm px-3 py-2 transition-colors duration-150 hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:outline-none"
+                    >
+                      {/* Aksen kiri saat hover/fokus keyboard */}
                       <span
                         aria-hidden
-                        className="flex h-full w-full items-center justify-center font-display text-sm font-bold text-muted-foreground"
-                      >
-                        {getInitials(game.name)}
+                        className="absolute inset-y-1.5 left-0 w-0.5 bg-primary opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+                      />
+                      <span className="flex min-w-0 flex-1 skew-x-12 items-center gap-3">
+                        <span className="chamfer relative h-11 w-11 shrink-0 overflow-hidden bg-muted [--chamfer:8px]">
+                          {game.thumbnail_url ? (
+                            <Image
+                              src={game.thumbnail_url}
+                              alt=""
+                              fill
+                              sizes="44px"
+                              unoptimized={!canOptimize(game.thumbnail_url)}
+                              className="object-cover"
+                            />
+                          ) : (
+                            // Tanpa thumbnail: inisial nama game, sama seperti GameTile & TransactionThumb
+                            <span
+                              aria-hidden
+                              className="flex h-full w-full items-center justify-center font-display text-sm font-bold text-muted-foreground"
+                            >
+                              {getInitials(game.name)}
+                            </span>
+                          )}
+                        </span>
+                        <span className="truncate font-display text-sm font-semibold text-foreground transition-colors duration-150 group-hover:text-primary">
+                          {game.name}
+                        </span>
                       </span>
-                    )}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-primary">
-                      {game.name}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+                      <ChevronRight
+                        className="h-4 w-4 shrink-0 skew-x-12 text-primary opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+                        aria-hidden
+                      />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
     </div>
