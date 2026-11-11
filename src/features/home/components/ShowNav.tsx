@@ -1,10 +1,8 @@
 'use client'
 
 import { Show } from '@/features/home/types/show'
-import { Link } from '@/i18n/routing'
 import { useTranslations } from 'next-intl'
 import { motion, useReducedMotion } from 'motion/react'
-import { Search } from 'lucide-react'
 
 interface NavigationShowProps {
   isNavSticky: boolean
@@ -19,7 +17,6 @@ export default function ShowNav({
   selectedId,
   shows,
 }: NavigationShowProps) {
-  const t = useTranslations('CheckTransaction')
   const tHome = useTranslations('Home')
   const shouldReduceMotion = useReducedMotion()
 
@@ -88,30 +85,6 @@ export default function ShowNav({
         )
       })}
 
-      {shows.length > 0 && (
-        <Link
-          href="/check-transaction"
-          className="
-    flex-shrink-0
-    px-3 md:px-4
-    py-1.5 md:py-2
-    rounded-full
-    text-xs md:text-sm
-    font-semibold
-    transition-colors duration-200 motion-reduce:transition-none
-    cursor-pointer
-    border border-primary/50
-    bg-primary/10
-    text-primary
-    hover:bg-primary/20
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-    flex items-center gap-2
-  "
-        >
-          <Search className="h-4 w-4" aria-hidden />
-          {t('checkTrxLink')}
-        </Link>
-      )}
     </nav>
   )
 }

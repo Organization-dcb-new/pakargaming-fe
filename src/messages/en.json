@@ -188,7 +188,6 @@
     "btnSearch": "Search",
     "btnSearching": "Searching...",
     "placeholder": "PG-XXXXXX-XXXXXXXX",
-    "checkTrxLink": "Check transaction",
     "title": "Check transaction",
     "subtitle": "Enter your invoice number to see your order status.",
     "viewDetail": "View details",
