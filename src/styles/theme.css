@@ -226,6 +226,12 @@
   }
 }
 
+/* Bayangan menu HUD (DropdownMenuHudContent). box-shadow & filter di elemen ber-clip-path ikut terpotong,
+   jadi drop-shadow dipasang di pembungkus popper milik Radix. */
+[data-radix-popper-content-wrapper]:has(> [data-hud-popover]) {
+  filter: drop-shadow(0 12px 28px color-mix(in oklab, var(--foreground) 16%, transparent));
+}
+
 /* Bar aksen kiri toast (ui/sonner.tsx). Warna diatur per tipe lewat --toast-accent.
    Dibuat lewat background, bukan ::before/::after, karena kedua pseudo-element dipakai Sonner (area swipe & hover). */
 @utility toast-accent {

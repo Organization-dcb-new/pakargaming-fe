@@ -12,7 +12,7 @@ export default function NotFound() {
   return (
     <section
       aria-labelledby="not-found-title"
-      className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 py-16 text-center sm:px-6 md:py-24 lg:px-8"
+      className="mx-auto flex min-h-[calc(100dvh-3.5rem)] w-full max-w-7xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6 md:min-h-[calc(100dvh-4rem)] lg:px-8"
     >
       <span className="chamfer inline-flex items-center bg-destructive/15 px-3 py-1 font-display text-xs font-bold uppercase tracking-widest text-destructive [--chamfer:6px]">
         {t('badge')}
@@ -46,7 +46,7 @@ export default function NotFound() {
         </Link>
         <Link
           href="/check-transaction"
-          className={`flex h-12 items-center justify-center gap-2 rounded-lg border border-border bg-card px-7 text-base font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary motion-reduce:transition-none ${focusRing}`}
+          className={`flex h-12 items-center justify-center gap-2 rounded-sm border border-border bg-card px-7 text-base font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary motion-reduce:transition-none ${focusRing}`}
         >
           <Search className="size-4" aria-hidden="true" />
           {t('ctaCheckTransaction')}

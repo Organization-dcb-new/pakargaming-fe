@@ -7,9 +7,10 @@ import { useTranslations } from 'next-intl'
 import LogoutConfirmDialog from '@/features/auth/components/LogoutConfirmDialog'
 import { focusRing } from '@/styles/focusRing'
 import { cn } from '@/lib/cn'
+import { HudPanel } from '@/components/ui/hud-panel'
 
 const itemClass =
-  'relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-200 motion-reduce:transition-none'
+  'relative flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors duration-200 motion-reduce:transition-none'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -24,11 +25,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="mx-auto flex w-full max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:gap-8 lg:px-8">
       <aside className="hidden w-56 shrink-0 md:block">
-        <nav
-          aria-label={t('menu')}
-          className="sticky top-24 rounded-2xl border border-border bg-card p-3 shadow-sm"
-        >
-          <p className="px-3 pt-1 pb-2 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
+        <HudPanel as="nav" aria-label={t('menu')} size="md" className="sticky top-24" innerClassName="p-3">
+          <p className="flex items-center gap-2 px-3 pt-1.5 pb-2 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground before:h-3 before:w-1 before:shrink-0 before:-skew-x-12 before:bg-gradient-brand">
             {t('menu')}
           </p>
 
@@ -51,7 +49,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   >
                     {/* Bar aktif di kiri — penanda posisi selain warna */}
                     {isActive && (
-                      <span aria-hidden="true" className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-primary" />
+                      <span aria-hidden="true" className="absolute inset-y-2 left-0 w-[3px] bg-primary" />
                     )}
                     <Icon className="size-4 shrink-0" aria-hidden="true" />
                     {menu.name}
@@ -71,7 +69,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <LogOut className="size-4 shrink-0" aria-hidden="true" />
             {t('logout')}
           </button>
-        </nav>
+        </HudPanel>
       </aside>
 
       <main className="min-w-0 flex-1">{children}</main>

@@ -10,8 +10,9 @@ import { useAuthMe } from '@/features/auth/api/auth'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/cn'
 import RetryButton from './RetryButton'
+import { HudPanel } from '@/components/ui/hud-panel'
 
-const badgeClass = 'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold'
+const badgeClass = 'inline-flex -skew-x-12 items-center rounded-sm px-2.5 py-0.5 text-xs font-bold'
 
 function StatusPill({ active, children }: { active: boolean; children: ReactNode }) {
   const Icon = active ? CircleCheck : CircleDashed
@@ -22,8 +23,10 @@ function StatusPill({ active, children }: { active: boolean; children: ReactNode
         active ? 'bg-success text-success-foreground' : 'bg-muted text-muted-foreground',
       )}
     >
-      <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-      {children}
+      <span className="inline-flex skew-x-12 items-center gap-1">
+        <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        {children}
+      </span>
     </span>
   )
 }
@@ -44,7 +47,7 @@ function MethodRow({
       <div className="flex min-w-0 flex-1 items-start gap-3">
         <span
           aria-hidden="true"
-          className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted"
+          className="chamfer flex size-10 shrink-0 items-center justify-center bg-muted [--chamfer:8px]"
         >
           {icon}
         </span>
@@ -63,12 +66,12 @@ function MethodsSkeleton() {
     <ul aria-hidden="true" className="divide-y divide-border">
       {[0, 1].map((row) => (
         <li key={row} className="flex items-center gap-3 py-4 first:pt-0 last:pb-0">
-          <Skeleton className="size-10 shrink-0 rounded-lg" />
+          <Skeleton className="chamfer size-10 shrink-0 rounded-none [--chamfer:8px]" />
           <div className="flex flex-1 flex-col gap-2">
-            <Skeleton className="h-4 w-32 rounded-md" />
-            <Skeleton className="h-4 w-48 max-w-full rounded-md" />
+            <Skeleton className="h-4 w-32 rounded-sm" />
+            <Skeleton className="h-4 w-48 max-w-full rounded-sm" />
           </div>
-          <Skeleton className="h-6 w-20 rounded-full" />
+          <Skeleton className="h-6 w-20 -skew-x-12 rounded-sm" />
         </li>
       ))}
     </ul>
@@ -93,7 +96,7 @@ export default function SignInMethods({ isLoggedIn }: { isLoggedIn: boolean }) {
     content = (
       <div
         role="alert"
-        className="flex flex-col items-start gap-3 rounded-xl border border-destructive/40 bg-destructive/10 p-4 sm:flex-row sm:items-center"
+        className="flex flex-col items-start gap-3 rounded-sm border border-destructive/40 bg-destructive/10 p-4 sm:flex-row sm:items-center"
       >
         <TriangleAlert className="size-5 shrink-0 text-destructive" aria-hidden="true" />
         <p className="flex-1 text-sm text-foreground">{t('error')}</p>
@@ -149,17 +152,14 @@ export default function SignInMethods({ isLoggedIn }: { isLoggedIn: boolean }) {
   }
 
   return (
-    <section
-      aria-labelledby="sign-in-methods-title"
-      className="rounded-2xl border border-border bg-card p-6 shadow-sm"
-    >
+    <HudPanel as="section" aria-labelledby="sign-in-methods-title" accent={false} innerClassName="p-6">
       <div className="mb-5 space-y-1">
-        <h2 id="sign-in-methods-title" className="font-display text-lg font-bold text-foreground">
+        <h2 id="sign-in-methods-title" className="font-display text-lg font-bold text-foreground flex items-center gap-2.5 before:h-5 before:w-1.5 before:shrink-0 before:-skew-x-12 before:bg-gradient-brand">
           {t('title')}
         </h2>
         <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
       </div>
       {content}
-    </section>
+    </HudPanel>
   )
 }

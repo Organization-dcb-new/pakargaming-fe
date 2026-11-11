@@ -30,7 +30,7 @@ function CopyField({
         value={value}
         successMessage={t('copySuccess')}
         label={t('copyLabel', { label })}
-        className={`w-full justify-between rounded-xl border border-border bg-muted px-4 py-3 text-foreground hover:border-primary ${
+        className={`w-full justify-between rounded-sm border border-border bg-muted px-4 py-3 text-foreground hover:border-primary ${
           compact ? 'font-mono text-xs' : 'font-display text-lg font-bold tracking-wider'
         }`}
       >
@@ -46,7 +46,7 @@ function StepList({ steps }: { steps: ReactNode[] }) {
   return (
     <ol className="flex w-full flex-col gap-2 text-left">
       {steps.map((step, i) => (
-        <li key={i} className="flex items-start gap-3 rounded-xl bg-muted px-3.5 py-3">
+        <li key={i} className="flex items-start gap-3 rounded-sm bg-muted px-3.5 py-3">
           <span
             aria-hidden
             className="chamfer flex h-6 w-6 shrink-0 items-center justify-center bg-brand-solid font-display text-xs font-bold text-brand-solid-foreground [--chamfer:5px]"

@@ -14,7 +14,7 @@ interface TransactionThumbProps {
 /** Thumbnail game/produk di daftar transaksi, dengan fallback inisial saat gambar kosong/gagal. */
 export default function TransactionThumb({ src, name, size = 'md' }: TransactionThumbProps) {
   const [failed, setFailed] = useState(false)
-  const box = size === 'lg' ? 'h-12 w-12 rounded-xl' : 'h-10 w-10 rounded-lg'
+  const box = size === 'lg' ? 'chamfer h-12 w-12 [--chamfer:9px]' : 'chamfer h-10 w-10 [--chamfer:8px]'
 
   return (
     <span className={`relative flex shrink-0 items-center justify-center overflow-hidden bg-muted ${box}`}>

@@ -154,6 +154,9 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
 
     // Header sendiri, bukan X-Forwarded-For: backend memakai IP server ini untuk whitelist.
     if (clientIp) headers["X-Client-IP"] = clientIp;
+    // Browser pembeli (fetch server ini sendiri mengaku "node"); dipakai email lupa password.
+    const clientUserAgent = req.headers.get("user-agent");
+    if (clientUserAgent) headers["X-Client-User-Agent"] = clientUserAgent.slice(0, 512);
 
     // Sesi dibaca dari cookie HttpOnly; header Authorization dari browser tidak dipakai lagi.
     const session = PUBLIC_AUTH_PATHS.has(targetPath) ? null : readSessionToken(req);

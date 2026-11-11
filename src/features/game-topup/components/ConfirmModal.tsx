@@ -52,7 +52,7 @@ export default function ConfirmModal({
         if (!loading) setOpen(value)
       }}
     >
-      <DialogContent className="gap-5 rounded-2xl border-border bg-card p-6 sm:max-w-md">
+      <DialogContent className="chamfer gap-5 rounded-none border-0 bg-card p-6 [--chamfer:20px] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-brand sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-display text-xl font-bold text-foreground">
             {t('confirmTitle')}
@@ -63,7 +63,7 @@ export default function ConfirmModal({
         </DialogHeader>
 
         {/* Tujuan top-up dulu: kesalahan di sini tidak bisa dibatalkan setelah dibayar */}
-        <dl className="flex flex-col gap-2.5 rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
+        <dl className="flex flex-col gap-2.5 rounded-sm border border-primary/30 bg-primary/5 p-4 text-sm">
           {accountName && (
             <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">{t('confirmAccount')}</dt>
@@ -90,7 +90,7 @@ export default function ConfirmModal({
           )}
         </dl>
 
-        <dl className="flex flex-col gap-2.5 rounded-xl bg-muted p-4 text-sm">
+        <dl className="flex flex-col gap-2.5 rounded-sm bg-muted p-4 text-sm">
           <div className="flex justify-between gap-3">
             <dt className="text-muted-foreground">{t('confirmProduct')}</dt>
             <dd className="text-right font-semibold text-foreground">{Product?.name || '-'}</dd>
@@ -110,7 +110,7 @@ export default function ConfirmModal({
             type="button"
             onClick={() => setOpen(false)}
             disabled={loading}
-            className="h-12 flex-1 cursor-pointer rounded-lg border border-border text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+            className="h-12 flex-1 cursor-pointer rounded-sm border border-border text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
           >
             {t('confirmEdit')}
           </button>

@@ -9,7 +9,7 @@ import { focusRing } from '@/styles/focusRing'
 /** Tombol pilihan di panel menu mobile — gaya sama dengan pilihan region (RegionSwitcher). */
 export const optionButtonClass = (active: boolean) =>
   cn(
-    'flex h-10 min-w-0 cursor-pointer touch-manipulation items-center justify-center rounded-lg border px-3 text-sm font-medium transition-colors duration-200 disabled:opacity-50',
+    'flex h-10 min-w-0 cursor-pointer touch-manipulation items-center justify-center rounded-sm border px-3 text-sm font-medium transition-colors duration-200 disabled:opacity-50',
     active
       ? 'border-primary/60 bg-primary/10 text-primary'
       : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground',

@@ -51,7 +51,7 @@ export default function GameHeader({ game }: GameHeaderProps) {
         </ol>
       </nav>
 
-      <div className="relative isolate h-36 overflow-hidden rounded-2xl border border-border bg-card sm:h-48 lg:h-56">
+      <div className="chamfer relative isolate h-36 overflow-hidden bg-card [--chamfer:20px] sm:h-48 lg:h-56">
         {showBannerArt ? (
           <>
             <Image
@@ -88,7 +88,7 @@ export default function GameHeader({ game }: GameHeaderProps) {
 
       <div className="flex items-start gap-4 px-3 sm:gap-5 sm:px-5">
         <div
-          className="relative -mt-10 h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-border bg-muted shadow-lg ring-4 ring-background sm:-mt-12 sm:h-24 sm:w-24"
+          className="chamfer relative -mt-10 h-20 w-20 shrink-0 overflow-hidden border-4 border-background bg-muted [--chamfer:14px] sm:-mt-12 sm:h-24 sm:w-24"
         >
           {showFallback ? (
             <div
@@ -116,9 +116,11 @@ export default function GameHeader({ game }: GameHeaderProps) {
             {game.name}
           </h1>
           {showRegionChip && (
-            <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-semibold text-foreground">
-              <Globe className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
-              {t('regionChip', { region: regionName(gameRegion, locale) })}
+            <p className="inline-flex -skew-x-12 items-center rounded-sm border border-border bg-card px-2.5 py-1 text-xs font-semibold text-foreground">
+              <span className="inline-flex skew-x-12 items-center gap-1.5">
+                <Globe className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+                {t('regionChip', { region: regionName(gameRegion, locale) })}
+              </span>
             </p>
           )}
         </div>

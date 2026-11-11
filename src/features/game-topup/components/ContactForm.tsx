@@ -143,7 +143,7 @@ export default function ContactForm({
               type="button"
               onClick={handleCheckCode}
               disabled={isLocked || checkMutation.isPending}
-              className="inline-flex h-11 shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-brand/60 bg-brand/10 px-4 text-sm font-bold text-brand transition-colors duration-200 hover:bg-brand-solid hover:text-brand-solid-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+              className="inline-flex h-11 shrink-0 cursor-pointer items-center gap-2 rounded-sm border border-brand/60 bg-brand/10 px-4 text-sm font-bold text-brand transition-colors duration-200 hover:bg-brand-solid hover:text-brand-solid-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
             >
               {checkMutation.isPending && (
                 <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />

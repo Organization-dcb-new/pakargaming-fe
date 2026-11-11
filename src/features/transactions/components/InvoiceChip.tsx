@@ -12,7 +12,7 @@ export default function InvoiceChip({ value, className = '' }: { value: string; 
       value={value}
       successMessage={t('copyPaymentNumber')}
       label={t('copyInvoiceLabel')}
-      className={`max-w-full rounded-full bg-muted px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground ${className}`}
+      className={`max-w-full rounded-sm bg-muted px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground ${className}`}
     >
       <span className="min-w-0 break-all text-left">
         {t('invoiceLabel')} <strong className="font-semibold text-foreground">{value}</strong>

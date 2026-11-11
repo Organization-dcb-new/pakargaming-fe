@@ -3,6 +3,7 @@
 import { createContext, useContext, type ReactNode } from 'react'
 import { Check, Lock, TriangleAlert } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { HudPanel } from '@/components/ui/hud-panel'
 
 export type StepStatus = {
   /** Langkah ini sudah lengkap & valid → badge hijau bercentang */
@@ -46,13 +47,16 @@ export default function StepCard({
   const isDone = done && !locked
 
   return (
-    <section
+    <HudPanel
+      as="section"
       id={id}
       aria-labelledby={headingId}
       aria-describedby={error ? errorId : undefined}
-      className={`w-full scroll-mt-24 rounded-2xl border bg-card p-4 transition-colors duration-200 motion-reduce:transition-none sm:p-5 ${
-        error ? 'border-destructive' : 'border-border'
-      } ${className}`}
+      accent={false}
+      size="md"
+      borderClassName={error ? 'bg-destructive' : 'bg-border'}
+      className={`w-full scroll-mt-24 ${className}`}
+      innerClassName="p-4 sm:p-5"
     >
       <div className="mb-4 flex items-center gap-3">
         <span
@@ -92,7 +96,7 @@ export default function StepCard({
         <p
           id={errorId}
           role="alert"
-          className="mb-4 flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive"
+          className="mb-4 flex items-start gap-2 rounded-sm border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive"
         >
           <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
           {error}
@@ -104,6 +108,6 @@ export default function StepCard({
       >
         {children}
       </div>
-    </section>
+    </HudPanel>
   )
 }

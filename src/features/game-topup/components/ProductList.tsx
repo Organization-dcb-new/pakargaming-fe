@@ -90,9 +90,9 @@ export function ProductList({
                 }
                 scrollToCategory(`category-${category.id}`);
               }}
-              className="cursor-pointer rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 hover:border-primary/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
+              className="-skew-x-12 cursor-pointer rounded-sm border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 hover:border-primary/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
             >
-              {category.name}
+              <span className="inline-block skew-x-12">{category.name}</span>
             </button>
           ))}
         </div>
@@ -161,7 +161,7 @@ export function ProductList({
               onClick={() => {
                 setShowAllRemaining(!showAllRemaining);
               }}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
             >
               {showAllRemaining ? t("showLess") : t("showMore")}
               <ChevronDown
@@ -195,14 +195,14 @@ function PackageCard({ pkg, fallbackImage, label, selected, onSelect }: PackageC
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
-      className={`relative flex min-h-[5.5rem] cursor-pointer flex-col gap-2 rounded-xl border-2 p-3 text-left transition-[border-color,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card motion-reduce:transition-none ${
+      className={`relative flex min-h-[5.5rem] cursor-pointer flex-col gap-2 rounded-sm border-2 p-3 text-left transition-[border-color,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card motion-reduce:transition-none ${
         selected
           ? "border-primary bg-primary/10"
           : "border-border bg-input-background hover:border-primary/60"
       }`}
     >
       {selected && (
-        <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+        <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-sm bg-primary text-primary-foreground shadow-md">
           <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
         </span>
       )}
@@ -220,7 +220,7 @@ function PackageCard({ pkg, fallbackImage, label, selected, onSelect }: PackageC
             height={28}
             unoptimized={!canOptimize(image)}
             // Thumbnail game (fallback) berbentuk persegi foto → sudut membulat; ikon item paket tetap apa adanya
-            className={`h-7 w-7 shrink-0 ${pkg.image ? "object-contain" : "rounded-md object-cover"}`}
+            className={`h-7 w-7 shrink-0 ${pkg.image ? "object-contain" : "rounded-sm object-cover"}`}
           />
         ) : (
           // Tanpa gambar sama sekali: ruang kosong seukuran ikon supaya harga tetap rata kanan

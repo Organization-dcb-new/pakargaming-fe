@@ -7,7 +7,7 @@ import { Link } from '@/i18n/routing'
 import LogoutConfirmDialog from '@/features/auth/components/LogoutConfirmDialog'
 import {
   DropdownMenu,
-  DropdownMenuContent,
+  DropdownMenuHudContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -24,7 +24,7 @@ interface UserMenuProps {
 }
 
 const menuItemClass =
-  'cursor-pointer rounded-lg py-2.5 font-medium focus:bg-primary/10 focus:text-primary [&:focus_svg]:!text-primary'
+  'cursor-pointer rounded-sm py-2.5 font-medium focus:bg-primary/10 focus:text-primary [&:focus_svg]:!text-primary'
 
 export default function UserMenu({ user, onLogin }: UserMenuProps) {
   const t = useTranslations('Navigation')
@@ -54,7 +54,7 @@ export default function UserMenu({ user, onLogin }: UserMenuProps) {
           <button
             type="button"
             aria-label={t('accountMenu')}
-            className={`group flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg p-0.5 pr-1.5 transition-colors duration-200 hover:bg-accent data-[state=open]:bg-accent ${focusRing}`}
+            className={`group flex shrink-0 cursor-pointer items-center gap-1.5 rounded-sm p-0.5 pr-1.5 transition-colors duration-200 hover:bg-accent data-[state=open]:bg-accent ${focusRing}`}
           >
             <PlayerAvatar src={avatarSrc} size="sm" />
             <ChevronDown
@@ -64,11 +64,10 @@ export default function UserMenu({ user, onLogin }: UserMenuProps) {
           </button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" sideOffset={8} className="w-64 overflow-hidden rounded-xl p-1.5">
+        <DropdownMenuHudContent align="end" sideOffset={8} className="w-64">
           {/* Mini kartu pemain — sama dengan header Dasbor */}
           <DropdownMenuLabel className="relative -m-1.5 mb-1.5 flex items-center gap-3 overflow-hidden p-3 font-normal">
             <span aria-hidden="true" className="bg-stripes pointer-events-none absolute inset-0" />
-            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-gradient-brand" />
             <PlayerAvatar src={avatarSrc} size="md" className="relative" />
             <div className="relative min-w-0">
               <p className="truncate font-display text-sm font-bold text-foreground">{user.name}</p>
@@ -84,13 +83,13 @@ export default function UserMenu({ user, onLogin }: UserMenuProps) {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
-            className="cursor-pointer rounded-lg py-2.5"
+            className="cursor-pointer rounded-sm py-2.5"
             onSelect={() => setLogoutOpen(true)}
           >
             <LogOut />
             {t('logout')}
           </DropdownMenuItem>
-        </DropdownMenuContent>
+        </DropdownMenuHudContent>
       </DropdownMenu>
 
       <LogoutConfirmDialog open={logoutOpen} onOpenChange={setLogoutOpen} />

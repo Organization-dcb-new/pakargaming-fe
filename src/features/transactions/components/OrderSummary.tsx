@@ -25,10 +25,10 @@ function VoucherCode({ code }: { code: string }) {
   const t = useTranslations('DetailTrx')
   const [visible, setVisible] = useState(false)
   const iconBtn =
-    'flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-success/15 hover:text-foreground'
+    'flex h-9 w-9 items-center justify-center rounded-sm text-muted-foreground hover:bg-success/15 hover:text-foreground'
 
   return (
-    <div className="rounded-xl border border-success/40 bg-success/10 p-3.5">
+    <div className="rounded-sm border border-success/40 bg-success/10 p-3.5">
       <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-success">
         <Ticket className="h-4 w-4" aria-hidden />
         {t('labelVoucher')}
@@ -92,7 +92,7 @@ export default function OrderSummary({ data }: { data: PaymentDataWithDetailProd
           <span className="inline-flex items-center gap-2">
             {product?.payment_image ? (
               /* Logo pihak ketiga di atas chip putih supaya tetap terbaca di dark mode (rules §2.3) */
-              <span className="inline-flex rounded bg-white px-1.5 py-0.5">
+              <span className="inline-flex rounded-sm bg-white px-1.5 py-0.5">
                 <Image
                   src={product.payment_image}
                   alt=""

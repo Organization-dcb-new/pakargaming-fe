@@ -6,11 +6,12 @@ import { Link } from '@/i18n/routing'
 import { formatPrice } from '@/lib/formatPrice'
 import TransactionThumb from '@/components/TransactionThumb'
 import { focusRing } from '@/styles/focusRing'
-import { StatusBadge } from '@/components/ui/status-badge'
+import { StatusBadge, statusAccentClass } from '@/components/ui/status-badge'
 import { cn } from '@/lib/cn'
 import type { PaymentResponseDetail } from '@/types/dashboard'
 import RetryButton from './RetryButton'
 import { STATE_GLYPH, StateGlyph } from '@/components/ui/state-glyph'
+import { HudPanel } from '@/components/ui/hud-panel'
 
 interface RecentTransactionsProps {
   transactions: PaymentResponseDetail[]
@@ -19,8 +20,6 @@ interface RecentTransactionsProps {
   isFetching: boolean
   onRetry: () => void
 }
-
-const cardClass = 'rounded-2xl border border-border bg-card shadow-sm'
 
 /** Daftar transaksi terbaru dari data dasbor (kartu per transaksi, bukan tabel — nyaman di mobile). */
 export default function RecentTransactions({
@@ -52,15 +51,15 @@ export default function RecentTransactions({
         <span className="sr-only">{t('loading')}</span>
         {Array.from({ length: 4 }).map((_, i) => (
           <li key={i} className="flex animate-pulse items-center gap-4 px-4 py-4 motion-reduce:animate-none sm:px-5">
-            <div className="size-12 shrink-0 rounded-xl bg-muted" />
+            <div className="chamfer size-12 shrink-0 bg-muted [--chamfer:9px]" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 w-2/5 rounded bg-muted" />
-              <div className="h-3 w-1/4 rounded bg-muted" />
-              <div className="h-3 w-1/3 rounded bg-muted" />
+              <div className="h-4 w-2/5 rounded-sm bg-muted" />
+              <div className="h-3 w-1/4 rounded-sm bg-muted" />
+              <div className="h-3 w-1/3 rounded-sm bg-muted" />
             </div>
             <div className="flex flex-col items-end gap-2">
-              <div className="h-4 w-20 rounded bg-muted" />
-              <div className="h-5 w-16 rounded-full bg-muted" />
+              <div className="h-4 w-20 rounded-sm bg-muted" />
+              <div className="h-5 w-16 -skew-x-12 rounded-sm bg-muted" />
             </div>
           </li>
         ))}
@@ -102,8 +101,10 @@ export default function RecentTransactions({
           <li key={trx.id}>
             <Link
               href={`/detail-trx/${trx.id}`}
-              className="group flex items-center gap-4 px-4 py-4 transition-colors duration-200 hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset motion-reduce:transition-none sm:px-5"
+              className="group relative flex items-center gap-4 px-4 py-4 transition-colors duration-200 hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset motion-reduce:transition-none sm:px-5"
             >
+              {/* Garis status di kiri: hijau berhasil, kuning menunggu, merah gagal — selain warna, label ada di badge */}
+              <span aria-hidden="true" className={cn('absolute inset-y-3 left-0 w-[3px]', statusAccentClass(trx.status))} />
               <TransactionThumb src={trx.game_image} name={trx.game_name} size="lg" />
 
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -136,17 +137,17 @@ export default function RecentTransactions({
   return (
     <section aria-labelledby="recent-trx-title" className="space-y-3">
       <div className="flex items-end justify-between gap-3">
-        <h2 id="recent-trx-title" className="font-display text-lg font-bold text-foreground">
+        <h2 id="recent-trx-title" className="font-display text-lg font-bold text-foreground flex items-center gap-2.5 before:h-5 before:w-1.5 before:shrink-0 before:-skew-x-12 before:bg-gradient-brand">
           {t('recentTitle')}
         </h2>
         <Link
           href="/check-transaction"
-          className={cn('rounded-md text-sm font-semibold text-primary hover:underline', focusRing)}
+          className={cn('rounded-sm text-sm font-semibold text-primary hover:underline', focusRing)}
         >
           {t('checkTransaction')}
         </Link>
       </div>
-      <div className={cn(cardClass, 'overflow-hidden')}>{content}</div>
+      <HudPanel innerClassName="overflow-hidden">{content}</HudPanel>
     </section>
   )
 }

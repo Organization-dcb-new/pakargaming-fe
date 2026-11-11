@@ -14,29 +14,45 @@ export function normalizeTransactionStatus(status?: string | null): StatusKey {
   return 'pending'
 }
 
-const STATUS_STYLE: Record<StatusKey, { className: string; Icon: LucideIcon }> = {
-  paid: { className: 'bg-success text-success-foreground', Icon: CheckCircle2 },
-  pending: { className: 'bg-pending text-pending-foreground', Icon: Clock },
-  failed: { className: 'bg-destructive text-destructive-foreground', Icon: XCircle },
+/**
+ * Satu sumber warna per status — berhasil / menunggu / gagal:
+ * `badge` (StatusBadge), `accent` (bilah status di kartu transaksi), `border` (garis tepi HudPanel).
+ */
+const STATUS_STYLE: Record<StatusKey, { badge: string; accent: string; border: string; Icon: LucideIcon }> = {
+  paid: { badge: 'bg-success text-success-foreground', accent: 'bg-success', border: 'bg-success/60', Icon: CheckCircle2 },
+  pending: { badge: 'bg-pending text-pending-foreground', accent: 'bg-pending', border: 'bg-pending/60', Icon: Clock },
+  failed: {
+    badge: 'bg-destructive text-destructive-foreground',
+    accent: 'bg-destructive',
+    border: 'bg-destructive/60',
+    Icon: XCircle,
+  },
 }
+
+export const statusAccentClass = (status?: string | null) => STATUS_STYLE[normalizeTransactionStatus(status)].accent
+
+export const statusBorderClass = (status?: string | null) => STATUS_STYLE[normalizeTransactionStatus(status)].border
 
 /** Badge status transaksi (rules §5): warna dari token status + ikon + label, bukan warna saja. */
 export function StatusBadge({ status, className }: { status?: string | null; className?: string }) {
   const t = useTranslations('Common')
   const key = normalizeTransactionStatus(status)
-  const { className: tone, Icon } = STATUS_STYLE[key]
+  const { badge: tone, Icon } = STATUS_STYLE[key]
   const label = { paid: t('statusPaid'), pending: t('statusPending'), failed: t('statusFailed') }[key]
 
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold',
+        // Tag jajar genjang seperti chip & badge show; isi dimiringkan balik supaya tegak
+        'inline-flex -skew-x-12 items-center rounded-sm px-2.5 py-0.5 text-xs font-bold',
         tone,
         className,
       )}
     >
-      <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-      {label}
+      <span className="inline-flex skew-x-12 items-center gap-1">
+        <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+        {label}
+      </span>
     </span>
   )
 }

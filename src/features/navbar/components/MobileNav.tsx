@@ -21,7 +21,7 @@ interface MobileNavProps {
 
 const sectionLabelClass = 'px-3 text-xs font-medium uppercase tracking-wide text-muted-foreground'
 const itemClass =
-  'flex h-10 w-full touch-manipulation items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors duration-200'
+  'flex h-10 w-full touch-manipulation items-center gap-3 rounded-sm px-3 text-sm font-medium transition-colors duration-200'
 const itemStateClass = (active: boolean) =>
   active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
 
@@ -41,7 +41,7 @@ export default function MobileNav({ user, onLogin }: MobileNavProps) {
           <button
             type="button"
             aria-label={t('openMenu')}
-            className={`-mr-2 inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-lg text-foreground transition-colors duration-200 hover:bg-accent ${focusRing}`}
+            className={`-mr-2 inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-sm text-foreground transition-colors duration-200 hover:bg-accent ${focusRing}`}
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </button>

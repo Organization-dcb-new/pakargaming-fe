@@ -9,10 +9,10 @@ import { normalizeTransactionStatus } from '@/components/ui/status-badge'
 type StepState = 'done' | 'current' | 'failed' | 'idle'
 
 const DOT: Record<StepState, string> = {
-  done: 'border-primary bg-primary text-primary-foreground',
-  current: 'border-pending bg-pending/15',
-  failed: 'border-destructive bg-destructive text-destructive-foreground',
-  idle: 'border-border bg-card',
+  done: 'bg-primary text-primary-foreground',
+  current: 'bg-pending/20',
+  failed: 'bg-destructive text-destructive-foreground',
+  idle: 'bg-muted',
 }
 
 const TITLE: Record<StepState, string> = {
@@ -70,20 +70,21 @@ export default function StatusTimeline({ data }: { data: PaymentDataWithDetailPr
             className="flex gap-3.5"
           >
             <div className="flex w-6 flex-none flex-col items-center">
-              <span
-                className={`relative flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${DOT[step.state]}`}
-              >
+              {/* Penanda chamfer (bahasa visual StepCard). Ping di luar elemen ber-clip-path supaya tidak terpotong. */}
+              <span className="relative flex h-6 w-6 shrink-0">
                 {step.state === 'current' && (
-                  <>
-                    <span
-                      aria-hidden
-                      className="absolute inset-0 animate-ping rounded-full bg-pending/40 motion-reduce:animate-none"
-                    />
-                    <span aria-hidden className="h-2 w-2 rounded-full bg-pending" />
-                  </>
+                  <span
+                    aria-hidden
+                    className="chamfer absolute inset-0 animate-ping bg-pending/40 [--chamfer:6px] motion-reduce:animate-none"
+                  />
                 )}
-                {step.state === 'done' && <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />}
-                {step.state === 'failed' && <X className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />}
+                <span
+                  className={`chamfer relative flex h-6 w-6 items-center justify-center [--chamfer:6px] ${DOT[step.state]}`}
+                >
+                  {step.state === 'current' && <span aria-hidden className="h-2 w-2 bg-pending" />}
+                  {step.state === 'done' && <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />}
+                  {step.state === 'failed' && <X className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />}
+                </span>
               </span>
               {!isLast && (
                 <span

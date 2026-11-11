@@ -86,7 +86,7 @@ export default function CheckTransaction() {
           ) : (
             <p id="invoice-hint" className="text-xs text-muted-foreground">
               {t('exampleHint')}{' '}
-              <code className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
+              <code className="rounded-sm border border-border bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
                 {t('exampleFormat')}
               </code>
             </p>
@@ -99,7 +99,7 @@ export default function CheckTransaction() {
           {notFound && (
             <div
               role="alert"
-              className="flex items-start gap-3 rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm font-semibold text-foreground"
+              className="flex items-start gap-3 rounded-sm border border-destructive/40 bg-destructive/10 p-4 text-sm font-semibold text-foreground"
             >
               <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden />
               {t('notFound')}

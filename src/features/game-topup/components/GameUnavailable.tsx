@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { cn } from "@/lib/cn";
 import { STATE_GLYPH, StateGlyph } from "@/components/ui/state-glyph";
+import { HudPanel } from "@/components/ui/hud-panel";
 
 interface GameUnavailableProps {
   /** `not-found`: slug tidak ada / gagal dimuat (empty state, rules §6). `maintenance`: game sedang dirawat. */
@@ -24,11 +24,11 @@ export default function GameUnavailable({ reason, gameName }: GameUnavailablePro
 
   return (
     <div className="flex min-h-[60vh] w-full items-center justify-center py-10">
-      <div
-        className={cn(
-          "w-full max-w-xl rounded-2xl border border-border bg-card p-6 text-center sm:p-8",
-          !maintenance && "border-dashed",
-        )}
+      <HudPanel
+        accent={maintenance}
+        borderClassName={maintenance ? "bg-warning/50" : "bg-border"}
+        className="w-full max-w-xl"
+        innerClassName="p-6 text-center sm:p-8"
       >
         <StateGlyph
           glyph={maintenance ? STATE_GLYPH.maintenance : STATE_GLYPH.notFound}
@@ -50,7 +50,7 @@ export default function GameUnavailable({ reason, gameName }: GameUnavailablePro
             {t("maintenanceBackHome")}
           </Link>
         </div>
-      </div>
+      </HudPanel>
     </div>
   );
 }

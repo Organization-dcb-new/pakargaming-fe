@@ -25,7 +25,7 @@ export default function RegionNotice({ gameName, region, gameRegion, onSwitchToG
   return (
     <div
       role="status"
-      className="mb-6 flex flex-col gap-3 rounded-xl border border-warning/40 bg-warning/10 p-4 sm:flex-row sm:items-center"
+      className="mb-6 flex flex-col gap-3 rounded-sm border border-warning/40 bg-warning/10 p-4 sm:flex-row sm:items-center"
     >
       <div className="flex min-w-0 flex-1 gap-3">
         <Globe className="mt-0.5 h-5 w-5 shrink-0 text-warning" aria-hidden />
@@ -40,13 +40,13 @@ export default function RegionNotice({ gameName, region, gameRegion, onSwitchToG
         <button
           type="button"
           onClick={onSwitchToGameRegion}
-          className={`inline-flex h-9 cursor-pointer touch-manipulation items-center rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 ${focusRing}`}
+          className={`inline-flex h-9 cursor-pointer touch-manipulation items-center rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 ${focusRing}`}
         >
           {t('regionSwitchTo', { region: served })}
         </button>
         <Link
           href="/"
-          className={`inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-muted ${focusRing}`}
+          className={`inline-flex h-9 items-center rounded-sm border border-border bg-card px-3 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-muted ${focusRing}`}
         >
           {t('regionBrowse', { region: chosen })}
         </Link>

@@ -36,13 +36,13 @@ export default function QrPayment({ src, title, channel }: QrPaymentProps) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t('enlargeQrHint')}
-        className={`group relative cursor-zoom-in rounded-2xl border border-border bg-white p-3 transition-transform duration-200 hover:scale-[1.02] motion-reduce:transition-none motion-reduce:hover:scale-100 ${focusRingOnCard}`}
+        className={`group relative cursor-zoom-in rounded-sm border border-border bg-white p-3 transition-transform duration-200 hover:scale-[1.02] motion-reduce:transition-none motion-reduce:hover:scale-100 ${focusRingOnCard}`}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- QR bisa berupa data: URL dari gateway */}
         <img src={src} alt={t('qrAlt')} className="h-52 w-52 object-contain sm:h-56 sm:w-56" />
         <span
           aria-hidden
-          className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white opacity-80 transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none"
+          className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-sm bg-black/60 text-white opacity-80 transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none"
         >
           <Maximize2 className="h-4 w-4" />
         </span>
@@ -53,12 +53,12 @@ export default function QrPayment({ src, title, channel }: QrPaymentProps) {
       {download ? <div className="w-full max-w-xs">{download}</div> : null}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="gap-4 rounded-2xl border-border bg-card p-5 sm:max-w-sm">
+        <DialogContent className="chamfer gap-4 rounded-none border-0 bg-card p-5 [--chamfer:20px] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-brand sm:max-w-sm">
           <DialogTitle className="pr-6 font-display text-lg font-bold text-foreground">
             {title}
           </DialogTitle>
           <DialogDescription>{t('scanQrHint')}</DialogDescription>
-          <div className="rounded-xl bg-white p-4">
+          <div className="rounded-sm bg-white p-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={src} alt={t('qrAlt')} className="h-auto w-full" />
           </div>

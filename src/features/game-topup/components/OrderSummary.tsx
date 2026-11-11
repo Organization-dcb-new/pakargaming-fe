@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { Price } from '@/types/game'
 import { PaymentMethod } from '@/types/paymentMethod'
 import { calculateTotalPrice } from './PaymentMethodList'
+import { HudPanel } from '@/components/ui/hud-panel'
 
 interface OrderProps {
   Product: Price
@@ -41,9 +42,11 @@ export default function OrderSummary({
   ]
 
   return (
-    <section
+    <HudPanel
+      as="section"
       aria-labelledby="order-summary-title"
-      className="hidden flex-col gap-4 rounded-2xl border border-border bg-card p-5 lg:flex"
+      className="hidden lg:block"
+      innerClassName="flex flex-col gap-4 p-5"
     >
       <div className="flex items-baseline justify-between gap-3">
         <h2 id="order-summary-title" className="font-display text-lg font-semibold text-foreground">
@@ -96,6 +99,6 @@ export default function OrderSummary({
           </ul>
         </div>
       )}
-    </section>
+    </HudPanel>
   )
 }

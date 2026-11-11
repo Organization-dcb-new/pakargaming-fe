@@ -18,7 +18,7 @@ export default function RetryButton({ onClick, isFetching, children }: RetryButt
       onClick={onClick}
       disabled={isFetching}
       className={cn(
-        'inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
+        'inline-flex h-9 cursor-pointer items-center gap-2 rounded-sm border border-border bg-card px-3 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
         focusRing,
       )}
     >

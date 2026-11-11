@@ -6,8 +6,9 @@ import { Link } from '@/i18n/routing'
 import { PaymentDataWithDetailProduct } from '@/types/transaction'
 import { formatDateTime } from '@/lib/formatDate'
 import { formatPrice } from '@/lib/formatPrice'
-import { StatusBadge } from '@/components/ui/status-badge'
+import { StatusBadge, statusAccentClass, statusBorderClass } from '@/components/ui/status-badge'
 import TransactionThumb from '@/components/TransactionThumb'
+import { HudPanel } from '@/components/ui/hud-panel'
 
 /** Kartu hasil cek invoice — klik menuju halaman detail transaksi. */
 export default function TransactionResultCard({
@@ -21,19 +22,25 @@ export default function TransactionResultCard({
   const title = [product?.item_name, product?.item_product].filter(Boolean).join(' · ') || '—'
 
   return (
-    <Link
+    <HudPanel
+      as={Link}
       href={`/detail-trx/${transaction.id}`}
-      className="group flex flex-wrap items-center gap-4 rounded-2xl border-2 border-primary bg-card p-4 transition-shadow duration-200 hover:shadow-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+      size="md"
+      // Garis tepi mengikuti status (berhasil / menunggu / gagal); hover menyala penuh
+      borderClassName={`${statusBorderClass(transaction.status)} hover:bg-primary`}
+      className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      innerClassName="flex flex-wrap items-center gap-4 p-4 pl-5"
     >
+      <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${statusAccentClass(transaction.status)}`} />
       <TransactionThumb src={product?.item_image} name={product?.item_name} size="lg" />
 
       <span className="flex min-w-0 flex-[1_1_12rem] flex-col gap-1">
         <span className="font-bold text-foreground">{title}</span>
-        <span className="break-all text-sm text-muted-foreground">
+        <span className="break-all font-mono text-sm text-muted-foreground">
           {transaction.payment_number}
           {transaction.created_at && ` · ${formatDateTime(transaction.created_at, locale)}`}
         </span>
-        <span className="font-display text-sm font-semibold text-foreground">
+        <span className="font-display text-sm font-semibold tabular-nums text-foreground">
           Rp {formatPrice(transaction.amount)}
         </span>
       </span>
@@ -48,7 +55,7 @@ export default function TransactionResultCard({
           />
         </span>
       </span>
-    </Link>
+    </HudPanel>
   )
 }
 
@@ -60,16 +67,16 @@ export function TransactionResultSkeleton() {
     <div
       role="status"
       aria-busy="true"
-      className="flex animate-pulse items-center gap-4 rounded-2xl border-2 border-border bg-card p-4 motion-reduce:animate-none"
+      className="chamfer flex animate-pulse items-center gap-4 bg-card p-4 [--chamfer:14px] motion-reduce:animate-none"
     >
       <span className="sr-only">{t('loading')}</span>
-      <div className="h-12 w-12 shrink-0 rounded-xl bg-muted" />
+      <div className="chamfer h-12 w-12 shrink-0 bg-muted [--chamfer:9px]" />
       <div className="flex-1 space-y-2">
-        <div className="h-4 w-1/2 rounded bg-muted" />
-        <div className="h-3 w-2/3 rounded bg-muted" />
-        <div className="h-3 w-20 rounded bg-muted" />
+        <div className="h-4 w-1/2 rounded-sm bg-muted" />
+        <div className="h-3 w-2/3 rounded-sm bg-muted" />
+        <div className="h-3 w-20 rounded-sm bg-muted" />
       </div>
-      <div className="h-6 w-20 rounded-full bg-muted" />
+      <div className="h-6 w-20 -skew-x-12 rounded-sm bg-muted" />
     </div>
   )
 }

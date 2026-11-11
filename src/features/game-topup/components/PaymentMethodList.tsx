@@ -84,7 +84,7 @@ export default function PaymentMethodList({
           const panelId = `payment-category-${index}`
 
           return (
-            <div key={`${index}-${category.name}`} className="overflow-hidden rounded-xl border border-border">
+            <div key={`${index}-${category.name}`} className="overflow-hidden rounded-sm border border-border">
               {/* HEADER */}
               <button
                 type="button"
@@ -159,7 +159,7 @@ export default function PaymentMethodList({
                         }}
                         aria-pressed={isSelected}
                         aria-disabled={isDisabled}
-                        className={`flex min-h-14 w-full items-center gap-3 rounded-xl border-2 px-3 py-2.5 text-left transition-[border-color,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none ${
+                        className={`flex min-h-14 w-full items-center gap-3 rounded-sm border-2 px-3 py-2.5 text-left transition-[border-color,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none ${
                           isDisabled
                             ? 'cursor-not-allowed border-border bg-muted opacity-50'
                             : isSelected
@@ -167,7 +167,7 @@ export default function PaymentMethodList({
                               : 'cursor-pointer border-border bg-input-background hover:border-primary/60'
                         }`}
                       >
-                        <span className="flex h-9 w-14 shrink-0 items-center justify-center rounded-md bg-white px-1.5 shadow-sm">
+                        <span className="flex h-9 w-14 shrink-0 items-center justify-center rounded-sm bg-white px-1.5 shadow-sm">
                           {iconSrc ? (
                             <Image
                               src={iconSrc}

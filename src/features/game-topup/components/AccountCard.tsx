@@ -154,8 +154,8 @@ export default function AccountCard({
         )}
 
         {!isPending && isVerified && (
-          <div className="mt-4 flex items-center gap-3 rounded-xl border border-success/30 bg-success/10 px-3.5 py-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground">
+          <div className="mt-4 flex items-center gap-3 rounded-sm border border-success/30 bg-success/10 px-3.5 py-3">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-success text-success-foreground">
               <Check className="h-4 w-4" strokeWidth={3} aria-hidden />
             </span>
             <span className="flex min-w-0 flex-col">

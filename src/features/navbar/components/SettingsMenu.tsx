@@ -4,7 +4,7 @@ import { ChevronDown, Globe } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import {
   DropdownMenu,
-  DropdownMenuContent,
+  DropdownMenuHudContent,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -18,8 +18,11 @@ import { cn } from '@/lib/cn'
 import { regionName } from '@/lib/regionName'
 import { focusRing } from '@/styles/focusRing'
 
-const sectionLabelClass = 'px-2 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground'
-const itemClass = 'cursor-pointer rounded-lg py-2 focus:bg-primary/10 focus:text-foreground'
+// Label section: bilah miring gradient + teks display, sama seperti judul section di halaman
+const sectionLabelClass =
+  'flex items-center gap-2 px-2 pb-1 pt-2.5 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground before:h-3 before:w-1 before:shrink-0 before:-skew-x-12 before:bg-gradient-brand'
+const itemClass =
+  'cursor-pointer rounded-sm py-2 focus:bg-primary/10 focus:text-foreground data-[state=checked]:bg-primary/10 data-[state=checked]:font-semibold data-[state=checked]:text-primary'
 
 /**
  * Satu tombol untuk region akun game, bahasa, dan tema (desktop). Tombol menampilkan kode region
@@ -40,7 +43,7 @@ export default function SettingsMenu() {
           type="button"
           aria-label={t('settingsLabel')}
           className={cn(
-            'group inline-flex h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 text-muted-foreground transition-colors duration-200 hover:bg-accent hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground',
+            'group inline-flex h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-sm px-2.5 text-muted-foreground transition-colors duration-200 hover:bg-accent hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground',
             focusRing,
           )}
         >
@@ -53,14 +56,14 @@ export default function SettingsMenu() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" sideOffset={8} className="w-72 rounded-xl p-1.5">
+      <DropdownMenuHudContent align="end" sideOffset={8} className="w-72">
         {showRegion && (
           <>
             <DropdownMenuLabel className={sectionLabelClass}>{t('region')}</DropdownMenuLabel>
             <DropdownMenuRadioGroup value={region} onValueChange={setRegion}>
               {regions.map((r) => (
                 <DropdownMenuRadioItem key={r.code} value={r.code} className={itemClass}>
-                  <span className="w-7 font-display text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <span className="w-7 font-display text-xs font-bold uppercase tracking-wider opacity-70">
                     {r.code}
                   </span>
                   {regionName(r.code, locale, r.name)}
@@ -96,7 +99,7 @@ export default function SettingsMenu() {
             {t('themeSystem')}
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
+      </DropdownMenuHudContent>
     </DropdownMenu>
   )
 }

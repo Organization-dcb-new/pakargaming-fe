@@ -28,7 +28,7 @@ export function TransactionNotFound({ onRetry }: { onRetry?: () => unknown }) {
   return (
     <section
       aria-labelledby="trx-not-found-title"
-      className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 py-16 text-center sm:px-6 md:py-24 lg:px-8"
+      className="mx-auto flex min-h-[calc(100dvh-3.5rem)] w-full max-w-7xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6 md:min-h-[calc(100dvh-4rem)] lg:px-8"
     >
       <StateGlyph glyph={STATE_GLYPH.notFound} tone="destructive" size="xl" />
 
@@ -55,7 +55,7 @@ export function TransactionNotFound({ onRetry }: { onRetry?: () => unknown }) {
             type="button"
             onClick={handleRetry}
             disabled={retrying}
-            className={`flex h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-card px-7 text-base font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none ${focusRing}`}
+            className={`flex h-12 cursor-pointer items-center justify-center gap-2 rounded-sm border border-border bg-card px-7 text-base font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none ${focusRing}`}
           >
             {retrying ? (
               <Loader2 className="size-4 animate-spin motion-reduce:animate-none" aria-hidden />
@@ -67,7 +67,7 @@ export function TransactionNotFound({ onRetry }: { onRetry?: () => unknown }) {
         ) : (
           <Link
             href="/"
-            className={`flex h-12 items-center justify-center gap-2 rounded-lg border border-border bg-card px-7 text-base font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary motion-reduce:transition-none ${focusRing}`}
+            className={`flex h-12 items-center justify-center gap-2 rounded-sm border border-border bg-card px-7 text-base font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary motion-reduce:transition-none ${focusRing}`}
           >
             {t('notFoundHome')}
           </Link>

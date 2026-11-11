@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/cn'
 import type { TransactionResponseDetail } from '@/types/dashboard'
 import RetryButton from './RetryButton'
+import { HudPanel } from '@/components/ui/hud-panel'
 
 interface PlayerCardProps {
   user: { name?: string; email?: string; picture?: string } | null
@@ -55,10 +56,7 @@ export default function PlayerCard({ user, stats, isLoading, isError, isFetching
   const segmentTotal = segments.reduce((sum, s) => sum + s.count, 0)
 
   return (
-    <section
-      aria-labelledby="player-name"
-      className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
-    >
+    <HudPanel as="section" aria-labelledby="player-name" accent={false} innerClassName="overflow-hidden">
       {/* Dekorasi: pita garis di atas + glow brand */}
       <div aria-hidden="true" className="bg-stripes pointer-events-none absolute inset-x-0 top-0 h-28" />
       <div
@@ -73,7 +71,7 @@ export default function PlayerCard({ user, stats, isLoading, isError, isFetching
           {user ? (
             <PlayerAvatar src={getAvatarSrc(user)} size="lg" />
           ) : (
-            <Skeleton className="size-16 shrink-0 rounded-xl sm:size-24" />
+            <Skeleton className="chamfer size-16 shrink-0 rounded-none [--chamfer:14px] sm:size-24" />
           )}
           <div className="min-w-0 flex-1 space-y-1">
             <p className="font-display text-xs font-bold uppercase tracking-widest text-primary">
@@ -91,8 +89,8 @@ export default function PlayerCard({ user, stats, isLoading, isError, isFetching
               </>
             ) : (
               <div className="space-y-2 pt-1">
-                <Skeleton className="h-7 w-56 max-w-full rounded-md" />
-                <Skeleton className="h-4 w-40 max-w-full rounded-md" />
+                <Skeleton className="h-7 w-56 max-w-full rounded-sm" />
+                <Skeleton className="h-4 w-40 max-w-full rounded-sm" />
               </div>
             )}
           </div>
@@ -104,7 +102,7 @@ export default function PlayerCard({ user, stats, isLoading, isError, isFetching
         {isError ? (
           <div
             role="alert"
-            className="flex flex-col items-start gap-3 rounded-xl border border-destructive/40 bg-destructive/10 p-4 sm:flex-row sm:items-center"
+            className="flex flex-col items-start gap-3 rounded-sm border border-destructive/40 bg-destructive/10 p-4 sm:flex-row sm:items-center"
           >
             <TriangleAlert className="size-5 shrink-0 text-destructive" aria-hidden="true" />
             <p className="flex-1 text-sm text-foreground">{t('errorState')}</p>
@@ -132,7 +130,7 @@ export default function PlayerCard({ user, stats, isLoading, isError, isFetching
               <div
                 role="img"
                 aria-label={segments.map((s) => `${s.label} ${s.count}`).join(', ')}
-                className="flex h-2.5 gap-0.5 overflow-hidden rounded-full bg-muted"
+                className="flex h-2.5 gap-0.5 overflow-hidden bg-muted"
               >
                 {!isLoading &&
                   segmentTotal > 0 &&
@@ -149,7 +147,7 @@ export default function PlayerCard({ user, stats, isLoading, isError, isFetching
                     <Icon className={cn('size-4 shrink-0', text)} aria-hidden="true" />
                     <span className="text-muted-foreground">{label}</span>
                     {isLoading ? (
-                      <Skeleton className="h-4 w-5 rounded" />
+                      <Skeleton className="h-4 w-5 rounded-sm" />
                     ) : (
                       <span className="font-display font-bold tabular-nums text-foreground">{count}</span>
                     )}
@@ -160,7 +158,7 @@ export default function PlayerCard({ user, stats, isLoading, isError, isFetching
           </div>
         )}
       </div>
-    </section>
+    </HudPanel>
   )
 }
 
@@ -180,7 +178,7 @@ function HudStat({
       <dt className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{label}</dt>
       <dd className="mt-1">
         {loading ? (
-          <Skeleton className="h-9 w-28 rounded-md" />
+          <Skeleton className="h-9 w-28 rounded-sm" />
         ) : (
           <span
             className={cn(

@@ -7,7 +7,8 @@ import { PaymentDataWithDetailProduct } from '@/types/transaction'
 import { formatPrice } from '@/lib/formatPrice'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { getPaymentView } from '@/features/transactions/lib/paymentView'
-import { btnPrimary, surface } from '@/features/transactions/styles'
+import { btnPrimary } from '@/features/transactions/styles'
+import { HudPanel } from '@/components/ui/hud-panel'
 import InvoiceChip from './InvoiceChip'
 import OrderSummary from './OrderSummary'
 import PaymentInstructions from './PaymentInstructions'
@@ -35,17 +36,19 @@ export default function CheckoutView({ data }: { data: PaymentDataWithDetailProd
       </header>
 
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12">
-        <section
+        <HudPanel
+          as="section"
           aria-labelledby="pay-panel-title"
-          className={`${surface} flex flex-col items-center gap-5 p-5 text-center sm:p-6 lg:col-span-7`}
+          className="lg:col-span-7"
+          innerClassName="flex flex-col items-center gap-5 p-5 text-center sm:p-6"
         >
           <h2 id="pay-panel-title" className="sr-only">
             {t('paymentPanelTitle')}
           </h2>
 
-          <span className="inline-flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-1.5 text-sm font-bold text-foreground">
+          <span className="inline-flex items-center gap-2 rounded-sm border border-border bg-muted px-3 py-1.5 text-sm font-bold text-foreground">
             {product?.payment_image ? (
-              <span className="inline-flex rounded bg-white px-1.5 py-0.5">
+              <span className="inline-flex rounded-sm bg-white px-1.5 py-0.5">
                 <Image
                   src={product.payment_image}
                   alt=""
@@ -83,35 +86,35 @@ export default function CheckoutView({ data }: { data: PaymentDataWithDetailProd
           <div className="flex max-w-md flex-col gap-1.5">
             <p className="text-xs font-medium text-foreground">
               <span aria-hidden className="relative mr-2 inline-flex h-2 w-2 align-middle">
-                <span className="absolute inset-0 animate-ping rounded-full bg-primary/60 motion-reduce:animate-none" />
-                <span className="relative h-2 w-2 rounded-full bg-primary" />
+                <span className="absolute inset-0 rotate-45 animate-ping bg-primary/60 motion-reduce:animate-none" />
+                <span className="relative h-2 w-2 rotate-45 bg-primary" />
               </span>
               {t('autoUpdateHint')}
             </p>
             <p className="text-xs text-muted-foreground">{tStatus('notePending')}</p>
           </div>
-        </section>
+        </HudPanel>
 
         <aside className="flex flex-col gap-5 lg:sticky lg:top-24 lg:col-span-5">
-          <section aria-labelledby="order-summary-title" className={`${surface} p-5`}>
+          <HudPanel as="section" aria-labelledby="order-summary-title" accent={false} size="md" innerClassName="p-5">
             <h2
               id="order-summary-title"
-              className="mb-4 font-display text-lg font-semibold text-foreground"
+              className="flex items-center gap-2.5 before:h-5 before:w-1.5 before:shrink-0 before:-skew-x-12 before:bg-gradient-brand mb-4 font-display text-lg font-semibold text-foreground"
             >
               {t('orderDetailTitle')}
             </h2>
             <OrderSummary data={data} />
-          </section>
+          </HudPanel>
 
-          <section aria-labelledby="order-progress-title" className={`${surface} p-5`}>
+          <HudPanel as="section" aria-labelledby="order-progress-title" accent={false} size="md" innerClassName="p-5">
             <h2
               id="order-progress-title"
-              className="mb-4 font-display text-lg font-semibold text-foreground"
+              className="flex items-center gap-2.5 before:h-5 before:w-1.5 before:shrink-0 before:-skew-x-12 before:bg-gradient-brand mb-4 font-display text-lg font-semibold text-foreground"
             >
               {t('progressTitle')}
             </h2>
             <StatusTimeline data={data} />
-          </section>
+          </HudPanel>
         </aside>
       </div>
     </div>

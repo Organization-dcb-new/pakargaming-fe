@@ -2,6 +2,7 @@
 
 import { GetGameResponse } from "@/types/game";
 import { useTranslations } from "next-intl";
+import { HudPanel } from "@/components/ui/hud-panel";
 
 interface DescriptionProps {
   game: GetGameResponse;
@@ -11,10 +12,12 @@ export default function GameDescription({ game }: DescriptionProps) {
   const t = useTranslations("GameCheckout");
 
   return (
-    <section
+    <HudPanel
+      as="section"
       id="description-game"
       aria-labelledby="description-game-title"
-      className="rounded-2xl border border-border bg-card p-5 sm:p-8"
+      accent={false}
+      innerClassName="p-5 sm:p-8"
     >
       <div className="mb-4 flex items-center gap-3">
         <span aria-hidden className="h-6 w-1.5 shrink-0 -skew-x-12 bg-gradient-brand" />
@@ -46,6 +49,6 @@ export default function GameDescription({ game }: DescriptionProps) {
           </ol>
         </div>
       </div>
-    </section>
+    </HudPanel>
   );
 }
