@@ -2,7 +2,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
-import '../globals.css'
+import '@/app/globals.css'
 import { Navbar } from '@/features/navbar/Navbar'
 import { Footer } from '@/features/footer/Footer'
 // @wrksz/themes/next: script anti-flash disuntik via useServerInsertedHTML — tanpa warning
