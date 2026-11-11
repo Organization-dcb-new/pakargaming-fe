@@ -29,6 +29,7 @@ import RegionNotice from "@/features/game-topup/components/RegionNotice";
 import { useGameRegion } from "@/features/game-topup/hooks/useGameRegion";
 import { StepStatusContext, type StepStatus } from "@/features/game-topup/components/StepCard";
 import { formatPrice } from "@/lib/formatPrice";
+import { CharacterBackdrop } from "@/components/character-backdrop/CharacterBackdrop";
 import { paymentTotalLimit } from "@/features/game-topup/lib/paymentTotal";
 
 /** Aturan metode (biaya, batas total, butuh nomor HP) dikirim backend — sama dengan yang dicek checkout. */
@@ -299,6 +300,7 @@ export default function GameTopUp() {
 
   return (
     <TopUpLayout>
+      <CharacterBackdrop gameSlug={slug} />
       <GameHeader game={dataGameDetail.data} />
       {regionMismatch && (
         <RegionNotice
