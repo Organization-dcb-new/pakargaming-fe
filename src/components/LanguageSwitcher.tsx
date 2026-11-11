@@ -1,37 +1,17 @@
 'use client'
 
-import { useLocale, useTranslations } from 'next-intl'
-import { usePathname, useRouter } from '@/i18n/routing'
-import { useTransition } from 'react'
-import { setEntranceSuppressed, startPageTransition, waitForDocumentLang } from '@/lib/pageTransition'
+import { useTranslations } from 'next-intl'
+import { useLocaleSwitch } from '@/hooks/useLocaleSwitch'
 
 const locales = [
   { code: 'en', label: 'EN' },
   { code: 'id', label: 'ID' },
 ] as const
 
-/** Jeda setelah locale baru ter-render, supaya komponen yang mount ulang (navbar, dsb.) selesai
- *  settle sebelum snapshot crossfade diambil. Pakai setTimeout: rAF tidak jalan selama render ditahan. */
-const SETTLE_MS = 80
-
+/** Toggle EN/ID ringkas — dipakai halaman maintenance. Navbar memakai popover pengaturan. */
 export function LanguageSwitcher() {
-  const locale = useLocale()
   const t = useTranslations('Navigation')
-  const router = useRouter()
-  const pathname = usePathname()
-  const [isPending, startTransition] = useTransition()
-
-  const handleLocaleChange = (newLocale: (typeof locales)[number]['code']) => {
-    if (newLocale === locale) return
-    setEntranceSuppressed(true)
-    startPageTransition(async () => {
-      startTransition(() => {
-        router.replace(pathname, { locale: newLocale })
-      })
-      await waitForDocumentLang(newLocale)
-      await new Promise((resolve) => setTimeout(resolve, SETTLE_MS))
-    }).finally(() => setEntranceSuppressed(false))
-  }
+  const { locale, switchLocale: handleLocaleChange, isPending } = useLocaleSwitch()
 
   return (
     <div

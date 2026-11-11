@@ -1,29 +1,17 @@
 'use client'
 
 import { Moon, Sun } from 'lucide-react'
-import { useTheme } from '@wrksz/themes/client'
-import { useEffect, useState } from 'react'
-import { flushSync } from 'react-dom'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
-import { startPageTransition } from '@/lib/pageTransition'
+import { useThemeSwitch } from '@/hooks/useThemeSwitch'
 
+/** Tombol terang/gelap ringkas — dipakai halaman maintenance. Navbar memakai popover pengaturan. */
 export function ThemeToggle() {
   const t = useTranslations('Theme')
-  const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const { mounted, resolvedTheme, switchTheme } = useThemeSwitch()
 
   // resolvedTheme (bukan theme): saat tema "system", theme === 'system' sehingga toggle tidak berefek
-  const toggleTheme = () => {
-    const next = resolvedTheme === 'dark' ? 'light' : 'dark'
-    // flushSync: update tema harus ter-commit (class di <html> berganti) di dalam callback
-    // supaya snapshot "sesudah" crossfade sudah bertema baru.
-    startPageTransition(() => flushSync(() => setTheme(next)))
-  }
+  const toggleTheme = () => switchTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
 
   if (!mounted) {
     return (

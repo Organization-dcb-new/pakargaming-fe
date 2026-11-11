@@ -35,6 +35,23 @@ export default function GameSearch({
   const isDesktopNav = variant === 'desktop'
   const isPhone = useMediaQuery('(max-width: 639px)')
 
+  // ⌘K / Ctrl+K memfokuskan search desktop. Label petunjuk baru diisi setelah mount (platform
+  // hanya diketahui di browser) supaya tidak ada hydration mismatch.
+  const [shortcutLabel, setShortcutLabel] = useState<string | null>(null)
+  useEffect(() => {
+    if (!isDesktopNav) return
+    setShortcutLabel(/Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘K' : 'Ctrl K')
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        inputRef.current?.focus()
+        inputRef.current?.select()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [isDesktopNav])
+
   /** Phone: ikon bisa minimize. Tablet+ dalam mobile nav & desktop: bar penuh selalu */
   const collapsibleChrome = isMobileNav && isPhone
   const effectiveOpen = isDesktopNav ? true : isMobileNav ? !isPhone || open : open
@@ -81,7 +98,7 @@ export default function GameSearch({
           }
         }}
         className={[
-          'group flex h-10 w-full items-center rounded-lg border border-border bg-card px-2.5 transition-colors duration-200 min-[400px]:px-3 hover:border-primary/50 focus-within:border-primary focus-within:ring-2 focus-within:ring-ring/30 motion-reduce:transition-none',
+          'group flex h-10 w-full items-center rounded-lg border border-transparent bg-muted/70 px-2.5 transition-colors duration-200 min-[400px]:px-3 hover:bg-muted focus-within:border-primary focus-within:bg-card focus-within:ring-2 focus-within:ring-ring/30 motion-reduce:transition-none',
           effectiveOpen ? '' : 'cursor-pointer',
         ].join(' ')}
       >
@@ -126,11 +143,20 @@ export default function GameSearch({
             }
           }}
           placeholder={t('searchPlaceholder')}
+          aria-keyshortcuts={isDesktopNav ? 'Meta+K Control+K' : undefined}
           className={[
             'ml-2 min-w-0 flex-1 cursor-text bg-transparent text-sm text-foreground outline-none transition-opacity duration-200 placeholder:text-muted-foreground',
             effectiveOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
           ].join(' ')}
         />
+        {isDesktopNav && shortcutLabel && !keyword && (
+          <kbd
+            aria-hidden="true"
+            className="ml-2 inline-flex shrink-0 items-center rounded-md border border-border bg-background px-1.5 py-0.5 font-sans text-xs font-medium text-muted-foreground"
+          >
+            {shortcutLabel}
+          </kbd>
+        )}
       </div>
 
       {/* PREVIEW */}

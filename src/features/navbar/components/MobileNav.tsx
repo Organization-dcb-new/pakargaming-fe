@@ -4,13 +4,12 @@ import { useState } from 'react'
 import { LayoutDashboard, LogIn, LogOut, Menu } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/routing'
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import LogoutConfirmDialog from '@/features/auth/components/LogoutConfirmDialog'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { BrandMark } from '@/components/Logo'
 import { NAV_ITEMS, isNavActive } from '@/features/navbar/config'
 import RegionSwitcher from '@/features/navbar/components/RegionSwitcher'
+import { LanguageOptions, ThemeOptions } from '@/features/navbar/components/SettingsOptions'
 import { focusRing } from '@/styles/focusRing'
 import { getAvatarSrc } from '@/lib/avatar'
 
@@ -42,14 +41,14 @@ export default function MobileNav({ user, onLogin }: MobileNavProps) {
           <button
             type="button"
             aria-label={t('openMenu')}
-            className={`-ml-2 inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-lg text-foreground transition-colors duration-200 hover:bg-accent ${focusRing}`}
+            className={`-mr-2 inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-lg text-foreground transition-colors duration-200 hover:bg-accent ${focusRing}`}
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
         </SheetTrigger>
 
         <SheetContent
-          side="left"
+          side="right"
           className="flex w-[min(100%,18rem)] flex-col gap-0 border-border p-0 [&>button]:right-4 [&>button]:top-5"
         >
           <SheetHeader className="h-14 flex-row items-center border-b border-border px-4 py-0">
@@ -77,17 +76,10 @@ export default function MobileNav({ user, onLogin }: MobileNavProps) {
               })}
             </nav>
 
-            <RegionSwitcher variant="mobile" labelClassName={sectionLabelClass} />
+            <RegionSwitcher labelClassName={sectionLabelClass} />
 
-            <div className="space-y-2">
-              <p className={sectionLabelClass}>{t('languageAndTheme')}</p>
-              <div className="flex items-center gap-3 rounded-lg border border-border px-3 py-2">
-                <LanguageSwitcher />
-                <div className="ml-auto shrink-0">
-                  <ThemeToggle />
-                </div>
-              </div>
-            </div>
+            <LanguageOptions labelClassName={sectionLabelClass} />
+            <ThemeOptions labelClassName={sectionLabelClass} />
           </div>
 
           <div className="border-t border-border p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">

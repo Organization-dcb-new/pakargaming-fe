@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, LayoutDashboard, LogIn, LogOut, Search } from 'lucide-react'
+import { ChevronDown, LayoutDashboard, LogIn, LogOut } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import LogoutConfirmDialog from '@/features/auth/components/LogoutConfirmDialog'
@@ -36,9 +36,9 @@ export default function UserMenu({ user, onLogin }: UserMenuProps) {
         type="button"
         onClick={onLogin}
         aria-haspopup="dialog"
-        className={`chamfer inline-flex h-9 shrink-0 cursor-pointer touch-manipulation items-center gap-2 whitespace-nowrap rounded-sm bg-primary px-4 text-sm font-bold text-primary-foreground transition-colors duration-200 [--chamfer:8px] hover:bg-primary/85 active:scale-[0.98] motion-reduce:active:scale-100 ${focusRing}`}
+        className={`chamfer inline-flex h-9 shrink-0 cursor-pointer touch-manipulation items-center gap-2 whitespace-nowrap rounded-sm bg-primary px-3 sm:px-4 lg:h-10 text-sm font-bold text-primary-foreground transition-colors duration-200 [--chamfer:8px] hover:bg-primary/85 active:scale-[0.98] motion-reduce:active:scale-100 ${focusRing}`}
       >
-        <LogIn className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <LogIn className="h-4 w-4 shrink-0 max-sm:hidden" aria-hidden="true" />
         {t('login')}
       </button>
     )
@@ -58,7 +58,7 @@ export default function UserMenu({ user, onLogin }: UserMenuProps) {
           >
             <PlayerAvatar src={avatarSrc} size="sm" />
             <ChevronDown
-              className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180 motion-reduce:transition-none"
+              className="h-4 w-4 text-muted-foreground transition-transform max-sm:hidden duration-200 group-data-[state=open]:rotate-180 motion-reduce:transition-none"
               aria-hidden="true"
             />
           </button>
@@ -79,12 +79,6 @@ export default function UserMenu({ user, onLogin }: UserMenuProps) {
             <Link href="/dashboard">
               <LayoutDashboard />
               {t('dashboard')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild className={menuItemClass}>
-            <Link href="/check-transaction">
-              <Search />
-              {t('checkTransaction')}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
