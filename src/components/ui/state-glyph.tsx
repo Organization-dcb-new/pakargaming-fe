@@ -13,6 +13,8 @@ export const STATE_GLYPH = {
   success: 'OK',
   maintenance: '||',
   password: '•••',
+  /** Link/kode kadaluarsa — seperti timer yang habis */
+  expired: '00:00',
 } as const
 
 export type StateGlyphTone = 'brand' | 'destructive' | 'success' | 'warning' | 'muted'

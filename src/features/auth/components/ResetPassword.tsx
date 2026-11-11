@@ -21,6 +21,7 @@ export default function ResetPassword({ token }: { token: string | null }) {
   const { user } = useAuth()
   const { openAuthDialog } = useAuthDialog()
   const [done, setDone] = useState(false)
+  const [expired, setExpired] = useState(false)
 
   const requestNewLink = () => openAuthDialog({ mode: 'forgot', email: user?.email })
 
@@ -47,6 +48,25 @@ export default function ResetPassword({ token }: { token: string | null }) {
           {homeLink}
         </div>
       </ResetPasswordResult>
+    )
+  } else if (expired) {
+    content = (
+      <div role="alert">
+        <ResetPasswordResult
+          glyph={STATE_GLYPH.expired}
+          tone="warning"
+          title={t('expiredTitle')}
+          description={t('expiredBody')}
+          focusOnMount
+        >
+          <div className="flex flex-col gap-3">
+            <button type="button" aria-haspopup="dialog" onClick={requestNewLink} className={primaryButtonClass}>
+              {t('requestNewLink')}
+            </button>
+            {homeLink}
+          </div>
+        </ResetPasswordResult>
+      </div>
     )
   } else if (done) {
     content = (
@@ -86,7 +106,7 @@ export default function ResetPassword({ token }: { token: string | null }) {
         <ResetPasswordForm
           token={token}
           onSuccess={() => setDone(true)}
-          onRequestNewLink={requestNewLink}
+          onExpired={() => setExpired(true)}
         />
       </ResetPasswordResult>
     )

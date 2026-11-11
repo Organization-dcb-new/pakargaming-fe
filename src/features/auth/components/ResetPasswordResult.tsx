@@ -7,6 +7,7 @@ const TONE = {
   primary: 'brand',
   success: 'success',
   destructive: 'destructive',
+  warning: 'warning',
 } as const satisfies Record<string, StateGlyphTone>
 
 interface ResultPanelProps {

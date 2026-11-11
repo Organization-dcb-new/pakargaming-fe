@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form'
 import { AUTH_LIMITS, createAuthSchemas } from '@/features/auth/lib/authSchema'
 import { AuthPasswordField, SubmitButton } from './AuthFields'
 import FormAlert from './FormAlert'
-import { textLinkClass } from '@/features/auth/styles'
 import { useResetPassword } from '@/features/auth/api/auth'
 import { parseAuthError, useAuthErrorMessage } from '@/features/auth/lib/authErrors'
 import { Form } from '@/components/ui/form'
@@ -15,10 +14,11 @@ import { Form } from '@/components/ui/form'
 interface ResetPasswordFormProps {
   token: string
   onSuccess: () => void
-  onRequestNewLink: () => void
+  /** Backend menolak token (kadaluarsa / sudah dipakai) → halaman menampilkan state "Link kadaluarsa" */
+  onExpired: () => void
 }
 
-export default function ResetPasswordForm({ token, onSuccess, onRequestNewLink }: ResetPasswordFormProps) {
+export default function ResetPasswordForm({ token, onSuccess, onExpired }: ResetPasswordFormProps) {
   const t = useTranslations('ResetPassword')
   const td = useTranslations('AuthDialog')
   const tv = useTranslations('AuthValidation')
@@ -33,27 +33,23 @@ export default function ResetPasswordForm({ token, onSuccess, onRequestNewLink }
   const error = resetPassword.error ? parseAuthError(resetPassword.error) : null
 
   const onSubmit = form.handleSubmit(({ password }) => {
-    resetPassword.mutate({ token, password }, { onSuccess })
+    resetPassword.mutate(
+      { token, password },
+      {
+        onSuccess,
+        onError: (err) => {
+          if (parseAuthError(err).code === 'resetLinkInvalid') onExpired()
+        },
+      },
+    )
   })
 
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} noValidate>
         <fieldset disabled={resetPassword.isPending} className="flex min-w-0 flex-col gap-4">
-          {error && (
-            <FormAlert
-              tone="error"
-              actions={
-                error.code === 'resetLinkInvalid' ? (
-                  <button type="button" onClick={onRequestNewLink} className={textLinkClass}>
-                    {t('requestNewLink')}
-                  </button>
-                ) : undefined
-              }
-            >
-              {errorMessage(error)}
-            </FormAlert>
-          )}
+          {/* Link kadaluarsa ditangani halaman (seluruh kartu berganti); di sini hanya error lain */}
+          {error && error.code !== 'resetLinkInvalid' && <FormAlert tone="error">{errorMessage(error)}</FormAlert>}
 
           <AuthPasswordField
             name="password"

@@ -506,7 +506,9 @@
     "dashboard": "Ke Dasbor",
     "home": "Kembali ke beranda",
     "missingTitle": "Link tidak valid",
-    "missingBody": "Link atur password ini tidak lengkap. Buka lagi link dari email, atau minta link baru."
+    "missingBody": "Link atur password ini tidak lengkap. Buka lagi link dari email, atau minta link baru.",
+    "expiredTitle": "Link kadaluarsa",
+    "expiredBody": "Link atur password ini sudah kedaluwarsa atau sudah pernah dipakai. Minta link baru, nanti kami kirim ke email-mu."
   },
   "SignInMethods": {
     "title": "Metode masuk",

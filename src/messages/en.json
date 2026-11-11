@@ -506,7 +506,9 @@
     "dashboard": "Go to Dashboard",
     "home": "Back to home",
     "missingTitle": "Invalid link",
-    "missingBody": "This password link is incomplete. Open the link from your email again, or request a new one."
+    "missingBody": "This password link is incomplete. Open the link from your email again, or request a new one.",
+    "expiredTitle": "Link expired",
+    "expiredBody": "This password link has expired or has already been used. Request a new one and we will email it to you."
   },
   "SignInMethods": {
     "title": "Login methods",
