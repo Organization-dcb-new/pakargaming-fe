@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { getGoogleAuthUrl } from '@/features/auth/lib/authUrls'
+import { GOOGLE_SIGN_IN_START_PATH } from '@/features/auth/lib/authUrls'
 import { createAuthSchemas } from '@/features/auth/lib/authSchema'
 import { Form } from '@/components/ui/form'
 import { cn } from '@/lib/cn'
@@ -68,13 +68,15 @@ export default function LoginForm({
               <FormAlert
                 tone="error"
                 actions={
-                  error.code === 'googleAccount' ? (
+                  // Backend tidak lagi membedakan akun Google-saja dari password salah (anti-enumerasi akun),
+                  // jadi dua jalan keluarnya ditawarkan di setiap gagal login
+                  error.code === 'googleAccount' || error.code === 'invalidCredentials' ? (
                     <>
                       <button
                         type="button"
                         className={textLinkClass}
                         onClick={() => {
-                          window.location.href = getGoogleAuthUrl()
+                          window.location.href = GOOGLE_SIGN_IN_START_PATH
                         }}
                       >
                         {t('useGoogle')}

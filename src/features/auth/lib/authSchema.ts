@@ -1,11 +1,19 @@
 import { z } from 'zod'
 
-/** Aturan sama dengan backend (topup-be): nama trim 1–100, email valid, password 8–72 karakter. */
+/** Aturan sama dengan backend (topup-be): nama trim 1–60, email valid, password 8–72 karakter. */
 export const AUTH_LIMITS = {
-  nameMax: 100,
+  nameMax: 60,
   passwordMin: 8,
   passwordMax: 72,
 } as const
+
+/**
+ * Karakter nama yang diterima backend: huruf (aksara apa pun) beserta tanda diakritiknya, spasi, dan . ' ’ -.
+ * Tanpa angka, titik dua, atau garis miring — nama pernah dipakai menyisipkan link/nominal palsu.
+ */
+// Lewat konstruktor: target TS ES2017 belum mengenal literal \p{…} (semua browser modern sudah mendukung)
+const NAME_PATTERN = new RegExp("^[\\p{L}\\p{M} .'’-]+$", 'u')
+const HAS_LETTER = new RegExp('\\p{L}', 'u')
 
 /** `t` dari useTranslations('AuthValidation') — pesan error langsung tampil lewat <FormMessage>. */
 type Translate = (key: string, values?: Record<string, number>) => string
@@ -33,7 +41,8 @@ export function createAuthSchemas(t: Translate) {
         .string()
         .trim()
         .min(1, t('nameRequired'))
-        .max(AUTH_LIMITS.nameMax, t('nameMax', { max: AUTH_LIMITS.nameMax })),
+        .max(AUTH_LIMITS.nameMax, t('nameMax', { max: AUTH_LIMITS.nameMax }))
+        .refine((name) => name === '' || (NAME_PATTERN.test(name) && HAS_LETTER.test(name)), t('nameInvalid')),
       email,
       password: newPassword,
     }),

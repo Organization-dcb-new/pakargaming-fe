@@ -12,6 +12,13 @@ export type AuthErrorCode =
   | 'googleLinkedElsewhere'
   | 'alreadyLinked'
   | 'captchaFailed'
+  | 'nameInvalid'
+  | 'passwordTooCommon'
+  | 'verifyLinkInvalid'
+  | 'verifyRecentlySent'
+  | 'emailNotVerified'
+  | 'wrongPassword'
+  | 'deleteNotConfirmed'
   | 'validation'
   | 'network'
   | 'generic'
@@ -32,6 +39,13 @@ const MESSAGE_TO_CODE: Record<string, AuthErrorCode> = {
   'invalid or expired link code': 'linkCodeInvalid',
   'google account already linked to another user': 'googleLinkedElsewhere',
   'account already linked to google': 'alreadyLinked',
+  "name may only contain letters, spaces and . ' -": 'nameInvalid',
+  'password is too common': 'passwordTooCommon',
+  'verification link is invalid or has expired': 'verifyLinkInvalid',
+  'a verification email was sent less than a minute ago': 'verifyRecentlySent',
+  'email not verified': 'emailNotVerified',
+  'current password is incorrect': 'wrongPassword',
+  'confirmation does not match the account email': 'deleteNotConfirmed',
   // Dari proxy Next.js (Turnstile), bukan backend
   'captcha verification failed': 'captchaFailed',
 }
@@ -57,6 +71,10 @@ export function parseAuthError(error: unknown): AuthError {
   const message = typeof rawMessage === 'string' ? rawMessage.trim().toLowerCase() : ''
   const code = MESSAGE_TO_CODE[message]
 
+  // 429 kirim ulang verifikasi punya teks sendiri — bukan "terlalu banyak percobaan masuk"
+  if (code === 'verifyRecentlySent') {
+    return { code, retryAfterSeconds: parseRetryAfter(response.headers?.['retry-after']) }
+  }
   if (response.status === 429 || code === 'tooManyAttempts') {
     return {
       code: 'tooManyAttempts',
@@ -68,6 +86,11 @@ export function parseAuthError(error: unknown): AuthError {
   return { code: 'generic' }
 }
 
+/** 403 "Email not verified" dari endpoint riwayat transaksi: sesi sah, tapi email akun belum diverifikasi. */
+export function isEmailNotVerifiedError(error: unknown): boolean {
+  return axios.isAxiosError(error) && error.response?.status === 403 && parseAuthError(error).code === 'emailNotVerified'
+}
+
 /** Ubah AuthError jadi kalimat yang ramah user (sesuai locale aktif). */
 export function useAuthErrorMessage() {
   const t = useTranslations('AuthErrors')
@@ -77,6 +100,9 @@ export function useAuthErrorMessage() {
       if (error.code === 'tooManyAttempts') {
         if (!error.retryAfterSeconds) return t('tooManyAttemptsNoTime')
         return t('tooManyAttempts', { minutes: Math.max(1, Math.ceil(error.retryAfterSeconds / 60)) })
+      }
+      if (error.code === 'verifyRecentlySent') {
+        return t('verifyRecentlySent', { seconds: Math.max(1, Math.ceil(error.retryAfterSeconds ?? 60)) })
       }
       return t(error.code)
     },

@@ -4,7 +4,7 @@ import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState, type ReactNode } from 'react'
 import { toast } from 'sonner'
-import { getGoogleAuthUrl } from '@/features/auth/lib/authUrls'
+import { getGoogleAuthUrl, GOOGLE_SIGN_IN_START_PATH } from '@/features/auth/lib/authUrls'
 import { startGoogleLink } from '@/features/auth/api/auth'
 import { cn } from '@/lib/cn'
 import { secondaryButtonClass, spinnerClass } from '@/features/auth/styles'
@@ -16,7 +16,7 @@ interface GoogleButtonProps {
   className?: string
 }
 
-/** Navigasi penuh ke OAuth Google di backend (bukan lewat /api/proxy). */
+/** Navigasi penuh ke OAuth Google (login lewat /api/session/google/start, link langsung ke backend). */
 export function GoogleButton({ intent, children, className }: GoogleButtonProps) {
   const t = useTranslations('AuthDialog')
   const tRedirect = useTranslations('AuthRedirect')
@@ -25,13 +25,14 @@ export function GoogleButton({ intent, children, className }: GoogleButtonProps)
   const openGoogle = async () => {
     setRedirecting(true)
     if (intent !== 'link') {
-      window.location.href = getGoogleAuthUrl()
+      // Lewat route server yang mengikat login ini ke browser ini (cookie nonce), bukan langsung ke backend
+      window.location.href = GOOGLE_SIGN_IN_START_PATH
       return
     }
     try {
       // Link butuh tiket dari akun yang sedang login; tanpa itu backend menolak.
       const ticket = await startGoogleLink()
-      window.location.href = getGoogleAuthUrl('link', ticket)
+      window.location.href = getGoogleAuthUrl({ intent: 'link', ticket })
     } catch {
       setRedirecting(false)
       toast.error(tRedirect('googleFailed'))

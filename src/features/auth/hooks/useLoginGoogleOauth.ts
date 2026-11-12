@@ -8,7 +8,7 @@ import { useAuthDialog } from '@/features/auth/components/AuthDialogProvider'
 import { redeemGoogleSignIn, useLinkGoogle } from '@/features/auth/api/auth'
 import { parseAuthError, useAuthErrorMessage } from '@/features/auth/lib/authErrors'
 import { useRouter as useLocaleRouter } from '@/i18n/routing'
-import { getGoogleAuthUrl } from '@/features/auth/lib/authUrls'
+import { GOOGLE_SIGN_IN_START_PATH } from '@/features/auth/lib/authUrls'
 import { getAuthUser, notifyAuthChange } from '@/lib/sessionClient'
 
 /** Query param yang dikirim backend setelah OAuth Google — dibuang dari URL setelah diproses. */
@@ -38,7 +38,7 @@ export default function useLoginGoogleOauth() {
   const { mutate: linkGoogle } = useLinkGoogle()
 
   const loginWithGoogle = useCallback(() => {
-    window.location.href = getGoogleAuthUrl()
+    window.location.href = GOOGLE_SIGN_IN_START_PATH
   }, [])
 
   useEffect(() => {
@@ -72,6 +72,7 @@ export default function useLoginGoogleOauth() {
       // Login Google berhasil → tukar kode sekali pakai dengan sesi
       if (signInCode) {
         if (!claimRedirect(`auth_code:${signInCode}`)) return
+        // Proxy menempelkan nonce dari cookie browser ini; kode milik orang lain (dari link) ditolak backend
         redeemGoogleSignIn(signInCode)
           .then(() => {
             // Cookie sesi sudah ditulis proxy dari respons exchange

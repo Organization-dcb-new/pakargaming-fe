@@ -46,7 +46,10 @@ export default function RegisterForm({
       { ...values, captchaToken: captcha.token },
       {
         onSuccess: (session) => {
-          toast.success(t('registerSuccess', { name: session.user.name }))
+          // Riwayat & voucher baru terbuka setelah link di email diklik — beri tahu sejak awal
+          toast.success(t('registerSuccess', { name: session.user.name }), {
+            description: t('registerVerifyHint', { email: session.user.email }),
+          })
           onDone()
         },
         onSettled: captcha.reset,

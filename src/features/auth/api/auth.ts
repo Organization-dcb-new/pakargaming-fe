@@ -4,13 +4,30 @@ import { notifyAuthChange } from '@/lib/sessionClient'
 import { TURNSTILE_HEADER } from '@/lib/session'
 import type { ApiResponse } from '@/types/api'
 import type {
-  AuthMe,
+  AuthMe as BaseAuthMe,
   AuthSession,
   ForgotPasswordPayload,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
 } from '@/types/auth'
+
+/**
+ * `data` dari GET /v1/auth/me & POST /v1/auth/google/link. `email_verified`: riwayat transaksi & kode voucher
+ * (dicocokkan lewat email) baru terbuka setelah pemilik membuktikan email itu miliknya (kontrak H1).
+ */
+export type AuthMe = BaseAuthMe & { email_verified: boolean }
+
+/** `data` dari POST /v1/auth/verify-email & /verify-email/resend. */
+interface EmailVerificationState {
+  email_verified: boolean
+}
+
+/**
+ * Konfirmasi hapus akun: password saat ini, atau — untuk akun Google tanpa password — email akun
+ * yang diketik ulang.
+ */
+export type DeleteAccountPayload = { password: string } | { confirmation: string }
 
 /** Prefix mutation milik dialog auth — dipakai useIsMutating supaya dialog tidak bisa ditutup saat proses. */
 export const AUTH_DIALOG_MUTATION_KEY = ['auth', 'dialog'] as const
@@ -86,6 +103,42 @@ export function useAuthMe(isLoggedIn: boolean) {
       return res.data.data
     },
     enabled: isLoggedIn,
+  })
+}
+
+/** Tukar token dari link email verifikasi. Publik: link bisa dibuka di perangkat yang belum login. */
+export async function verifyEmail(token: string): Promise<EmailVerificationState> {
+  const res = await api.post<ApiResponse<EmailVerificationState>>('/v1/auth/verify-email', { token }, {
+    skipAuth: true,
+  })
+  return res.data.data
+}
+
+/** Kirim ulang link verifikasi ke email akun yang sedang login (backend memberi jeda 60 detik). */
+export function useResendVerification() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['auth', 'verify-email-resend'],
+    mutationFn: async () => {
+      const res = await api.post<ApiResponse<EmailVerificationState>>('/v1/auth/verify-email/resend', {})
+      return res.data.data
+    },
+    onSuccess: (state) => {
+      // Ternyata sudah terverifikasi (mis. lewat perangkat lain) → banner hilang, riwayat dimuat
+      if (state.email_verified) queryClient.invalidateQueries({ queryKey: [AUTH_ME_KEY] })
+    },
+  })
+}
+
+/** Hapus akun yang sedang login. Proxy ikut menghapus cookie sesi setelah backend menjawab 2xx. */
+export function useDeleteAccount() {
+  return useMutation({
+    mutationKey: ['auth', 'delete-account'],
+    mutationFn: async (payload: DeleteAccountPayload) => {
+      const res = await api.delete<ApiResponse<unknown>>('/v1/auth/account', { data: payload })
+      return res.data
+    },
   })
 }
 

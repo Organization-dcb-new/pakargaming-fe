@@ -311,7 +311,8 @@
     "emptyCta": "Start topping up",
     "errorState": "Couldn't load your dashboard data.",
     "retry": "Try again",
-    "checkTransaction": "Check transaction"
+    "checkTransaction": "Check transaction",
+    "lockedState": "Verify your email first to open your transaction history and voucher codes."
   },
   "FooterInformation": {
     "title": "Information",
@@ -450,6 +451,7 @@
     "forgotSentHint": "Can’t find it? Check your spam or promotions folder.",
     "loginSuccess": "Logged in. Hi, {name}!",
     "registerSuccess": "Account created. Welcome, {name}!",
+    "registerVerifyHint": "We sent a verification link to {email}. Open it to unlock your transaction history and voucher codes in the Dashboard.",
     "useGoogle": "Log in with Google",
     "setPasswordViaEmail": "Forgot password",
     "goToLogin": "Log in with this email",
@@ -468,11 +470,12 @@
     "passwordMin": "Password must be at least {min} characters.",
     "passwordMax": "Password can be at most {max} characters.",
     "confirmRequired": "Re-enter your new password.",
-    "passwordMismatch": "Passwords don’t match."
+    "passwordMismatch": "Passwords don’t match.",
+    "nameInvalid": "Name can only contain letters, spaces and . ' -"
   },
   "AuthErrors": {
-    "emailRegistered": "This email is already registered. Log in instead — if you signed up with Google, choose “Continue with Google”.",
-    "invalidCredentials": "Incorrect email or password.",
+    "emailRegistered": "This email is already registered. Log in instead — if you signed up with Google, choose “Continue with Google”. Didn’t sign up? Use “Forgot password” to take this account back.",
+    "invalidCredentials": "Incorrect email or password. If you signed up with Google, choose “Log in with Google”.",
     "googleAccount": "This account was created with Google and has no password yet. Log in with Google, or create a password via “Forgot password”.",
     "tooManyAttempts": "Too many login attempts. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
     "tooManyAttemptsNoTime": "Too many login attempts. Try again in a few minutes.",
@@ -483,13 +486,60 @@
     "validation": "Some of the details you entered aren’t valid. Please check them again.",
     "network": "Couldn’t reach the server. Check your internet connection.",
     "generic": "Something went wrong. Please try again shortly.",
-    "captchaFailed": "Security check failed or expired. Please try again."
+    "captchaFailed": "Security check failed or expired. Please try again.",
+    "nameInvalid": "Name can only contain letters, spaces and . ' -",
+    "passwordTooCommon": "This password is too common and easy to guess. Please choose another one.",
+    "verifyLinkInvalid": "This verification link has expired or has already been used.",
+    "verifyRecentlySent": "A verification link was just sent. Try again in {seconds, plural, one {# second} other {# seconds}}.",
+    "emailNotVerified": "Verify your email first to open your transaction history.",
+    "wrongPassword": "The password you entered is incorrect.",
+    "deleteNotConfirmed": "The email you typed doesn’t match your account email."
   },
   "AuthRedirect": {
     "googleFailed": "Couldn’t log in with Google, please try again.",
     "linkNeedsLogin": "Log in to your account first, then link Google from your Dashboard.",
     "linking": "Linking your Google account…",
     "linkSuccess": "Google account linked successfully"
+  },
+  "VerifyEmail": {
+    "metaTitle": "Verify Email | Pakar Gaming",
+    "title": "Verify your email",
+    "description": "Click the button below to confirm this email is yours. Your transaction history and voucher codes for this email will then open in the Dashboard.",
+    "submit": "Verify email",
+    "processing": "Verifying…",
+    "notYouHint": "Didn’t sign up at Pakar Gaming? Just close this page — without verification, whoever signed up can’t open this email’s transaction history.",
+    "successTitle": "Email verified",
+    "successBody": "Your transaction history and voucher codes for this email are now available in the Dashboard.",
+    "invalidTitle": "Link no longer valid",
+    "invalidBody": "This verification link has expired or has already been used. Log in, then resend the link from your Dashboard.",
+    "missingTitle": "Invalid link",
+    "missingBody": "This verification link is incomplete. Open the link from your email again.",
+    "dashboard": "Go to Dashboard",
+    "login": "Log in",
+    "home": "Back to home"
+  },
+  "VerifyEmailBanner": {
+    "title": "Verify your email",
+    "body": "The transaction history and voucher codes for {email} open once this email is verified. Check your inbox (or spam folder) for the verification link.",
+    "resend": "Resend link",
+    "sending": "Sending…",
+    "sent": "Verification link sent to {email}.",
+    "alreadyVerified": "Your email is already verified."
+  },
+  "DeleteAccount": {
+    "title": "Delete account",
+    "description": "Your name, password, picture and linked Google account are removed from this account. Your transaction history is kept as a financial record.",
+    "button": "Delete account",
+    "dialogTitle": "Delete this account?",
+    "dialogBody": "The account is deleted for good and you’ll be logged out right away. This can’t be undone. You can sign up again with the same email.",
+    "passwordLabel": "Current password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmLabel": "Type your account email to confirm",
+    "confirmHint": "Type {email} exactly to continue.",
+    "cancel": "Cancel",
+    "confirm": "Yes, delete account",
+    "processing": "Deleting…",
+    "success": "Your account has been deleted."
   },
   "ResetPassword": {
     "metaTitle": "Set Password | Pakar Gaming",

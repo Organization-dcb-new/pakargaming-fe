@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronRight, TriangleAlert } from 'lucide-react'
+import { ChevronRight, Lock, TriangleAlert } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { formatPrice } from '@/lib/formatPrice'
@@ -18,6 +18,8 @@ interface RecentTransactionsProps {
   isLoading: boolean
   isError: boolean
   isFetching: boolean
+  /** Email belum diverifikasi: backend menolak riwayat (403) sampai link verifikasi diklik. */
+  locked?: boolean
   onRetry: () => void
 }
 
@@ -27,6 +29,7 @@ export default function RecentTransactions({
   isLoading,
   isError,
   isFetching,
+  locked,
   onRetry,
 }: RecentTransactionsProps) {
   const t = useTranslations('Dashboard')
@@ -45,7 +48,14 @@ export default function RecentTransactions({
   }
 
   let content
-  if (isLoading) {
+  if (locked) {
+    content = (
+      <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+        <Lock className="size-8 text-muted-foreground" aria-hidden="true" />
+        <p className="max-w-sm text-sm text-muted-foreground">{t('lockedState')}</p>
+      </div>
+    )
+  } else if (isLoading) {
     content = (
       <ul role="status" aria-busy="true" className="divide-y divide-border">
         <span className="sr-only">{t('loading')}</span>

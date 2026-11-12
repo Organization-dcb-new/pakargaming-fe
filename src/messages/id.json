@@ -311,7 +311,8 @@
     "emptyCta": "Mulai top up",
     "errorState": "Gagal memuat data dasbor.",
     "retry": "Coba lagi",
-    "checkTransaction": "Cek transaksi"
+    "checkTransaction": "Cek transaksi",
+    "lockedState": "Verifikasi email dulu untuk membuka riwayat transaksi dan kode voucher kamu."
   },
   "FooterInformation": {
     "title": "Informasi",
@@ -450,6 +451,7 @@
     "forgotSentHint": "Belum masuk? Cek folder spam atau promosi.",
     "loginSuccess": "Berhasil masuk. Halo, {name}!",
     "registerSuccess": "Akun berhasil dibuat. Selamat datang, {name}!",
+    "registerVerifyHint": "Kami kirim link verifikasi ke {email}. Klik link itu supaya riwayat transaksi dan kode voucher bisa dibuka di Dasbor.",
     "useGoogle": "Masuk dengan Google",
     "setPasswordViaEmail": "Lupa password",
     "goToLogin": "Masuk dengan email ini",
@@ -468,11 +470,12 @@
     "passwordMin": "Password minimal {min} karakter.",
     "passwordMax": "Password maksimal {max} karakter.",
     "confirmRequired": "Ketik ulang password baru kamu.",
-    "passwordMismatch": "Password tidak sama."
+    "passwordMismatch": "Password tidak sama.",
+    "nameInvalid": "Nama hanya boleh berisi huruf, spasi, dan tanda . ' -"
   },
   "AuthErrors": {
-    "emailRegistered": "Email ini sudah terdaftar. Silakan masuk — kalau dulu daftar pakai Google, pilih “Lanjut dengan Google”.",
-    "invalidCredentials": "Email atau password salah.",
+    "emailRegistered": "Email ini sudah terdaftar. Silakan masuk — kalau dulu daftar pakai Google, pilih “Lanjut dengan Google”. Tidak merasa mendaftar? Pakai “Lupa password” untuk mengambil alih akun ini.",
+    "invalidCredentials": "Email atau password salah. Kalau dulu daftar pakai Google, pilih “Masuk dengan Google”.",
     "googleAccount": "Akun ini dibuat lewat Google dan belum punya password. Masuk dengan Google, atau buat password lewat “Lupa password”.",
     "tooManyAttempts": "Terlalu banyak percobaan masuk. Coba lagi dalam {minutes} menit.",
     "tooManyAttemptsNoTime": "Terlalu banyak percobaan masuk. Coba lagi beberapa menit lagi.",
@@ -483,13 +486,60 @@
     "validation": "Data yang kamu isi belum valid. Periksa lagi, ya.",
     "network": "Gagal terhubung ke server. Cek koneksi internet kamu.",
     "generic": "Terjadi kesalahan. Coba lagi sebentar lagi.",
-    "captchaFailed": "Verifikasi keamanan gagal atau kedaluwarsa. Silakan coba lagi."
+    "captchaFailed": "Verifikasi keamanan gagal atau kedaluwarsa. Silakan coba lagi.",
+    "nameInvalid": "Nama hanya boleh berisi huruf, spasi, dan tanda . ' -",
+    "passwordTooCommon": "Password ini terlalu umum dan mudah ditebak. Pilih password lain, ya.",
+    "verifyLinkInvalid": "Link verifikasi ini sudah kedaluwarsa atau sudah dipakai.",
+    "verifyRecentlySent": "Link verifikasi baru saja dikirim. Coba kirim ulang dalam {seconds} detik.",
+    "emailNotVerified": "Verifikasi email kamu dulu untuk membuka riwayat transaksi.",
+    "wrongPassword": "Password yang kamu masukkan salah.",
+    "deleteNotConfirmed": "Email yang kamu ketik tidak sama dengan email akun."
   },
   "AuthRedirect": {
     "googleFailed": "Gagal masuk dengan Google, coba lagi.",
     "linkNeedsLogin": "Masuk dulu ke akunmu, lalu hubungkan Google dari Dasbor.",
     "linking": "Menghubungkan akun Google…",
     "linkSuccess": "Akun Google berhasil dihubungkan"
+  },
+  "VerifyEmail": {
+    "metaTitle": "Verifikasi Email | Pakar Gaming",
+    "title": "Verifikasi email kamu",
+    "description": "Klik tombol di bawah untuk memastikan email ini milikmu. Setelah itu riwayat transaksi dan kode voucher untuk email ini bisa dibuka di Dasbor.",
+    "submit": "Verifikasi email",
+    "processing": "Memverifikasi…",
+    "notYouHint": "Tidak merasa mendaftar di Pakar Gaming? Tutup saja halaman ini — tanpa verifikasi, pendaftar tidak bisa membuka riwayat transaksi email ini.",
+    "successTitle": "Email terverifikasi",
+    "successBody": "Riwayat transaksi dan kode voucher untuk email ini sekarang bisa dibuka di Dasbor.",
+    "invalidTitle": "Link tidak berlaku",
+    "invalidBody": "Link verifikasi ini sudah kedaluwarsa atau sudah dipakai. Masuk, lalu kirim ulang link dari Dasbor.",
+    "missingTitle": "Link tidak valid",
+    "missingBody": "Link verifikasi ini tidak lengkap. Buka lagi link dari email.",
+    "dashboard": "Ke Dasbor",
+    "login": "Masuk",
+    "home": "Kembali ke beranda"
+  },
+  "VerifyEmailBanner": {
+    "title": "Verifikasi email kamu",
+    "body": "Riwayat transaksi dan kode voucher untuk {email} baru bisa dibuka setelah email ini diverifikasi. Cek inbox (atau folder spam) untuk link verifikasi.",
+    "resend": "Kirim ulang link",
+    "sending": "Mengirim…",
+    "sent": "Link verifikasi sudah dikirim ke {email}.",
+    "alreadyVerified": "Email kamu sudah terverifikasi."
+  },
+  "DeleteAccount": {
+    "title": "Hapus akun",
+    "description": "Nama, password, foto, dan akun Google yang tertaut dihapus dari akun ini. Riwayat transaksi tetap kami simpan sebagai catatan keuangan.",
+    "button": "Hapus akun",
+    "dialogTitle": "Hapus akun ini?",
+    "dialogBody": "Akun dihapus permanen dan kamu langsung keluar. Tindakan ini tidak bisa dibatalkan. Email yang sama bisa dipakai mendaftar lagi.",
+    "passwordLabel": "Password saat ini",
+    "passwordPlaceholder": "Masukkan password kamu",
+    "confirmLabel": "Ketik email akun untuk konfirmasi",
+    "confirmHint": "Ketik {email} persis untuk melanjutkan.",
+    "cancel": "Batal",
+    "confirm": "Ya, hapus akun",
+    "processing": "Menghapus…",
+    "success": "Akun kamu sudah dihapus."
   },
   "ResetPassword": {
     "metaTitle": "Atur Password | Pakar Gaming",

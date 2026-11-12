@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle2, Clock, TriangleAlert, XCircle, type LucideIcon } from 'lucide-react'
+import { CheckCircle2, Clock, Lock, TriangleAlert, XCircle, type LucideIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 import { formatPrice } from '@/lib/formatPrice'
@@ -18,13 +18,15 @@ interface PlayerCardProps {
   isLoading: boolean
   isError: boolean
   isFetching: boolean
+  /** Email belum diverifikasi: statistik (dari riwayat yang dicocokkan lewat email) belum boleh dibuka. */
+  locked?: boolean
   onRetry: () => void
 }
 
 type Segment = { key: string; label: string; count: number; bar: string; text: string; Icon: LucideIcon }
 
 /** Kartu "pemain": identitas + statistik HUD + bar segmen status transaksi. */
-export default function PlayerCard({ user, stats, isLoading, isError, isFetching, onRetry }: PlayerCardProps) {
+export default function PlayerCard({ user, stats, isLoading, isError, isFetching, locked, onRetry }: PlayerCardProps) {
   const t = useTranslations('Dashboard')
 
   const segments: Segment[] = [
@@ -99,7 +101,12 @@ export default function PlayerCard({ user, stats, isLoading, isError, isFetching
         <div aria-hidden="true" className="h-px bg-border" />
 
         {/* Statistik */}
-        {isError ? (
+        {locked ? (
+          <div className="flex items-start gap-3 rounded-sm border border-border bg-muted/40 p-4">
+            <Lock className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <p className="flex-1 text-sm text-foreground">{t('lockedState')}</p>
+          </div>
+        ) : isError ? (
           <div
             role="alert"
             className="flex flex-col items-start gap-3 rounded-sm border border-destructive/40 bg-destructive/10 p-4 sm:flex-row sm:items-center"
