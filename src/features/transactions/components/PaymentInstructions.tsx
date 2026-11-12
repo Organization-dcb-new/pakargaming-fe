@@ -114,6 +114,7 @@ export default function PaymentInstructions({ data, view }: PaymentInstructionsP
         <QrPayment
           src={view.qrImageSrc}
           channel={data.payment_channel}
+          badge={view.isQris ? t('qrisBadge') : data.payment_channel}
           title={
             view.isQris ? t('payWithQris') : t('payWithChannel', { channel: data.payment_channel })
           }

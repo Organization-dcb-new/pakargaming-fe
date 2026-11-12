@@ -1,16 +1,15 @@
 import createMiddleware from 'next-intl/middleware'
 import { routing } from '@/i18n/routing'
 import { NextRequest, NextResponse } from 'next/server'
-import { LEGACY_TOKEN_COOKIE, SESSION_COOKIE } from '@/lib/session'
+import { SESSION_COOKIE } from '@/lib/session'
 
 const intlMiddleware = createMiddleware(routing)
 
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Cookie lama tetap dihitung sampai proxy API memigrasikannya ke cookie HttpOnly
-  const hasSession =
-    request.cookies.has(SESSION_COOKIE) || request.cookies.has(LEGACY_TOKEN_COOKIE)
+  // Hanya cookie HttpOnly; cookie lama `token` tidak lagi dihitung sebagai sesi
+  const hasSession = request.cookies.has(SESSION_COOKIE)
 
   const protectedRoute = /^\/(id|en)?\/dashboard/
 

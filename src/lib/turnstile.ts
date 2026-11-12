@@ -10,6 +10,15 @@ export function isTurnstileEnabled() {
   return Boolean(process.env.TURNSTILE_SECRET_KEY && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
 }
 
+/**
+ * Secret diisi tapi site key kosong → Turnstile diam-diam MATI. Biasanya karena image dibangun tanpa
+ * build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY (NEXT_PUBLIC_* di-inline saat build, bukan dibaca saat jalan).
+ * Dicek saat server start (src/instrumentation.ts) supaya kelihatan di log.
+ */
+export function isTurnstileMisconfigured() {
+  return Boolean(process.env.TURNSTILE_SECRET_KEY) && !process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+}
+
 /** Fail-closed: kalau Cloudflare tidak bisa dihubungi, request auth ditolak (bot tidak lolos saat gangguan). */
 export async function verifyTurnstile(token: string | null, remoteIp?: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY

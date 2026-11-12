@@ -7,7 +7,7 @@ export function useGetGamesBySlug(slug: string) {
   const { data, isLoading } = useQuery<GetGameResponse>({
     queryKey: ['get-games-slug', slug],
     queryFn: async () => {
-      const res = await api.get(`/v1/games/slug/${slug}`)
+      const res = await api.get(`/v1/games/slug/${encodeURIComponent(slug)}`)
       return res.data
     },
   })

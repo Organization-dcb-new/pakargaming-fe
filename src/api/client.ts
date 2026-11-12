@@ -36,6 +36,11 @@ export const api = axios.create({
   },
 });
 
+/**
+ * "Enkripsi" body POST/PUT/PATCH — BUKAN kontrol keamanan. Kuncinya ada di browser (CryptoProvider),
+ * jadi siapa pun bisa mendekripsi atau membuat payload sendiri, dan proxy tetap menerima body polos.
+ * Hanya penyamaran isi di DevTools; jangan diandalkan untuk kerahasiaan atau integritas data.
+ */
 api.interceptors.request.use(
   (config) => {
     const mutateMethods = ["post", "put", "patch"];

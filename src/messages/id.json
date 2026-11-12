@@ -275,6 +275,7 @@
     "carrierStep4": "Tunggu beberapa saat sampai status transaksi berubah menjadi berhasil.",
     "carrierNote": "Pastikan pulsa Smartfren kamu mencukupi untuk pembayaran.",
     "payWithQris": "Bayar dengan QRIS",
+    "qrisBadge": "QRIS",
     "payWithChannel": "Bayar menggunakan {channel}",
     "qrAlt": "QR pembayaran",
     "scanQrHint": "Scan QR ini dengan aplikasi e-wallet atau mobile banking kamu",

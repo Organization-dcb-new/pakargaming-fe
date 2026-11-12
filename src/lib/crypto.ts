@@ -1,9 +1,11 @@
 import CryptoJS from "crypto-js";
 
-// Server-side (Next.js API route): uses ENCRYPT_SECRET_KEY (not exposed to browser)
-// Client-side (browser): uses NEXT_PUBLIC_ENCRYPT_KEY
-
-// Both must be the same value in .env
+/**
+ * Dekripsi body request di proxy (/api/proxy). BUKAN kontrol keamanan: ENCRYPT_SECRET_KEY yang sama
+ * dikirim ke browser lewat CryptoProvider (layout.tsx), dan proxy juga menerima body polos. Siapa pun
+ * bisa membaca/membuat payload-nya — kerahasiaan datang dari HTTPS, validasi tetap di backend.
+ * Jangan dipakai untuk melindungi data apa pun, dan jangan isi kunci ini dengan rahasia lain.
+ */
 const getSecretKey = () => {
   const key = process.env.ENCRYPT_SECRET_KEY;
   if (!key) {

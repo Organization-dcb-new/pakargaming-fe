@@ -7,7 +7,7 @@ export function useGetTransaction(id: string) {
     {
       queryKey: ["get-transaction-detail", id],
       queryFn: async () => {
-        const res = await api.get(`/v1/transactions/${id}`);
+        const res = await api.get(`/v1/transactions/${encodeURIComponent(id)}`);
         return res.data;
       },
       refetchIntervalInBackground: true,

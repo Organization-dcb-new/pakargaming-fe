@@ -1,6 +1,12 @@
 import { Metadata } from "next";
 import GameTopUp from "@/features/game-topup/GameTopUp";
 import { GetGameResponse } from "@/types/game";
+import { isGameSlug } from "@/lib/backendIds";
+
+const DEFAULT_METADATA: Metadata = {
+  title: "Pakar Gaming - Top Up Game Murah & Instan",
+  description: "Top up game murah, cepat dan aman.",
+};
 
 export async function generateMetadata({
   params,
@@ -9,9 +15,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
 
+  // Fetch ini jalan di server FE (dipercaya backend). Slug dari URL dicek dulu lalu di-encode:
+  // tanpa itu `..`/`%2F` bisa membelokkan request server ke path backend lain.
+  if (!isGameSlug(slug)) return DEFAULT_METADATA;
+
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/games/slug/${slug}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/games/slug/${encodeURIComponent(slug)}`,
       {
         cache: "no-store",
       },

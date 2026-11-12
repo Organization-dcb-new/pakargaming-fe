@@ -6,7 +6,7 @@
 /** JWT sesi. HttpOnly → hanya server (proxy) yang bisa membacanya; script di halaman (termasuk XSS) tidak. */
 export const SESSION_COOKIE = 'pg_session'
 
-/** Cookie JWT lama yang ditulis js-cookie (bisa dibaca JS). Proxy memindahkannya ke SESSION_COOKIE lalu menghapusnya. */
+/** Cookie JWT lama yang ditulis js-cookie (bisa dibaca JS). Tidak diterima lagi; hanya dihapus kalau masih ada. */
 export const LEGACY_TOKEN_COOKIE = 'token'
 
 /** Profil tampilan (nama, email, foto) untuk navbar/checkout. Sengaja bisa dibaca JS — bukan kredensial. */

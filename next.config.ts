@@ -8,17 +8,26 @@ const isDev = process.env.NODE_ENV !== 'production'
 
 /**
  * CSP yang ditegakkan sekarang: aman karena tidak membatasi script/gambar/koneksi apa pun yang dipakai situs.
- * - frame-ancestors: situs tidak bisa di-iframe situs lain (clickjacking)
+ * - frame-ancestors 'none': situs tidak bisa di-iframe siapa pun, termasuk dirinya (clickjacking)
  * - object-src: tidak ada plugin (Flash/applet) — vektor XSS lama
  * - base-uri: <base> sisipan tidak bisa membelokkan URL relatif
+ * - form-action 'self': form hanya boleh dikirim ke situs ini. Semua form (login, daftar, lupa/reset
+ *   password, cek transaksi) ditangani JS (onSubmit + preventDefault) lewat /api/proxy; login Google
+ *   dan pembayaran memakai navigasi biasa (window.location / link), yang tidak diatur form-action.
  */
-const enforcedCsp = ["frame-ancestors 'self'", "object-src 'none'", "base-uri 'self'"].join('; ')
+const enforcedCsp = [
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ')
 
 /**
  * CSP lengkap, masih Report-Only: pelanggaran hanya dicatat di console browser, tidak memblokir.
  * Pantau console di production (checkout, pembayaran, login Google, GA); setelah bersih, pindahkan
  * ke header `Content-Security-Policy`. 'unsafe-inline' masih perlu untuk script inline Next.js —
- * menggantinya dengan nonce butuh render dinamis per request.
+ * menggantinya dengan nonce butuh render dinamis per request. Direktif yang sudah ditegakkan di
+ * enforcedCsp tetap diulang di sini supaya kebijakan ini lengkap saat nanti dipindahkan.
  */
 const reportOnlyCsp = [
   "default-src 'self'",
@@ -32,11 +41,12 @@ const reportOnlyCsp = [
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "frame-ancestors 'self'",
+  "frame-ancestors 'none'",
 ].join('; ')
 
 const securityHeaders = [
-  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  // Untuk browser lama yang belum mengenal frame-ancestors; samakan dengan enforcedCsp
+  { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Content-Security-Policy', value: enforcedCsp },
   { key: 'Content-Security-Policy-Report-Only', value: reportOnlyCsp },
   // Paksa HTTPS 1 tahun. Sengaja tanpa includeSubDomains: subdomain lain (blog, dev) belum tentu HTTPS semua.

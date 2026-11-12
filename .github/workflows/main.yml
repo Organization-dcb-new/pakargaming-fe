@@ -5,29 +5,33 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  packages: write
+# Default tanpa izin apa pun; tiap job meminta yang ia perlukan saja.
+permissions: {}
 
 jobs:
   build-and-push:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # push git tag prod-x.y.z
+      packages: write # push image ke GHCR
     outputs:
       new_tag: ${{ steps.bump.outputs.new_tag }}
       repo_lower: ${{ steps.repo_lower.outputs.repo }}
 
     steps:
+      # Action dipatok ke commit SHA (tag bisa dipindah pemiliknya); komentar = versinya.
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           fetch-depth: 0
 
       - name: Lowercase Repo
         id: repo_lower
-        run: echo "repo=${GITHUB_REPOSITORY@L}" >> $GITHUB_OUTPUT
+        run: echo "repo=${GITHUB_REPOSITORY@L}" >> "$GITHUB_OUTPUT"
 
       - name: Login GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -36,20 +40,20 @@ jobs:
       - name: Version Bump
         id: bump
         run: |
-         
+
           LATEST_TAG=$(git describe --tags --match "prod-*" --abbrev=0 2>/dev/null || echo "prod-1.0.0")
-          
-          
+
+
           CLEAN_TAG=${LATEST_TAG#prod-}
 
-          
+
           IFS='.' read -r major minor patch <<< "$CLEAN_TAG"
 
-         
+
           if [ "$LATEST_TAG" == "prod-1.0.0" ] && ! git rev-parse "prod-1.0.0" >/dev/null 2>&1; then
             NEW_TAG="1.0.0"
           else
-           
+
             if [ "$patch" -eq 9 ]; then
               minor=$((minor + 1))
               patch=0
@@ -59,73 +63,95 @@ jobs:
             NEW_TAG="$major.$minor.$patch"
           fi
 
-          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "new_tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
           echo "🚀 Versi Produksi Baru: $NEW_TAG"
 
       - name: Build & Push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        env:
+          # Build record/summary bisa memuat build-arg; jangan diunggah sebagai artifact yang bisa diunduh
+          DOCKER_BUILD_SUMMARY: false
+          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: .
           push: true
+          # NEXT_PUBLIC_* di-inline saat build: build-arg yang hilang = fitur mati di image (mis. Turnstile).
           build-args: |
             NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_PROD }}
             NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_PROD }}
             NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_PROD }}
             ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY_PROD }}
             NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID_PROD }}
-          
+            NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY_PROD }}
+            NEXT_PUBLIC_IMAGE_HOSTS=${{ vars.NEXT_PUBLIC_IMAGE_HOSTS_PROD }}
+
           tags: |
             ghcr.io/${{ steps.repo_lower.outputs.repo }}:prod-latest
             ghcr.io/${{ steps.repo_lower.outputs.repo }}:prod-${{ steps.bump.outputs.new_tag }}
 
       - name: Create Git Tag
+        env:
+          TAG: prod-${{ steps.bump.outputs.new_tag }}
         run: |
-          TAG="prod-${{ steps.bump.outputs.new_tag }}"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           if ! git rev-parse "$TAG" >/dev/null 2>&1; then
-            git tag $TAG
-            git push origin $TAG
+            git tag "$TAG"
+            git push origin "$TAG"
           fi
 
   deploy:
     needs: build-and-push
+    if: github.ref == 'refs/heads/main'
     runs-on: [ self-hosted, prod ]
+    # Pasang aturan proteksi (reviewer, branch main saja) di Settings → Environments → production
+    environment: production
+    permissions:
+      packages: read # docker login + pull image dari GHCR
 
     steps:
-      - name: Deploy 
+      - name: Deploy
+        # Nilai rahasia lewat env, bukan ${{ }} di dalam script (tidak tersisip ke teks shell).
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          NEW_TAG: prod-${{ needs.build-and-push.outputs.new_tag }}
+          ENCRYPT_SECRET_KEY: ${{ secrets.ENCRYPT_SECRET_KEY_PROD }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL_PROD }}
+          NEXT_PUBLIC_ENCRYPT_KEY: ${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_PROD }}
+          NEXT_SITE_BASE_URL: ${{ secrets.NEXT_SITE_BASE_URL_PROD }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID_PROD }}
+          # Opsional (nama sengaja beda): hanya di-export kalau secret-nya ada, supaya nilai yang
+          # sudah diisi di .env server tidak tertimpa string kosong.
+          IN_STOREFRONT_PROXY_SECRET: ${{ secrets.STOREFRONT_PROXY_SECRET_PROD }}
+          IN_TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY_PROD }}
         run: |
           set -e
 
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+          trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
 
           cd /data/prod-deploy/fe-client-prod
 
           CURRENT_IMAGE=$(docker inspect --format='{{.Config.Image}}' pakargaming-fe-prod 2>/dev/null || echo "")
-          CURRENT_TAG=$(echo $CURRENT_IMAGE | awk -F: '{print $2}')
-
-          NEW_TAG="prod-${{ needs.build-and-push.outputs.new_tag }}"
+          CURRENT_TAG=$(echo "$CURRENT_IMAGE" | awk -F: '{print $2}')
 
           echo "Current Tag: ${CURRENT_TAG:-none}"
           echo "New Tag: $NEW_TAG"
 
-          export IMAGE_TAG=$NEW_TAG
+          export IMAGE_TAG="$NEW_TAG"
+          if [ -n "$IN_STOREFRONT_PROXY_SECRET" ]; then export STOREFRONT_PROXY_SECRET="$IN_STOREFRONT_PROXY_SECRET"; fi
+          if [ -n "$IN_TURNSTILE_SECRET_KEY" ]; then export TURNSTILE_SECRET_KEY="$IN_TURNSTILE_SECRET_KEY"; fi
 
-          export ENCRYPT_SECRET_KEY=${{ secrets.ENCRYPT_SECRET_KEY_PROD }}
-          export NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_PROD }}
-          export NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_PROD }}
-          export NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_PROD }}
-          export NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID_PROD }}
           docker compose pull
-          docker compose up -d --remove-orphans
 
-          if [ $? -ne 0 ]; then
+          if ! docker compose up -d --remove-orphans; then
             echo "Deploy failed ❌"
 
             if [ -n "$CURRENT_TAG" ]; then
               echo "Rolling back..."
-              export IMAGE_TAG=$CURRENT_TAG
+              export IMAGE_TAG="$CURRENT_TAG"
               docker compose up -d --remove-orphans
               echo "Rollback done 🔄"
             fi

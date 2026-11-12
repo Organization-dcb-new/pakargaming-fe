@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  INVOICE_PATTERN,
+  REFERRAL_CODE_PATTERN,
+  SLUG_PATTERN,
+  UUID_PATTERN,
+} from "@/lib/backendIds";
 import { decryptPayload } from "@/lib/crypto";
+import { getClientIp, UNKNOWN_CLIENT_IP } from "@/lib/clientIp";
 import { CSRF_HEADER, CSRF_HEADER_VALUE, TURNSTILE_HEADER } from "@/lib/session";
 import {
+  clearGoogleBinding,
   clearSession,
+  hasSessionCookie,
   readCookieUser,
+  readGoogleBinding,
   readSessionToken,
   writeSession,
   writeUser,
@@ -13,29 +23,42 @@ import { isTurnstileEnabled, verifyTurnstile } from "@/lib/turnstile";
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const SITE_URL = process.env.NEXT_SITE_BASE_URL
 
+/**
+ * Rahasia bersama dengan backend (env runtime, server-only — jangan pernah NEXT_PUBLIC). Kalau diisi,
+ * dikirim sebagai `X-Storefront-Key` di setiap request; backend hanya memercayai `X-Client-IP` /
+ * `X-Client-User-Agent` dari request yang membawa kunci ini.
+ */
+const STOREFRONT_PROXY_SECRET = process.env.STOREFRONT_PROXY_SECRET;
+
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 type RouteContext = { params: Promise<{ path: string[] }> };
+
+const route = (pattern: string) => new RegExp(`^${pattern}$`);
 
 /**
  * Endpoint backend yang boleh dipanggil browser lewat proxy ini — selain ini ditolak 404.
  * Backend hanya menerima request dari IP server FE (akses langsung dari internet dapat 403), jadi proxy
  * ini satu-satunya pintu dari luar: tanpa daftar ini endpoint internal/admin ikut terbuka.
- * Endpoint baru di FE → tambahkan di sini.
+ * Endpoint baru di FE → tambahkan di sini. Segmen id/slug pakai pola sempit dari src/lib/backendIds.ts,
+ * bukan `[^/]+`: segmen bebas pernah dipakai untuk keluar dari allowlist ke endpoint admin
+ * (`games/slug/%252e%252e`, `transactions/export-csv`).
  */
 const ALLOWED_ROUTES: ReadonlyArray<readonly [Method, RegExp]> = [
-  ["GET", /^v1\/banners$/],
-  ["GET", /^v1\/shows$/],
-  ["GET", /^v1\/games\/(search|regions|slug\/[^/]+)$/],
-  ["GET", /^v1\/category-product\/by-game\/[^/]+$/],
-  ["GET", /^v1\/payment-categories\/client$/],
-  ["GET", /^v1\/referral-codes\/code\/[^/]+$/],
-  ["POST", /^v1\/transactions(\/check-id)?$/],
-  ["GET", /^v1\/transactions\/email\/dashboard$/],
-  ["GET", /^v1\/transactions\/detail-trx\/[^/]+$/],
-  ["GET", /^v1\/transactions\/[^/]+$/],
-  ["POST", /^v1\/auth\/(login|register|forgot-password|reset-password)$/],
-  ["GET", /^v1\/auth\/me$/],
-  ["POST", /^v1\/auth\/google\/(exchange|link|link\/start)$/],
+  ["GET", route("v1/banners")],
+  ["GET", route("v1/shows")],
+  ["GET", route(`v1/games/(search|regions|slug/${SLUG_PATTERN})`)],
+  ["GET", route(`v1/category-product/by-game/${UUID_PATTERN}`)],
+  ["GET", route("v1/payment-categories/client")],
+  ["GET", route(`v1/referral-codes/code/${REFERRAL_CODE_PATTERN}`)],
+  ["POST", route("v1/transactions(/check-id)?")],
+  ["GET", route("v1/transactions/email/dashboard")],
+  ["GET", route(`v1/transactions/detail-trx/${INVOICE_PATTERN}`)],
+  ["GET", route(`v1/transactions/${UUID_PATTERN}`)],
+  ["POST", route("v1/auth/(login|register|forgot-password|reset-password)")],
+  ["GET", route("v1/auth/me")],
+  ["POST", route("v1/auth/google/(exchange|link|link/start)")],
+  ["POST", route("v1/auth/verify-email(/resend)?")],
+  ["DELETE", route("v1/auth/account")],
 ];
 
 /** Endpoint publik: tidak pernah ditempeli sesi, dan 401 di sini berarti kredensial salah, bukan sesi habis. */
@@ -45,6 +68,7 @@ const PUBLIC_AUTH_PATHS = new Set([
   "v1/auth/forgot-password",
   "v1/auth/reset-password",
   "v1/auth/google/exchange",
+  "v1/auth/verify-email",
 ]);
 
 /** Respons berisi `{ token, user }` → token dipindah ke cookie HttpOnly dan dibuang dari body. */
@@ -60,6 +84,12 @@ const TURNSTILE_PATHS = new Set([
   "v1/auth/register",
   "v1/auth/forgot-password",
 ]);
+
+/** Tukar kode login Google: wajib membawa nonce dari cookie browser yang memulai login (kontrak M5). */
+const GOOGLE_EXCHANGE_PATH = "v1/auth/google/exchange";
+
+/** Hapus akun: setelah berhasil, cookie sesi browser ini ikut dibersihkan. */
+const DELETE_ACCOUNT_PATH = "v1/auth/account";
 
 export async function GET(req: NextRequest, { params }: RouteContext) {
   return proxyRequest(req, (await params).path, "GET");
@@ -82,12 +112,13 @@ export async function DELETE(req: NextRequest, { params }: RouteContext) {
 }
 
 /**
- * Segmen sudah di-decode Next.js, jadi `%2e%2e`, `%2F`, `%3F` muncul sebagai `..`, `/`, `?`.
- * Ditolak supaya path tidak bisa keluar dari allowlist atau menyisipkan query sendiri.
+ * Segmen sudah di-decode Next.js satu kali, jadi `%2e%2e`, `%2F`, `%3F` muncul sebagai `..`, `/`, `?`.
+ * `%` dan `.` juga ditolak: `%252e%252e` tiba di sini sebagai `%2e%2e`, dan parser URL `fetch`
+ * membacanya sebagai `..` (keluar dari allowlist). Tidak ada id/slug sah yang memakai keduanya.
  */
 function resolveTargetPath(segments: string[]): string | null {
   for (const segment of segments) {
-    if (!segment || segment === "." || segment === ".." || /[/\\?#]/.test(segment)) return null;
+    if (!segment || /[/\\?#%.]/.test(segment)) return null;
   }
   return segments.join("/");
 }
@@ -97,14 +128,23 @@ function isAllowed(method: Method, path: string) {
 }
 
 /**
- * IP pembeli untuk rate limit per pembeli di backend. Header ini bisa diisi siapa saja, jadi hanya akurat
- * kalau nginx di depan FE menimpanya: `proxy_set_header X-Real-IP $remote_addr;`.
+ * URL backend final. Path-nya dicek ulang SETELAH dinormalisasi `new URL()` (titik, encoding):
+ * harus tetap sama dengan path yang lolos allowlist, di origin backend yang sama.
  */
-function getClientIp(req: NextRequest) {
-  return (
-    req.headers.get("x-real-ip") ??
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-  );
+function buildTargetUrl(method: Method, targetPath: string, search: string): URL | null {
+  try {
+    const base = new URL(BACKEND_URL as string);
+    const basePath = base.pathname.replace(/\/+$/, "");
+    const url = new URL(`${base.origin}${basePath}/${targetPath}`);
+    url.search = search;
+
+    if (url.origin !== base.origin || !url.pathname.startsWith(`${basePath}/`)) return null;
+    const finalPath = url.pathname.slice(basePath.length + 1);
+    if (finalPath !== targetPath || !isAllowed(method, finalPath)) return null;
+    return url;
+  } catch {
+    return null;
+  }
 }
 
 async function proxyRequest(req: NextRequest, pathSegments: string[], method: Method) {
@@ -119,7 +159,10 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
   }
 
   const targetPath = resolveTargetPath(pathSegments);
-  if (!targetPath || !isAllowed(method, targetPath)) {
+  const targetUrl = targetPath && isAllowed(method, targetPath)
+    ? buildTargetUrl(method, targetPath, req.nextUrl.search)
+    : null;
+  if (!targetPath || !targetUrl) {
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 
@@ -128,19 +171,20 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }
 
-  const clientIp = getClientIp(req);
+  // Sudah divalidasi (net.isIP) atau "unknown" — lihat src/lib/clientIp.ts untuk syarat di edge proxy
+  const clientIp = getClientIp(req.headers);
 
   if (TURNSTILE_PATHS.has(targetPath) && isTurnstileEnabled()) {
-    const passed = await verifyTurnstile(req.headers.get(TURNSTILE_HEADER), clientIp ?? undefined);
+    const remoteIp = clientIp === UNKNOWN_CLIENT_IP ? undefined : clientIp;
+    const passed = await verifyTurnstile(req.headers.get(TURNSTILE_HEADER), remoteIp);
     if (!passed) {
       return NextResponse.json({ message: "captcha verification failed" }, { status: 403 });
     }
   }
 
-  try {
-    const search = req.nextUrl.search;
-    const targetUrl = `${BACKEND_URL}/${targetPath}${search}`;
+  const isGoogleExchange = targetPath === GOOGLE_EXCHANGE_PATH;
 
+  try {
     // Forward headers (strip host, add forward info)
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -153,27 +197,39 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
     }
 
     // Header sendiri, bukan X-Forwarded-For: backend memakai IP server ini untuk whitelist.
-    if (clientIp) headers["X-Client-IP"] = clientIp;
+    // Selalu dikirim (kontrak H4): tanpa IP sah → "unknown", bukan dihilangkan.
+    headers["X-Client-IP"] = clientIp;
+    if (STOREFRONT_PROXY_SECRET) headers["X-Storefront-Key"] = STOREFRONT_PROXY_SECRET;
     // Browser pembeli (fetch server ini sendiri mengaku "node"); dipakai email lupa password.
     const clientUserAgent = req.headers.get("user-agent");
     if (clientUserAgent) headers["X-Client-User-Agent"] = clientUserAgent.slice(0, 512);
 
+    if (isGoogleExchange) {
+      const binding = readGoogleBinding(req);
+      if (binding) headers["X-Google-Binding"] = binding;
+    }
+
     // Sesi dibaca dari cookie HttpOnly; header Authorization dari browser tidak dipakai lagi.
-    const session = PUBLIC_AUTH_PATHS.has(targetPath) ? null : readSessionToken(req);
+    // readSessionToken hanya mengembalikan token pembeli — token admin/NOC tidak pernah diteruskan.
+    const buyerSession = readSessionToken(req);
+    const session = PUBLIC_AUTH_PATHS.has(targetPath) ? null : buyerSession;
+    // Cookie sesi berisi token yang bukan milik pembeli (admin, rusak) → dihapus di respons
+    const rejectedSessionCookie = !buyerSession && hasSessionCookie(req);
     if (session) headers["Authorization"] = `Bearer ${session.token}`;
 
     let body: string | undefined;
 
-    // Decrypt payload for mutating methods
-    if (["POST", "PUT", "PATCH"].includes(method)) {
+    if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
       const rawBody = await req.json().catch(() => null);
 
+      // BUKAN kontrol keamanan: "enkripsi" body ini memakai kunci yang dikirim ke browser
+      // (CryptoProvider di layout), dan body polos tetap diterima. Siapa pun bisa membaca/membuat
+      // payload-nya. Kerahasiaan datang dari HTTPS; validasi tetap di backend. Jangan diandalkan.
       if (rawBody && rawBody.payload) {
-        // Encrypted payload — decrypt it
         const decrypted = decryptPayload(rawBody.payload);
         body = JSON.stringify(decrypted);
       } else if (rawBody) {
-        // Non-encrypted payload — forward as-is (fallback)
+        // Body polos — diteruskan apa adanya
         body = JSON.stringify(rawBody);
       }
     }
@@ -204,17 +260,15 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
       headers: retryAfter ? { "Retry-After": retryAfter } : undefined,
     });
 
+    const accountDeleted = response.ok && method === "DELETE" && targetPath === DELETE_ACCOUNT_PATH;
+
     if (issuedToken) {
       writeSession(res, issuedToken, data?.data?.user);
-    } else if (session && response.status === 401) {
-      // Sesi ditolak backend (kedaluwarsa/dicabut) → hapus juga cookie HttpOnly yang tidak bisa dihapus JS
+    } else if ((session && response.status === 401) || rejectedSessionCookie || accountDeleted) {
+      // Sesi ditolak backend (kedaluwarsa/dicabut), cookie bukan token pembeli, atau akun baru dihapus
+      // → hapus juga cookie HttpOnly yang tidak bisa dihapus JS
       clearSession(res);
     } else if (session) {
-      if (session.legacy) {
-        // Pengguna yang login sebelum migrasi: pindahkan token dari cookie lama ke cookie HttpOnly
-        writeSession(res, session.token, readCookieUser(req));
-      }
-
       // Akun email belum punya foto; setelah link Google, backend mengisinya → perbarui avatar navbar
       const avatarUrl = data?.data?.avatar_url;
       const cookieUser = readCookieUser(req);
@@ -230,6 +284,9 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
       }
     }
 
+    // Nonce Google sekali pakai, berhasil maupun gagal
+    if (isGoogleExchange) clearGoogleBinding(res);
+
     return res;
   } catch (error) {
     console.error("[Proxy Error]", {
@@ -237,6 +294,8 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
       path: targetPath,
       error: error instanceof Error ? error.message : String(error),
     });
-    return NextResponse.json({ message: "Proxy error" }, { status: 500 });
+    const res = NextResponse.json({ message: "Proxy error" }, { status: 500 });
+    if (isGoogleExchange) clearGoogleBinding(res);
+    return res;
   }
 }

@@ -6,7 +6,7 @@ export const useGetCategoryProduct = (id: string) =>
   useQuery<CategoryProductListResponse>({
     queryKey: ['categories-product', id],
     queryFn: async () => {
-      const res = await api.get(`/v1/category-product/by-game/${id}`)
+      const res = await api.get(`/v1/category-product/by-game/${encodeURIComponent(id)}`)
       return res.data
     },
     enabled: !!id,

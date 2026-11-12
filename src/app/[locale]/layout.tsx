@@ -61,6 +61,11 @@ export default async function RootLayout({
       <body className="min-h-screen bg-background text-foreground" suppressHydrationWarning>
         {/* Latar item game melayang — di luar provider karena murni dekoratif (server component) */}
         <GameBackdrop />
+        {/*
+          BUKAN kontrol keamanan: kunci "enkripsi" body request ini sengaja dikirim ke browser, jadi siapa pun
+          bisa membaca/membuat payload-nya, dan proxy tetap menerima body polos. Kerahasiaan datang dari HTTPS;
+          validasi & otorisasi tetap di backend. Jangan menaruh rahasia apa pun di ENCRYPT_SECRET_KEY.
+        */}
         <CryptoProvider secretKey={process.env.ENCRYPT_SECRET_KEY || ""} />
         <QueryProvider>
           <ThemeProvider
@@ -85,6 +90,7 @@ export default async function RootLayout({
                     <Footer />
 
                     <WhatsAppButton />
+                    {/* Id halaman bayar & param kredensial disamarkan sebelum dikirim ke GA (lihat komponennya) */}
                     <GoogleAnalytics />
                   </div>
                 </AuthDialogProvider>

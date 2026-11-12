@@ -275,6 +275,7 @@
     "carrierStep4": "Wait a moment until the transaction status updates to successful.",
     "carrierNote": "Make sure your Smartfren airtime balance is sufficient to cover the payment.",
     "payWithQris": "Pay with QRIS",
+    "qrisBadge": "QRIS",
     "payWithChannel": "Pay with {channel}",
     "qrAlt": "Payment QR code",
     "scanQrHint": "Scan this QR with your e-wallet or mobile banking app.",

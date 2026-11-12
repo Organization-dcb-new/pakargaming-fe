@@ -13,7 +13,7 @@ export function useGetTransactionByPaymentNumber(id: string) {
 
     queryFn: async () => {
       try {
-        const res = await api.get(`/v1/transactions/detail-trx/${id}`)
+        const res = await api.get(`/v1/transactions/detail-trx/${encodeURIComponent(id)}`)
         return res.data
       } catch (error: any) {
         if (
