@@ -22,7 +22,12 @@ services:
     # Read when the app runs, so changing one needs a restart, not a new image. NEXT_PUBLIC_* are the
     # ones the browser may see: the layout hands them to the client components.
     environment:
+      # Public (https://api.pakargaming.id): the browser is sent there to sign in with Google.
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set NEXT_PUBLIC_API_BASE_URL in .env, see deploy/prod.env.example}
+      # The backend on this network for this server's own requests (http://172.20.0.10:4001, the
+      # port included); empty = NEXT_PUBLIC_API_BASE_URL. The backend's ALLOWED_IPS must list this
+      # container's address (172.20.0.20) first.
+      API_INTERNAL_URL: ${API_INTERNAL_URL:-}
       NEXT_SITE_BASE_URL: ${NEXT_SITE_BASE_URL:?set NEXT_SITE_BASE_URL in .env, see deploy/prod.env.example}
       ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY:?set ENCRYPT_SECRET_KEY in .env, see deploy/prod.env.example}
       # The same as the backend's STOREFRONT_PROXY_SECRET; the proxy sends it as X-Storefront-Key.

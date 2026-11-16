@@ -36,7 +36,7 @@ KEEP_IMAGES="${KEEP_IMAGES:-3}"
 # the server's: compose takes them from DEPLOY_DIR/.env, or the compose file's default. Whatever this
 # shell has under those names is dropped, so it can't override .env. The job log shows the values of
 # the public ones; of a secret, only whether it is set.
-RUNTIME_PUBLIC="NEXT_PUBLIC_API_BASE_URL NEXT_SITE_BASE_URL NEXT_PUBLIC_TURNSTILE_SITE_KEY NEXT_PUBLIC_GA_MEASUREMENT_ID NEXT_PUBLIC_FOOTER_LOGO_URL CLIENT_IP_HEADER"
+RUNTIME_PUBLIC="NEXT_PUBLIC_API_BASE_URL API_INTERNAL_URL NEXT_SITE_BASE_URL NEXT_PUBLIC_TURNSTILE_SITE_KEY NEXT_PUBLIC_GA_MEASUREMENT_ID NEXT_PUBLIC_FOOTER_LOGO_URL CLIENT_IP_HEADER"
 RUNTIME_SECRETS="ENCRYPT_SECRET_KEY STOREFRONT_PROXY_SECRET TURNSTILE_SECRET_KEY"
 RUNTIME_SETTINGS="$RUNTIME_PUBLIC $RUNTIME_SECRETS"
 # shellcheck disable=SC2086 # one name per word
@@ -341,6 +341,26 @@ for name in $RUNTIME_SETTINGS; do
     echo "   $name: empty"
   fi
 done
+
+# Whether the new version can use the backend the way every buyer's request will (an IP-filtered
+# route, from inside the container, at the address it is configured with). Only reported, never a
+# rollback: a backend that is down is not this deploy's to fix. A 403 is the backend's ALLOWED_IPS
+# not listing this container, the usual slip when API_INTERNAL_URL is first set.
+BACKEND="$(env_of "$CONTAINER" API_INTERNAL_URL)"
+BACKEND="${BACKEND:-$(env_of "$CONTAINER" NEXT_PUBLIC_API_BASE_URL)}"
+BACKEND="${BACKEND%/}"
+if [ -n "$BACKEND" ]; then
+  if PROBE="$(docker exec "$CONTAINER" wget -q -T 5 -O /dev/null "$BACKEND/v1/maintenances" 2>&1)"; then
+    echo "Backend answers $CONTAINER at $BACKEND"
+  else
+    ADDRS="$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' "$CONTAINER" 2>/dev/null || true)"
+    echo "⚠️ $CONTAINER can't use the backend at $BACKEND: ${PROBE:-no answer}"
+    case "$PROBE" in
+      *403*) echo "   Add this container's address (${ADDRS% }) to ALLOWED_IPS in the backend's .env, then restart the backend." ;;
+      *refused* | *"timed out"* | *"bad address"*) echo "   Check the address and port (the backend listens on 4001: http://172.20.0.10:4001)." ;;
+    esac
+  fi
+fi
 
 # Port 3000 open to other machines lets anyone send a forged buyer IP header past the reverse proxy
 # (README, "Edge proxy"). Not a failure: the reverse proxy may be on another machine.

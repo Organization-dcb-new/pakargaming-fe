@@ -19,8 +19,21 @@ function readRuntimeEnv(name: string): string | undefined {
   return process.env[name] || undefined
 }
 
-/** Base URL backend Go, tanpa /v1. Hanya untuk kode server. */
-export function getApiBaseUrl(): string | undefined {
+/**
+ * Base URL backend (tanpa /v1) untuk request DARI SERVER INI: proxy /api/proxy, sitemap, metadata game,
+ * maintenance, logout. API_INTERNAL_URL — alamat backend di network Docker, mis. http://172.20.0.10:4001 —
+ * supaya tidak memutar lewat internet & nginx; kosong → NEXT_PUBLIC_API_BASE_URL (mis. `yarn dev` lokal).
+ * Jangan dipakai untuk URL yang dibuka browser: alamat internal tidak bisa dijangkau pembeli.
+ */
+export function getServerApiBaseUrl(): string | undefined {
+  return readRuntimeEnv('API_INTERNAL_URL') ?? getPublicApiBaseUrl()
+}
+
+/**
+ * Base URL backend (tanpa /v1) yang dibuka BROWSER pembeli: tujuan redirect login & link Google. Harus
+ * alamat publik (https://api.pakargaming.id), bukan alamat internal Docker.
+ */
+export function getPublicApiBaseUrl(): string | undefined {
   return readRuntimeEnv('NEXT_PUBLIC_API_BASE_URL')
 }
 
@@ -41,7 +54,7 @@ export type PublicEnv = {
 /** Dipanggil layout (server) per request, lalu diteruskan ke PublicEnvProvider. */
 export function getPublicEnv(): PublicEnv {
   return {
-    apiBaseUrl: getApiBaseUrl() ?? '',
+    apiBaseUrl: getPublicApiBaseUrl() ?? '',
     turnstileSiteKey: getTurnstileSiteKey() ?? '',
     gaMeasurementId: readRuntimeEnv('NEXT_PUBLIC_GA_MEASUREMENT_ID') ?? '',
     footerLogoUrl: readRuntimeEnv('NEXT_PUBLIC_FOOTER_LOGO_URL') ?? '',

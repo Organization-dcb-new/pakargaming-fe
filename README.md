@@ -85,7 +85,8 @@ atau tambahkan `header_up X-Real-IP {remote_host}`.
 
 | Env | Default | Keterangan |
 | --- | --- | --- |
-| `NEXT_PUBLIC_API_BASE_URL` | wajib | URL backend tanpa `/v1`: proxy, metadata game, sitemap, maintenance, link Google |
+| `NEXT_PUBLIC_API_BASE_URL` | wajib | URL backend **publik** tanpa `/v1`: tujuan redirect login & link Google (dibuka browser). Jangan alamat internal |
+| `API_INTERNAL_URL` | kosong | Backend di network Docker untuk request dari server ini (proxy, sitemap, metadata game, maintenance, logout): `http://172.20.0.10:4001`, port wajib. Kosong = `NEXT_PUBLIC_API_BASE_URL`. Syarat: `ALLOWED_IPS` backend memuat `172.20.0.20` — log deploy mengecek ini |
 | `NEXT_SITE_BASE_URL` | wajib | Domain storefront: URL sitemap.xml, header `X-Forwarded-Origin/Referer` dari proxy |
 | `ENCRYPT_SECRET_KEY` | wajib | "Enkripsi" body browser→proxy; bukan kontrol keamanan (kuncinya ada di browser) |
 | `STOREFRONT_PROXY_SECRET` | kosong | Sama persis dengan backend; dikirim sebagai `X-Storefront-Key`. Jangan `NEXT_PUBLIC_` |

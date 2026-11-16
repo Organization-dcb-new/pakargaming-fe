@@ -19,10 +19,13 @@ import {
   writeUser,
 } from "@/lib/sessionServer";
 import { isTurnstileEnabled, verifyTurnstile } from "@/lib/turnstile";
-import { getApiBaseUrl } from "@/config/runtimeEnv";
+import { getServerApiBaseUrl } from "@/config/runtimeEnv";
 
-/** Dibaca saat runtime dari .env server (bukan di-inline saat build) — lihat src/config/runtimeEnv.ts. */
-const BACKEND_URL = getApiBaseUrl();
+/**
+ * Dibaca saat runtime dari .env server (bukan di-inline saat build): API_INTERNAL_URL (backend di network
+ * Docker), kalau kosong NEXT_PUBLIC_API_BASE_URL — lihat src/config/runtimeEnv.ts.
+ */
+const BACKEND_URL = getServerApiBaseUrl();
 const SITE_URL = process.env.NEXT_SITE_BASE_URL
 
 /**
@@ -152,7 +155,7 @@ function buildTargetUrl(method: Method, targetPath: string, search: string): URL
 async function proxyRequest(req: NextRequest, pathSegments: string[], method: Method) {
   if (!BACKEND_URL) {
     console.error(
-      "[Proxy Error] BACKEND_URL (NEXT_PUBLIC_API_BASE_URL) is not set",
+      "[Proxy Error] BACKEND_URL (API_INTERNAL_URL / NEXT_PUBLIC_API_BASE_URL) is not set",
     );
     return NextResponse.json(
       { message: "Proxy misconfigured: backend URL not set" },

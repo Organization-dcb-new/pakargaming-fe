@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from '@/config/runtimeEnv'
+import { getServerApiBaseUrl } from '@/config/runtimeEnv'
 
 export type MaintenanceSchedule = {
   id: string
@@ -30,7 +30,7 @@ export function isMaintenanceLive(m: MaintenanceSchedule, now: number) {
 }
 
 async function fetchSchedules(): Promise<MaintenanceSchedule[]> {
-  const baseUrl = getApiBaseUrl()
+  const baseUrl = getServerApiBaseUrl()
   if (!baseUrl) return []
 
   const res = await fetch(`${baseUrl}/v1/maintenances`, {

@@ -2,7 +2,8 @@ const FALLBACK_API_BASE_URL = 'https://api.pakargaming.id'
 
 /**
  * Origin backend untuk navigasi browser langsung (OAuth Google tidak lewat /api/proxy). Nilainya dari
- * pemanggil: getApiBaseUrl() di server, usePublicEnv().apiBaseUrl di client (src/config/runtimeEnv.ts).
+ * pemanggil: getPublicApiBaseUrl() di server, usePublicEnv().apiBaseUrl di client (src/config/runtimeEnv.ts).
+ * Selalu URL publik, bukan API_INTERNAL_URL: yang membukanya browser pembeli.
  */
 function normalizeApiBaseUrl(apiBaseUrl: string | undefined) {
   return (apiBaseUrl || FALLBACK_API_BASE_URL).replace(/\/+$/, '')

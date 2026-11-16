@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
-import { getApiBaseUrl } from '@/config/runtimeEnv'
+import { getPublicApiBaseUrl } from '@/config/runtimeEnv'
 import { getGoogleAuthUrl } from '@/features/auth/lib/authUrls'
 import { GOOGLE_BINDING_COOKIE } from '@/lib/sessionServer'
 
@@ -21,7 +21,8 @@ export function GET(req: NextRequest) {
   const nonce = randomBytes(32).toString('base64url')
   const binding = createHash('sha256').update(nonce).digest('base64url')
 
-  const res = NextResponse.redirect(getGoogleAuthUrl({ apiBaseUrl: getApiBaseUrl(), binding }), 302)
+  // URL publik, bukan API_INTERNAL_URL: yang membuka redirect ini browser pembeli.
+  const res = NextResponse.redirect(getGoogleAuthUrl({ apiBaseUrl: getPublicApiBaseUrl(), binding }), 302)
   res.cookies.set(GOOGLE_BINDING_COOKIE, nonce, {
     httpOnly: true,
     sameSite: 'lax',
