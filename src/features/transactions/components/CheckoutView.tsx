@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useIsPresent } from 'motion/react'
 import Image from 'next/image'
 import { ExternalLink, RefreshCw } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -131,10 +132,14 @@ export default function CheckoutView({ data, onCheckStatus, checkingStatus }: Ch
  * Tombol cek status pembayaran. Kalau pembayaran sudah masuk, halaman berganti ke kartu status;
  * kalau belum, tombol menunggu jeda dulu sebelum bisa ditekan lagi.
  */
-function CheckStatusButton({ onCheck, checking }: { onCheck: () => Promise<unknown>; checking: boolean }) {
+function CheckStatusButton({ onCheck, checking: fetching }: { onCheck: () => Promise<unknown>; checking: boolean }) {
   const t = useTranslations('DetailTrx')
   const [cooldown, setCooldown] = useState(0)
   const [checked, setChecked] = useState(false)
+  // False selama checkout memudar karena status sudah berubah — tahan tampilan "mengecek" supaya
+  // label tidak sempat berganti ke "masih menunggu" / hitung mundur sebelum kartu hasil muncul.
+  const isPresent = useIsPresent()
+  const checking = fetching || !isPresent
 
   useEffect(() => {
     if (cooldown <= 0) return
