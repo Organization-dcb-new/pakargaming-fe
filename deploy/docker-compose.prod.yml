@@ -1,0 +1,69 @@
+# Storefront on the production server.
+#
+# The deploy job (.github/workflows/main.yml → deploy/deploy.sh) installs this file as
+# /data/prod-deploy/fe-client-prod/docker-compose.yml and starts it with IMAGE_TAG set to the
+# version it deploys. Change it here, not on the server: the next deploy overwrites the server's copy.
+#
+# NEXT_PUBLIC_* are build args (main.yml), fixed per image. What the container reads when it runs is
+# below; compose fills the ${...} from the deploy job's environment first (the repository's *_PROD
+# secrets, only the ones that are set), then from the .env beside this file:
+#   FE_PUBLISH               the host side of the port mapping, where the reverse proxy sends the
+#                            storefront's traffic. Default 127.0.0.1:3000. Keep it on 127.0.0.1 unless
+#                            the reverse proxy is on another machine: the proxy route trusts the buyer
+#                            IP header the reverse proxy sets (README, "Edge proxy").
+#   ENCRYPT_SECRET_KEY       secret ENCRYPT_SECRET_KEY_PROD
+#   NEXT_SITE_BASE_URL       secret NEXT_SITE_BASE_URL_PROD
+#   STOREFRONT_PROXY_SECRET  secret STOREFRONT_PROXY_SECRET_PROD, or .env
+#   TURNSTILE_SECRET_KEY     secret TURNSTILE_SECRET_KEY_PROD, or .env
+#   CLIENT_IP_HEADER         .env, default x-real-ip
+# The first deploy with deploy.sh copies to .env whichever of them neither the job nor .env sets,
+# from the container running then.
+#
+# By hand on the server, with the version that is deployed (the job's secrets aren't there then:
+# what the container needs must be in .env, or run the deploy job again):
+#   IMAGE_TAG=$(cat .deployed-tag) docker compose up -d
+services:
+  fe-client:
+    image: ${IMAGE_REPO:-ghcr.io/organization-dcb-new/pakargaming-fe}:${IMAGE_TAG:?set IMAGE_TAG, the deployed one is in .deployed-tag}
+    container_name: fe-client-prod
+    restart: always
+
+    # Runtime only, never build args, so they stay out of the image's layers.
+    environment:
+      ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY:-}
+      NEXT_SITE_BASE_URL: ${NEXT_SITE_BASE_URL:-}
+      # The same as the backend's STOREFRONT_PROXY_SECRET; the proxy sends it as X-Storefront-Key.
+      STOREFRONT_PROXY_SECRET: ${STOREFRONT_PROXY_SECRET:-}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      # The header the reverse proxy overwrites with the buyer's IP (nginx: proxy_set_header X-Real-IP $remote_addr).
+      CLIENT_IP_HEADER: ${CLIENT_IP_HEADER:-x-real-ip}
+
+    ports:
+      - "${FE_PUBLISH:-127.0.0.1:3000}:3000"
+
+    # deploy.sh waits for healthy before it calls a deploy good, and rolls back otherwise. A static
+    # file the Next.js server serves itself (no middleware, no backend call): a backend that is down
+    # must not roll the storefront back. Needs HOSTNAME=0.0.0.0 from the Dockerfile.
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/robots.txt"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    # Docker keeps the container's output without limit unless told otherwise.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # The storefront reaches the backend through its public URL (NEXT_PUBLIC_API_BASE_URL), not
+    # this network. When the backend is on the same server, its IP allowlist (ALLOWED_IPS) sees
+    # those requests come from this network's addresses: check it before moving to another network.
+    networks:
+      - pakargaming_network
+
+networks:
+  pakargaming_network:
+    external: true

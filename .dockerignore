@@ -40,10 +40,12 @@ Thumbs.db
 *.swo
 .claude
 
-# Docker & dokumen (tidak dipakai saat build)
+# Docker, deploy & dokumen (tidak dipakai saat build)
 Dockerfile
 .dockerignore
+deploy
 docker-compose*.yml
+.agents
 README.md
 ATTRIBUTIONS.md
 rules.md

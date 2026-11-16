@@ -1,0 +1,358 @@
+#!/usr/bin/env bash
+# Deploys one image tag of the storefront on this server, and rolls back to the version that was
+# running when the new one doesn't pass its healthcheck in time.
+#
+# Run by the deploy job of .github/workflows/dev.yml and main.yml, on the server's self-hosted
+# runner, from a checkout of deploy/. It installs the repo's compose file in DEPLOY_DIR, so the
+# compose file on the server is always the one of the commit being deployed.
+#
+# Environment (all required unless a default is given):
+#   DEPLOY_DIR      folder on the server that holds the compose project and its .env
+#   COMPOSE_SRC     compose file in the checkout, e.g. deploy/docker-compose.prod.yml
+#   CONTAINER       container_name in that compose file, e.g. fe-client-prod
+#   NETWORK         external Docker network that compose file joins: pakargaming_network
+#   IMAGE_REPO      ghcr.io/<owner>/<repo>, lowercase
+#   NEW_TAG         image tag to deploy, e.g. prod-1.2.3
+#   TAG_PREFIX      prod- or dev-; older images with it are removed after a good deploy
+#   GHCR_USER, GHCR_TOKEN   registry login for the pull
+#   HEALTH_TIMEOUT  seconds the new version gets to report healthy, default 90. The compose file's
+#                   healthcheck first probes 10s after start and calls it unhealthy after ~40s.
+#   KEEP_IMAGES     versions of the image kept on disk for a rollback, default 3
+#   IN_ENCRYPT_SECRET_KEY, IN_NEXT_SITE_BASE_URL, IN_STOREFRONT_PROXY_SECRET, IN_TURNSTILE_SECRET_KEY
+#                   optional, from the repository's secrets: the runtime setting named without IN_.
+#                   Only a non-empty one is used, so a secret that isn't defined leaves the value in
+#                   DEPLOY_DIR/.env in place.
+#
+# The health check is the container's own (healthcheck in the compose file, a request for a static
+# file to the Next.js server inside it), not a request to the host port: that port, and the address
+# it is bound to, are the server's choice (FE_PUBLISH in DEPLOY_DIR/.env).
+set -euo pipefail
+
+: "${DEPLOY_DIR:?}" "${COMPOSE_SRC:?}" "${CONTAINER:?}" "${NETWORK:?}" "${IMAGE_REPO:?}"
+: "${NEW_TAG:?}" "${TAG_PREFIX:?}" "${GHCR_USER:?}" "${GHCR_TOKEN:?}"
+HEALTH_TIMEOUT="${HEALTH_TIMEOUT:-90}"
+KEEP_IMAGES="${KEEP_IMAGES:-3}"
+
+# What the container reads when it runs (environment in the compose file), besides CLIENT_IP_HEADER,
+# which only .env sets. compose takes each from, in this order: this script's environment (the
+# job's IN_<name>), DEPLOY_DIR/.env, the compose file's default. Whatever else this shell has under
+# those names is dropped, so it can't override .env.
+RUNTIME_SETTINGS="ENCRYPT_SECRET_KEY NEXT_SITE_BASE_URL STOREFRONT_PROXY_SECRET TURNSTILE_SECRET_KEY"
+for name in $RUNTIME_SETTINGS; do
+  in="IN_$name"
+  if [ -n "${!in:-}" ]; then
+    export "$name=${!in}"
+  else
+    unset "$name"
+  fi
+  unset "$in"
+done
+
+# The compose file is used as docker-compose.yml in DEPLOY_DIR; the one it replaces is kept beside
+# it as docker-compose.yml.previous, which a rollback puts back.
+COMPOSE_NAME="docker-compose.yml"
+COMPOSE_PREVIOUS="docker-compose.yml.previous"
+COMPOSE_SRC="$(realpath "$COMPOSE_SRC")"
+
+# compose reads IMAGE_REPO and IMAGE_TAG from the environment (see the compose file).
+export IMAGE_REPO
+
+compose() {
+  docker compose -f "$COMPOSE_NAME" "$@"
+}
+
+# container_state NAME prints a container's state for the job log.
+container_state() {
+  docker inspect --format 'state={{.State.Status}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} restarts={{.RestartCount}} exit_code={{.State.ExitCode}} image={{.Config.Image}}' "$1" 2>/dev/null ||
+    echo "container $1 not found"
+}
+
+# env_of NAME VAR prints the value of VAR in container NAME; nothing when either isn't there.
+env_of() {
+  [ -n "$1" ] || return 0
+  { docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$1" 2>/dev/null || true; } |
+    sed -n "/^$2=/{s/^$2=//p;q;}"
+}
+
+# publish_of NAME prints the host side of container NAME's mapping of port 3000 as compose writes it:
+# 3000 (every address) or 127.0.0.1:3000. Nothing when the container or the mapping isn't there.
+publish_of() {
+  [ -n "$1" ] || return 0
+  local ip="" port=""
+  read -r ip port < <(
+    docker inspect --format '{{with index .HostConfig.PortBindings "3000/tcp"}}{{with index . 0}}{{if .HostIp}}{{.HostIp}}{{else}}-{{end}} {{.HostPort}}{{end}}{{end}}' "$1" 2>/dev/null || true
+  ) || true
+  if [ -z "$port" ]; then
+    return 0
+  fi
+  case "$ip" in
+    -) echo "$port" ;;
+    *:*) echo "[$ip]:$port" ;;
+    *) echo "$ip:$port" ;;
+  esac
+}
+
+# wait_healthy NAME waits until container NAME's healthcheck says healthy, and gives up when it says
+# unhealthy, the container is gone, or HEALTH_TIMEOUT seconds pass. A container without a
+# healthcheck (started from a compose file from before this script, which is what a rollback can
+# bring back) only has to stay running, without restarting, for 10s.
+wait_healthy() {
+  local name="$1"
+  local deadline=$((SECONDS + HEALTH_TIMEOUT))
+  local status health restarts
+  while [ "$SECONDS" -lt "$deadline" ]; do
+    read -r status health restarts < <(
+      docker inspect --format '{{.State.Status}} {{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} {{.RestartCount}}' "$name" 2>/dev/null ||
+        echo "missing missing 0"
+    ) || true
+    case "$status/$health" in
+      running/healthy)
+        echo "Healthy after ${SECONDS}s"
+        return 0
+        ;;
+      */unhealthy | missing/*)
+        return 1
+        ;;
+      running/none)
+        sleep 10
+        if [ "$(docker inspect --format '{{.State.Status}} {{.RestartCount}}' "$name" 2>/dev/null)" = "running $restarts" ]; then
+          echo "Running after ${SECONDS}s (it has no healthcheck, so that is all there is to check)"
+          return 0
+        fi
+        ;;
+    esac
+    sleep 3
+  done
+  return 1
+}
+
+# show_output prints the end of the failed container's output, which names why it didn't start
+# (a port already taken, a crash at boot). Called only when the new version failed, before the
+# rollback replaces the container and its output with it. It is boot output, but anyone who can
+# read the job log sees it.
+show_output() {
+  echo "   Last lines of its output:"
+  docker logs --tail 30 "$CONTAINER" 2>&1 | sed 's/^/   | /' || true
+}
+
+printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+# Leave no registry credential behind on the server.
+trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
+
+if ! docker network inspect "$NETWORK" >/dev/null 2>&1; then
+  echo "Creating network $NETWORK..."
+  docker network create --driver bridge "$NETWORK"
+fi
+
+cd "$DEPLOY_DIR"
+
+# The container running now is the rollback target, and what the settings below are taken from.
+# It is CONTAINER, or, when no container has that name yet (the server's compose file from before
+# this script named it differently), the one compose started from this folder.
+CURRENT_CONTAINER="$CONTAINER"
+if ! docker inspect "$CONTAINER" >/dev/null 2>&1; then
+  CURRENT_CONTAINER="$(docker ps -a --filter "label=com.docker.compose.project.working_dir=$PWD" --format '{{.Names}}' 2>/dev/null | sed -n 1p || true)"
+  if [ -n "$CURRENT_CONTAINER" ]; then
+    echo "No container is named $CONTAINER yet; it replaces $CURRENT_CONTAINER, started from $PWD"
+  fi
+fi
+
+current() {
+  if [ -n "$CURRENT_CONTAINER" ]; then
+    docker inspect --format "$1" "$CURRENT_CONTAINER" 2>/dev/null || true
+  fi
+}
+
+# Before this script managed the compose file, the image was a moving *-latest tag or a fixed one;
+# such a tag is never pulled here, so locally it still names the old image and is a valid rollback
+# target as well.
+CURRENT_IMAGE="$(current '{{.Config.Image}}')"
+CURRENT_TAG=""
+case "$CURRENT_IMAGE" in
+  *:*) CURRENT_TAG="${CURRENT_IMAGE##*:}" ;;
+esac
+echo "Current: ${CURRENT_IMAGE:-none}${CURRENT_CONTAINER:+ ($CURRENT_CONTAINER)}"
+echo "New:     $IMAGE_REPO:$NEW_TAG ($CONTAINER)"
+
+# The rollback goes by the running image's ID, tagged <prefix>previous here, not by its tag: a tag
+# can be pushed again and then names the new image (the old version bump did that to dev-* tags).
+ROLLBACK_TAG="${TAG_PREFIX}previous"
+CURRENT_IMAGE_ID="$(current '{{.Image}}')"
+if [ -n "$CURRENT_IMAGE_ID" ]; then
+  docker tag "$CURRENT_IMAGE_ID" "$IMAGE_REPO:$ROLLBACK_TAG"
+fi
+
+# Pulled before anything on the server changes, so a failed pull leaves it as it was.
+echo "Pulling $NEW_TAG..."
+docker pull "$IMAGE_REPO:$NEW_TAG"
+
+# The settings the job doesn't pass are the server's (see the compose file). When .env doesn't set
+# one either, it is taken from the container running now and written to .env, so the first deploy
+# with the repo's compose file keeps what the server's own compose file gave the container: the port
+# the reverse proxy sends traffic to, the buyer IP header, a secret set only there. Nothing to take
+# means the compose file's default.
+env_has() {
+  [ -f .env ] && grep -Eq "^[[:space:]]*(export[[:space:]]+)?$1=" .env
+}
+
+# carry_over NAME VALUE [secret]: a secret's value isn't printed.
+carry_over() {
+  local name="$1" value="$2" shown="$2"
+  if [ -n "${!name:-}" ] || env_has "$name" || [ -z "$value" ]; then
+    return 0
+  fi
+  if [ "${3:-}" = secret ]; then
+    shown="(not shown)"
+  fi
+  echo "$name is not in $DEPLOY_DIR/.env; keeping what $CURRENT_CONTAINER uses now: $name=$shown"
+  export "$name=$value"
+  case "$value" in
+    *"'"* | *$'\n'*)
+      echo "⚠️ It can't be written to .env in single quotes; add $name to $DEPLOY_DIR/.env by hand"
+      return 0
+      ;;
+  esac
+  # .env holds secrets: when this creates it, only its owner can read it.
+  if [ ! -e .env ]; then
+    (umask 077 && : >.env) 2>/dev/null || true
+  fi
+  if ! printf "\n# Taken by deploy/deploy.sh on %s from the container running then.\n%s='%s'\n" \
+    "$(date -u +%F)" "$name" "$value" >>.env 2>/dev/null; then
+    echo "⚠️ Could not write it to $DEPLOY_DIR/.env; add $name there by hand"
+  fi
+}
+
+carry_over FE_PUBLISH "$(publish_of "$CURRENT_CONTAINER")"
+carry_over CLIENT_IP_HEADER "$(env_of "$CURRENT_CONTAINER" CLIENT_IP_HEADER)"
+SET_BEFORE=" "
+for name in $RUNTIME_SETTINGS; do
+  value="$(env_of "$CURRENT_CONTAINER" "$name")"
+  if [ -n "$value" ]; then
+    SET_BEFORE="$SET_BEFORE$name "
+  fi
+  carry_over "$name" "$value" secret
+done
+unset value
+
+# Keep the compose file now in use (whatever its name, in compose's own order of preference) for a
+# rollback, then make docker-compose.yml the only one, so a manual `docker compose` on the server
+# uses the same file.
+rm -f "$COMPOSE_PREVIOUS"
+for f in compose.yaml compose.yml docker-compose.yaml docker-compose.yml; do
+  if [ -f "$f" ]; then
+    cp "$f" "$COMPOSE_PREVIOUS"
+    break
+  fi
+done
+
+restore_compose() {
+  if [ -f "$COMPOSE_PREVIOUS" ]; then
+    cp "$COMPOSE_PREVIOUS" "$COMPOSE_NAME"
+  fi
+}
+
+for f in compose.yaml compose.yml docker-compose.yaml; do
+  if [ -f "$f" ]; then
+    echo "Moving $f aside to $f.replaced; $COMPOSE_NAME from the repo replaces it"
+    mv "$f" "$f.replaced"
+  fi
+done
+install -m 0644 "$COMPOSE_SRC" "$COMPOSE_NAME"
+
+# A compose file that doesn't resolve here stops the deploy, before the running container is touched.
+if ! IMAGE_TAG="$NEW_TAG" compose config --quiet; then
+  echo "❌ $COMPOSE_SRC does not resolve on this server; the server's previous compose file is back in place"
+  restore_compose
+  exit 1
+fi
+
+# rollback starts the version that was running before, with the compose file it ran with, and
+# fails the job either way.
+rollback() {
+  if [ -z "$CURRENT_IMAGE_ID" ]; then
+    echo "⚠️ No version was running before this one, so there is nothing to roll back to"
+    exit 1
+  fi
+
+  echo "Rolling back to $CURRENT_TAG (image ${CURRENT_IMAGE_ID#sha256:})..."
+  restore_compose
+  # A compose file from before this script may name a fixed *-latest image and ignore IMAGE_TAG;
+  # that tag is never pulled here, so it still names the old image.
+  IMAGE_TAG="$ROLLBACK_TAG" compose up -d --remove-orphans || true
+
+  # The previous compose file brings back its own container; without one, the repo's starts the
+  # old image under CONTAINER.
+  local name="$CURRENT_CONTAINER"
+  if [ ! -f "$COMPOSE_PREVIOUS" ]; then
+    name="$CONTAINER"
+  fi
+  SECONDS=0
+  if wait_healthy "$name"; then
+    echo "🔄 Rolled back to $CURRENT_TAG, which is up"
+  else
+    echo "❌ The rollback to $CURRENT_TAG is not healthy either: $(container_state "$name")"
+  fi
+  exit 1
+}
+
+echo "Starting $NEW_TAG..."
+if ! IMAGE_TAG="$NEW_TAG" compose up -d --remove-orphans; then
+  echo "❌ docker compose up failed: $(container_state "$CONTAINER")"
+  show_output
+  rollback
+fi
+
+RUNNING_IMAGE="$(docker inspect --format '{{.Config.Image}}' "$CONTAINER" 2>/dev/null || true)"
+if [ "$RUNNING_IMAGE" != "$IMAGE_REPO:$NEW_TAG" ]; then
+  echo "❌ $CONTAINER runs ${RUNNING_IMAGE:-nothing}, not $IMAGE_REPO:$NEW_TAG: check container_name and image in $COMPOSE_SRC"
+  rollback
+fi
+
+echo "Waiting up to ${HEALTH_TIMEOUT}s for $CONTAINER to report healthy..."
+SECONDS=0
+if ! wait_healthy "$CONTAINER"; then
+  echo "❌ $NEW_TAG did not become healthy in ${HEALTH_TIMEOUT}s: $(container_state "$CONTAINER")"
+  show_output
+  rollback
+fi
+
+# For a manual `docker compose` on the server: IMAGE_TAG=$(cat .deployed-tag) docker compose up -d
+printf '%s\n' "$NEW_TAG" >.deployed-tag
+
+# Names only: the values are secrets. A setting the version before had and this one doesn't is the
+# sign of a .env line that sets it empty.
+echo "Runtime settings of $CONTAINER:"
+for name in $RUNTIME_SETTINGS; do
+  if [ -n "$(env_of "$CONTAINER" "$name")" ]; then
+    echo "   $name: set"
+  elif [[ "$SET_BEFORE" == *" $name "* ]]; then
+    echo "   ⚠️ $name: empty, and the version before had it set"
+  else
+    echo "   $name: empty"
+  fi
+done
+
+# Port 3000 open to other machines lets anyone send a forged buyer IP header past the reverse proxy
+# (README, "Edge proxy"). Not a failure: the reverse proxy may be on another machine.
+PUBLISH="$(publish_of "$CONTAINER")"
+if [ -n "$PUBLISH" ] && { [ "${PUBLISH#*:}" = "$PUBLISH" ] || [ "${PUBLISH%:*}" = "0.0.0.0" ] || [ "${PUBLISH%:*}" = "[::]" ]; }; then
+  echo "⚠️ Port 3000 is published on every address of this server ($PUBLISH). Unless the reverse proxy"
+  echo "   is on another machine, set FE_PUBLISH=127.0.0.1:3000 in $DEPLOY_DIR/.env (and check the firewall)."
+fi
+
+# docker image prune only removes untagged images, and every deploy leaves a tagged one behind.
+# Keep the newest KEEP_IMAGES versions, and always the one now running and the rollback target.
+echo "Removing old images, keeping the newest $KEEP_IMAGES..."
+docker image ls "$IMAGE_REPO" --format '{{.Tag}}' |
+  { grep -E "^${TAG_PREFIX}[0-9]+\.[0-9]+\.[0-9]+$" || true; } |
+  sort -V -r |
+  tail -n +"$((KEEP_IMAGES + 1))" |
+  while read -r tag; do
+    if [ "$tag" = "$NEW_TAG" ] || [ "$tag" = "$CURRENT_TAG" ]; then
+      continue
+    fi
+    docker image rm "$IMAGE_REPO:$tag" >/dev/null || echo "Could not remove $tag (still in use?)"
+  done
+docker image prune -f
+
+echo "Deployment of $NEW_TAG succeeded 🚀"
