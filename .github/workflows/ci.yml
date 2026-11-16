@@ -46,9 +46,8 @@ jobs:
       - name: Install
         run: yarn install --frozen-lockfile
 
-      # next build, the same command the image build runs, without the image's NEXT_PUBLIC_* (they
-      # change inlined values, not whether it builds). Without NEXT_PUBLIC_API_BASE_URL the sitemap
-      # logs "Sitemap Fetch Error" for its game list; sitemap.ts catches that and the build goes on.
+      # next build, the same command the image build runs. The app's settings are read when the
+      # server runs (src/config/runtimeEnv.ts), so the build needs none of them.
       - name: Build
         run: yarn build
 

@@ -87,17 +87,11 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/ws/:path*',
-        // Use http/https protocol for destination, Next.js will handle the WS upgrade automatically
-        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.pakargaming.id'}/v1/ws/:path*`,
-      },
-    ]
-  },
+  // Rewrite /api/ws → backend /v1/ws dihapus: WebSocket status pembayaran sudah dihapus di backend dan
+  // tidak dipakai di src. Rewrite dikunci saat build, jadi tidak bisa memakai URL backend dari .env server.
   images: {
-    // Satu sumber dengan canOptimize() — lihat src/config/images.ts
+    // Satu sumber dengan canOptimize() — lihat src/config/images.ts. Ini satu-satunya env build-time
+    // (NEXT_PUBLIC_IMAGE_HOSTS): images.remotePatterns dikunci saat build.
     remotePatterns: OPTIMIZED_IMAGE_HOSTS.map((hostname) => ({ protocol: 'https' as const, hostname })),
   },
 }

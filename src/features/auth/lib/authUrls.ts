@@ -1,8 +1,11 @@
 const FALLBACK_API_BASE_URL = 'https://api.pakargaming.id'
 
-/** Origin backend untuk navigasi browser langsung (OAuth Google tidak lewat /api/proxy). */
-function getApiBaseUrl() {
-  return (process.env.NEXT_PUBLIC_API_BASE_URL || FALLBACK_API_BASE_URL).replace(/\/+$/, '')
+/**
+ * Origin backend untuk navigasi browser langsung (OAuth Google tidak lewat /api/proxy). Nilainya dari
+ * pemanggil: getApiBaseUrl() di server, usePublicEnv().apiBaseUrl di client (src/config/runtimeEnv.ts).
+ */
+function normalizeApiBaseUrl(apiBaseUrl: string | undefined) {
+  return (apiBaseUrl || FALLBACK_API_BASE_URL).replace(/\/+$/, '')
 }
 
 /**
@@ -14,6 +17,8 @@ function getApiBaseUrl() {
 export const GOOGLE_SIGN_IN_START_PATH = '/api/session/google/start'
 
 interface GoogleAuthUrlOptions {
+  /** NEXT_PUBLIC_API_BASE_URL saat runtime; kosong → api.pakargaming.id. */
+  apiBaseUrl: string | undefined
   /** `link` = hubungkan Google ke akun yang sedang login. */
   intent?: 'link'
   /** Tiket dari `POST /v1/auth/google/link/start` (hanya untuk `link`). */
@@ -30,8 +35,8 @@ interface GoogleAuthUrlOptions {
  *   login (backend kembali ke `/?google_link=<code>`). Tiket mengikat link ke akun ini, jadi kode
  *   link milik orang lain tidak bisa dipakai di akun kita.
  */
-export function getGoogleAuthUrl({ intent, ticket, binding }: GoogleAuthUrlOptions = {}) {
-  const url = new URL(`${getApiBaseUrl()}/v1/auth/google`)
+export function getGoogleAuthUrl({ apiBaseUrl, intent, ticket, binding }: GoogleAuthUrlOptions) {
+  const url = new URL(`${normalizeApiBaseUrl(apiBaseUrl)}/v1/auth/google`)
   if (intent) url.searchParams.set('intent', intent)
   if (ticket) url.searchParams.set('ticket', ticket)
   if (binding) url.searchParams.set('binding', binding)

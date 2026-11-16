@@ -40,16 +40,21 @@ Manual di server (versi yang sedang jalan ada di `.deployed-tag`):
 
 ### `.env` di folder server
 
-Semua yang dibaca container saat **runtime** ada di `.env` folder server, bukan di GitHub (pola
-topup-be). Isinya dan cara mengisinya: [`deploy/dev.env.example`](deploy/dev.env.example) /
+**Semua** konfigurasi app — termasuk `NEXT_PUBLIC_*` — ada di `.env` folder server, bukan di GitHub
+(pola topup-be). Tidak ada yang tertanam di image: kode server membacanya saat runtime lewat
+[`src/config/runtimeEnv.ts`](src/config/runtimeEnv.ts), dan nilai untuk browser dikirim layout lewat
+`usePublicEnv()`. Isinya dan cara mengisinya: [`deploy/dev.env.example`](deploy/dev.env.example) /
 [`deploy/prod.env.example`](deploy/prod.env.example). Compose membacanya untuk `${...}`; container hanya
 menerima yang ada di `environment:`.
 
 - Deploy pertama membuat `.env` sendiri (mode 600) dan menyalin ke situ yang dipakai container lama
-  (port, `ENCRYPT_SECRET_KEY`, `NEXT_SITE_BASE_URL`), jadi tidak wajib dibuat dulu.
-- `ENCRYPT_SECRET_KEY` & `NEXT_SITE_BASE_URL` wajib: kalau tetap kosong, deploy berhenti sebelum
-  container lama disentuh.
+  (port, `NEXT_PUBLIC_API_BASE_URL`, `NEXT_SITE_BASE_URL`, `ENCRYPT_SECRET_KEY`), jadi tidak wajib dibuat
+  dulu. Yang dulu tertanam di image (site key Turnstile, id GA) harus diisi sendiri.
+- `NEXT_PUBLIC_API_BASE_URL`, `NEXT_SITE_BASE_URL`, `ENCRYPT_SECRET_KEY` wajib: kalau tetap kosong, deploy
+  berhenti sebelum container lama disentuh.
 - Setelah mengubah `.env`: jalankan ulang job deploy, atau perintah manual di atas. Tidak perlu build ulang.
+- Di kode: jangan menulis `process.env.NEXT_PUBLIC_*` langsung — Next.js menggantinya dengan nilai saat
+  build (kosong di image). Pakai fungsi di `runtimeEnv.ts` (server) atau `usePublicEnv()` (client).
 
 ### Edge proxy (nginx di host) — wajib
 
@@ -62,7 +67,7 @@ location / {
     proxy_pass http://127.0.0.1:3000;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;   # wajib: menimpa X-Real-IP kiriman pembeli
-    # ...pengaturan lain yang sudah ada (WebSocket /api/ws, TLS, dll.) tetap
+    # ...pengaturan lain yang sudah ada (TLS, dll.) tetap
 }
 ```
 
@@ -80,35 +85,25 @@ atau tambahkan `header_up X-Real-IP {remote_host}`.
 
 | Env | Default | Keterangan |
 | --- | --- | --- |
-| `ENCRYPT_SECRET_KEY` | wajib | "Enkripsi" body browser→proxy; bukan kontrol keamanan (kuncinya ada di browser). Dibaca saat runtime (layout & proxy) |
-| `NEXT_SITE_BASE_URL` | wajib | Header `X-Forwarded-Origin/Referer` dari proxy |
+| `NEXT_PUBLIC_API_BASE_URL` | wajib | URL backend tanpa `/v1`: proxy, metadata game, sitemap, maintenance, link Google |
+| `NEXT_SITE_BASE_URL` | wajib | Domain storefront: URL sitemap.xml, header `X-Forwarded-Origin/Referer` dari proxy |
+| `ENCRYPT_SECRET_KEY` | wajib | "Enkripsi" body browser→proxy; bukan kontrol keamanan (kuncinya ada di browser) |
 | `STOREFRONT_PROXY_SECRET` | kosong | Sama persis dengan backend; dikirim sebagai `X-Storefront-Key`. Jangan `NEXT_PUBLIC_` |
-| `TURNSTILE_SECRET_KEY` | kosong | Secret Cloudflare Turnstile (aktif hanya kalau site key ada di image) |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY` | kosong | Cloudflare Turnstile; aktif hanya kalau keduanya terisi |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | kosong | `G-XXXXXXXXXX`; kosong = GA tidak dimuat |
+| `NEXT_PUBLIC_FOOTER_LOGO_URL` | kosong | Logo footer; kosong = logo bawaan |
 | `CLIENT_IP_HEADER` | `x-real-ip` | Header yang ditimpa edge dengan IP pembeli |
 | `FE_PUBLISH` | `127.0.0.1:3000` | Sisi host port mapping (tujuan reverse proxy) — lihat Edge proxy |
 
-Log job deploy menampilkan mana yang terisi (nama saja, tanpa nilai).
-
-### Build-arg (secret GitHub, di-inline saat build — kosong di build = kosong di image)
-
-Settings → Secrets and variables → Actions → **Repository** secrets (job build tidak memakai
-environment, jadi Environment secrets tidak terbaca), `<ENV>` = `DEV` / `PROD`:
-
-| Secret | Wajib? | Isi |
-| --- | --- | --- |
-| `NEXT_PUBLIC_API_BASE_URL_<ENV>` | ✅ | URL backend tanpa `/v1` |
-| `NEXT_SITE_BASE_URL_<ENV>` | ✅ | Domain storefront (untuk sitemap.xml); samakan dengan `.env` server |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY_<ENV>` | berpasangan dengan `TURNSTILE_SECRET_KEY` di `.env` | Site key Cloudflare Turnstile |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID_<ENV>` | opsional | `G-XXXXXXXXXX`; kosong = GA tidak dimuat |
-| `NEXT_PUBLIC_ENCRYPT_KEY_<ENV>` | opsional | Belum dibaca kode |
-
-Variables (bukan secret): `NEXT_PUBLIC_IMAGE_HOSTS_<ENV>` (opsional). Mengubah salah satunya butuh push
-ulang (image baru). Build-arg baru wajib dideklarasikan `ARG` + `ENV` di Dockerfile — kalau tidak,
-Docker mengabaikannya diam-diam. Secret `ENCRYPT_SECRET_KEY_*`, `STOREFRONT_PROXY_SECRET_*` dan
-`TURNSTILE_SECRET_KEY_*` tidak dipakai lagi: hapus setelah nilainya ada di `.env` server.
+Log job deploy menampilkan nilainya (rahasia hanya `set` / `empty`).
 
 ### GitHub
 
+- **Tidak ada secret GitHub yang dipakai** (selain `GITHUB_TOKEN` otomatis). Satu-satunya input build:
+  Variable `NEXT_PUBLIC_IMAGE_HOSTS_DEV` / `_PROD` (opsional, host gambar tambahan untuk next/image —
+  dikunci saat build). Secret lama (`NEXT_PUBLIC_*_DEV/_PROD`, `NEXT_SITE_BASE_URL_*`,
+  `ENCRYPT_SECRET_KEY_*`, `STOREFRONT_PROXY_SECRET_*`, `TURNSTILE_SECRET_KEY_*`) boleh dihapus setelah
+  `.env` server dev & production lengkap.
 - Job deploy memakai environment `production` / `development`: pasang aturan proteksinya di
   Settings → Environments (branch `main` / `dev` saja, reviewer untuk production).
 - Supaya PR tidak bisa di-merge kalau CI merah: Settings → Branches → aturan untuk `dev` dan `main` →

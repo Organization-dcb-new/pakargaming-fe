@@ -17,6 +17,8 @@ import ProgressBar from '@/components/ProgressBar'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 import CryptoProvider from '@/providers/CryptoProvider'
+import PublicEnvProvider from '@/providers/PublicEnvProvider'
+import { getPublicEnv } from '@/config/runtimeEnv'
 import { AuthDialogProvider } from '@/features/auth/components/AuthDialogProvider'
 import MaintenancePage from '@/features/maintenance/MaintenancePage'
 import MaintenanceWatcher from '@/features/maintenance/MaintenanceWatcher'
@@ -67,6 +69,8 @@ export default async function RootLayout({
           validasi & otorisasi tetap di backend. Jangan menaruh rahasia apa pun di ENCRYPT_SECRET_KEY.
         */}
         <CryptoProvider secretKey={process.env.ENCRYPT_SECRET_KEY || ""} />
+        {/* Site key Turnstile, id GA, logo, base URL backend: dibaca dari .env server per request (runtimeEnv.ts) */}
+        <PublicEnvProvider value={getPublicEnv()}>
         <QueryProvider>
           <ThemeProvider
             attribute="class"
@@ -98,6 +102,7 @@ export default async function RootLayout({
             </NextIntlClientProvider>
           </ThemeProvider>
         </QueryProvider>
+        </PublicEnvProvider>
       </body>
     </html>
   )

@@ -6,6 +6,13 @@ import { GetGamesResponse } from '@/types/game'
 /** Halaman publik statis (tanpa /dashboard yang butuh login). Halaman top-up per game ditambahkan di bawah. */
 const pages = ['', 'check-transaction', 'about', 'policy-and-privacy', 'term-and-condition']
 
+/**
+ * Dibuat saat diminta, bukan saat `next build`: NEXT_SITE_BASE_URL & URL backend ada di .env server, dan
+ * daftar game harus diambil dari server FE — backend menolak IP runner build (dulu sitemap production
+ * dibangun di runner CI, jadi daftar gamenya kosong).
+ */
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_SITE_BASE_URL
 

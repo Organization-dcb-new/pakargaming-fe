@@ -8,12 +8,19 @@ export async function register() {
 
   const { isTurnstileMisconfigured } = await import('@/lib/turnstile')
   const { clientIpHeaderName, isClientIpHeaderMisconfigured } = await import('@/lib/clientIp')
+  const { getApiBaseUrl } = await import('@/config/runtimeEnv')
+
+  if (!getApiBaseUrl()) {
+    console.error(
+      '[Config] NEXT_PUBLIC_API_BASE_URL kosong → semua request /api/proxy gagal (500). Isi di .env server ' +
+        '(deploy/*.env.example) atau .env lokal, lalu restart.',
+    )
+  }
 
   if (isTurnstileMisconfigured()) {
     console.error(
-      '[Security] TURNSTILE_SECRET_KEY diisi tapi NEXT_PUBLIC_TURNSTILE_SITE_KEY kosong di build ini → ' +
-        'Turnstile MATI (login/daftar/lupa password tanpa captcha). Bangun ulang image dengan build-arg ' +
-        'NEXT_PUBLIC_TURNSTILE_SITE_KEY.',
+      '[Security] TURNSTILE_SECRET_KEY diisi tapi NEXT_PUBLIC_TURNSTILE_SITE_KEY kosong → Turnstile MATI ' +
+        '(login/daftar/lupa password tanpa captcha). Isi NEXT_PUBLIC_TURNSTILE_SITE_KEY di .env server, lalu restart.',
     )
   }
 

@@ -3,8 +3,7 @@
 import Script from 'next/script'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef } from 'react'
-
-const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+import { usePublicEnv } from '@/providers/PublicEnvProvider'
 
 /**
  * Query param berisi kredensial (JWT sesi lama, token reset password / verifikasi email, kode & tiket
@@ -44,26 +43,26 @@ function initialReferrer() {
 
 type Gtag = (...args: unknown[]) => void
 
-function gtagConfig(pageLocation: string, pagePath: string, referrer: string) {
-  if (!GA_ID || typeof window === 'undefined') return true
+function gtagConfig(gaId: string, pageLocation: string, pagePath: string, referrer: string) {
+  if (!gaId || typeof window === 'undefined') return true
   const g = (window as Window & { gtag?: Gtag }).gtag
   if (typeof g !== 'function') return false
   // `set` dulu: berlaku untuk SEMUA event berikutnya (termasuk event otomatis enhanced measurement),
   // bukan hanya page_view dari `config`. Tanpa page_location/page_referrer, gtag mengirim URL asli
   // browser — termasuk id halaman bayar dan query di atas.
   g('set', { page_location: pageLocation, page_referrer: referrer })
-  g('config', GA_ID, { page_path: pagePath, page_location: pageLocation, page_referrer: referrer })
+  g('config', gaId, { page_path: pagePath, page_location: pageLocation, page_referrer: referrer })
   return true
 }
 
-function GoogleAnalyticsInner() {
+function GoogleAnalyticsInner({ gaId }: { gaId: string }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   /** Halaman terakhir yang dilaporkan (sudah disamarkan) — jadi referrer navigasi client-side berikutnya. */
   const lastPage = useRef<{ location: string; referrer: string } | null>(null)
 
   useEffect(() => {
-    if (!GA_ID) return
+    if (!gaId) return
     const pagePath = redact(pathname, searchParams?.toString() ?? '')
     const pageLocation = `${window.location.origin}${pagePath}`
     const last = lastPage.current
@@ -77,7 +76,7 @@ function GoogleAnalyticsInner() {
 
     const tick = () => {
       if (cancelled || attempts++ > maxAttempts) return
-      if (!gtagConfig(pageLocation, pagePath, referrer)) {
+      if (!gtagConfig(gaId, pageLocation, pagePath, referrer)) {
         requestAnimationFrame(tick)
       }
     }
@@ -85,14 +84,14 @@ function GoogleAnalyticsInner() {
     return () => {
       cancelled = true
     }
-  }, [pathname, searchParams])
+  }, [gaId, pathname, searchParams])
 
-  if (!GA_ID) return null
+  if (!gaId) return null
 
   return (
     <>
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
         strategy="afterInteractive"
       />
       <Script id="google-analytics-init" strategy="afterInteractive">
@@ -106,11 +105,13 @@ function GoogleAnalyticsInner() {
   )
 }
 
+/** Id GA dari .env server (NEXT_PUBLIC_GA_MEASUREMENT_ID, lewat usePublicEnv); kosong = GA tidak dimuat. */
 export function GoogleAnalytics() {
-  if (!GA_ID) return null
+  const { gaMeasurementId } = usePublicEnv()
+  if (!gaMeasurementId) return null
   return (
     <Suspense fallback={null}>
-      <GoogleAnalyticsInner />
+      <GoogleAnalyticsInner gaId={gaMeasurementId} />
     </Suspense>
   )
 }

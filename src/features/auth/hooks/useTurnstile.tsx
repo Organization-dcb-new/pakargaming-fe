@@ -5,8 +5,8 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import FormAlert from '@/features/auth/components/FormAlert'
 import { textLinkClass } from '@/features/auth/styles'
+import { usePublicEnv } from '@/providers/PublicEnvProvider'
 
-const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 const SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
 
 interface TurnstileOptions {
@@ -58,10 +58,12 @@ type Status = 'verifying' | 'ready' | 'error'
 
 /**
  * Cloudflare Turnstile untuk form login, daftar, dan lupa password; tokennya diverifikasi proxy.
- * Tanpa NEXT_PUBLIC_TURNSTILE_SITE_KEY hook ini tidak melakukan apa-apa, jadi form berjalan seperti biasa.
+ * Tanpa NEXT_PUBLIC_TURNSTILE_SITE_KEY (.env server, lewat usePublicEnv) hook ini tidak melakukan apa-apa,
+ * jadi form berjalan seperti biasa.
  * Mode `interaction-only`: widget hanya muncul kalau Cloudflare butuh interaksi — biasanya tidak terlihat.
  */
 export function useTurnstile() {
+  const { turnstileSiteKey: siteKey } = usePublicEnv()
   const t = useTranslations('AuthDialog')
   const locale = useLocale()
   const { resolvedTheme } = useTheme()
@@ -76,7 +78,7 @@ export function useTurnstile() {
 
   useEffect(() => {
     const container = containerRef.current
-    if (!SITE_KEY || !container) return
+    if (!siteKey || !container) return
 
     let cancelled = false
     setToken(null)
@@ -86,7 +88,7 @@ export function useTurnstile() {
       .then((turnstile) => {
         if (cancelled) return
         widgetIdRef.current = turnstile.render(container, {
-          sitekey: SITE_KEY,
+          sitekey: siteKey,
           theme,
           language: locale,
           appearance: 'interaction-only',
@@ -117,11 +119,11 @@ export function useTurnstile() {
       widgetIdRef.current = null
       setInteractive(false)
     }
-  }, [theme, locale, attempt])
+  }, [siteKey, theme, locale, attempt])
 
   /** Token hanya berlaku sekali: setelah dipakai submit, minta token baru. */
   const reset = useCallback(() => {
-    if (!SITE_KEY || !widgetIdRef.current) return
+    if (!siteKey || !widgetIdRef.current) return
     setToken(null)
     setStatus('verifying')
     try {
@@ -129,9 +131,9 @@ export function useTurnstile() {
     } catch {
       // Container sudah dilepas (mis. form lupa password berganti ke layar "email terkirim")
     }
-  }, [])
+  }, [siteKey])
 
-  const enabled = Boolean(SITE_KEY)
+  const enabled = Boolean(siteKey)
 
   /** Bungkus tombol submit: widget (kalau perlu interaksi) dan pesan gagal muat tampil tepat di atasnya. */
   const withWidget = (submit: ReactNode) => {

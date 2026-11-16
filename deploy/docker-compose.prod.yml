@@ -4,8 +4,8 @@
 # /data/prod-deploy/fe-client-prod/docker-compose.yml and starts it with IMAGE_TAG set to the
 # version it deploys. Change it here, not on the server: the next deploy overwrites the server's copy.
 #
-# NEXT_PUBLIC_* are build args (main.yml), fixed per image. Everything the container reads when it
-# runs is the server's: the .env beside this file, which compose reads for the ${...} below (the
+# Every setting of the app is the server's, NEXT_PUBLIC_* included (none is built into the image, see
+# src/config/runtimeEnv.ts): the .env beside this file, which compose reads for the ${...} below (the
 # container gets only what `environment` lists). deploy/prod.env.example says what goes in it, owned
 # by the runner's user, mode 600. The first deploy with deploy.sh copies to .env whatever .env lacks
 # from the container running then. A required value that is still missing stops the deploy before
@@ -19,13 +19,19 @@ services:
     container_name: fe-client-prod
     restart: always
 
-    # Runtime only, never build args, so they stay out of the image's layers.
+    # Read when the app runs, so changing one needs a restart, not a new image. NEXT_PUBLIC_* are the
+    # ones the browser may see: the layout hands them to the client components.
     environment:
-      ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY:?set ENCRYPT_SECRET_KEY in .env, see deploy/prod.env.example}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set NEXT_PUBLIC_API_BASE_URL in .env, see deploy/prod.env.example}
       NEXT_SITE_BASE_URL: ${NEXT_SITE_BASE_URL:?set NEXT_SITE_BASE_URL in .env, see deploy/prod.env.example}
+      ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY:?set ENCRYPT_SECRET_KEY in .env, see deploy/prod.env.example}
       # The same as the backend's STOREFRONT_PROXY_SECRET; the proxy sends it as X-Storefront-Key.
       STOREFRONT_PROXY_SECRET: ${STOREFRONT_PROXY_SECRET:-}
+      # Turnstile is on only when both are set.
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
       TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-}
+      NEXT_PUBLIC_FOOTER_LOGO_URL: ${NEXT_PUBLIC_FOOTER_LOGO_URL:-}
       # The header the reverse proxy overwrites with the buyer's IP (nginx: proxy_set_header X-Real-IP $remote_addr).
       CLIENT_IP_HEADER: ${CLIENT_IP_HEADER:-x-real-ip}
 

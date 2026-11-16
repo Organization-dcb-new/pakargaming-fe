@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import GameTopUp from "@/features/game-topup/GameTopUp";
 import { GetGameResponse } from "@/types/game";
 import { isGameSlug } from "@/lib/backendIds";
+import { getApiBaseUrl } from "@/config/runtimeEnv";
 
 const DEFAULT_METADATA: Metadata = {
   title: "Pakar Gaming - Top Up Game Murah & Instan",
@@ -21,7 +22,7 @@ export async function generateMetadata({
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/games/slug/${encodeURIComponent(slug)}`,
+      `${getApiBaseUrl()}/v1/games/slug/${encodeURIComponent(slug)}`,
       {
         cache: "no-store",
       },

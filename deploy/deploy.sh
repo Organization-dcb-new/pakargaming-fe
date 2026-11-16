@@ -32,12 +32,19 @@ set -euo pipefail
 HEALTH_TIMEOUT="${HEALTH_TIMEOUT:-90}"
 KEEP_IMAGES="${KEEP_IMAGES:-3}"
 
-# The secrets the container reads when it runs (environment in the compose file). They, FE_PUBLISH
-# and CLIENT_IP_HEADER are the server's: compose takes them from DEPLOY_DIR/.env, or the compose
-# file's default. Whatever this shell has under those names is dropped, so it can't override .env.
-RUNTIME_SETTINGS="ENCRYPT_SECRET_KEY NEXT_SITE_BASE_URL STOREFRONT_PROXY_SECRET TURNSTILE_SECRET_KEY"
+# What the container reads when it runs (environment in the compose file). These and FE_PUBLISH are
+# the server's: compose takes them from DEPLOY_DIR/.env, or the compose file's default. Whatever this
+# shell has under those names is dropped, so it can't override .env. The job log shows the values of
+# the public ones; of a secret, only whether it is set.
+RUNTIME_PUBLIC="NEXT_PUBLIC_API_BASE_URL NEXT_SITE_BASE_URL NEXT_PUBLIC_TURNSTILE_SITE_KEY NEXT_PUBLIC_GA_MEASUREMENT_ID NEXT_PUBLIC_FOOTER_LOGO_URL CLIENT_IP_HEADER"
+RUNTIME_SECRETS="ENCRYPT_SECRET_KEY STOREFRONT_PROXY_SECRET TURNSTILE_SECRET_KEY"
+RUNTIME_SETTINGS="$RUNTIME_PUBLIC $RUNTIME_SECRETS"
 # shellcheck disable=SC2086 # one name per word
-unset $RUNTIME_SETTINGS FE_PUBLISH CLIENT_IP_HEADER
+unset $RUNTIME_SETTINGS FE_PUBLISH
+
+is_secret() {
+  [[ " $RUNTIME_SECRETS " == *" $1 "* ]]
+}
 
 # The compose file is used as docker-compose.yml in DEPLOY_DIR; the one it replaces is kept beside
 # it as docker-compose.yml.previous, which a rollback puts back.
@@ -181,8 +188,10 @@ docker pull "$IMAGE_REPO:$NEW_TAG"
 
 # When .env doesn't set one of the settings, it is taken from the container running now and written
 # to .env, so the first deploy with the repo's compose file keeps what the container had: the port
-# the reverse proxy sends traffic to, the secrets the deploy job used to pass. Nothing to take means
-# the compose file's default, or, for a required one, the stop at `compose config` below.
+# the reverse proxy sends traffic to, the backend URL and secrets the old deploy job passed. Nothing
+# to take means the compose file's default, or, for a required one, the stop at `compose config`
+# below. (What older images had built in, such as the Turnstile site key, isn't in the container's
+# environment to take: fill it in .env.)
 # env_has NAME: .env gives NAME a value. An empty one (NAME=, NAME='', as the *.env.example files
 # have them) counts as not set; a line added after it wins.
 env_has() {
@@ -217,14 +226,17 @@ carry_over() {
 }
 
 carry_over FE_PUBLISH "$(publish_of "$CURRENT_CONTAINER")"
-carry_over CLIENT_IP_HEADER "$(env_of "$CURRENT_CONTAINER" CLIENT_IP_HEADER)"
 SET_BEFORE=" "
 for name in $RUNTIME_SETTINGS; do
   value="$(env_of "$CURRENT_CONTAINER" "$name")"
   if [ -n "$value" ]; then
     SET_BEFORE="$SET_BEFORE$name "
   fi
-  carry_over "$name" "$value" secret
+  if is_secret "$name"; then
+    carry_over "$name" "$value" secret
+  else
+    carry_over "$name" "$value"
+  fi
 done
 unset value
 
@@ -314,12 +326,15 @@ fi
 # For a manual `docker compose` on the server: IMAGE_TAG=$(cat .deployed-tag) docker compose up -d
 printf '%s\n' "$NEW_TAG" >.deployed-tag
 
-# Names only: the values are secrets. A setting the version before had and this one doesn't is the
-# sign of a .env line that sets it empty.
+# A secret shows as set or empty, never its value. A setting the version before had and this one
+# doesn't is the sign of a .env line that sets it empty.
 echo "Runtime settings of $CONTAINER:"
 for name in $RUNTIME_SETTINGS; do
-  if [ -n "$(env_of "$CONTAINER" "$name")" ]; then
+  value="$(env_of "$CONTAINER" "$name")"
+  if [ -n "$value" ] && is_secret "$name"; then
     echo "   $name: set"
+  elif [ -n "$value" ]; then
+    echo "   $name=$value"
   elif [[ "$SET_BEFORE" == *" $name "* ]]; then
     echo "   ⚠️ $name: empty, and the version before had it set"
   else

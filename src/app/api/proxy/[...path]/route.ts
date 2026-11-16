@@ -19,8 +19,10 @@ import {
   writeUser,
 } from "@/lib/sessionServer";
 import { isTurnstileEnabled, verifyTurnstile } from "@/lib/turnstile";
+import { getApiBaseUrl } from "@/config/runtimeEnv";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+/** Dibaca saat runtime dari .env server (bukan di-inline saat build) — lihat src/config/runtimeEnv.ts. */
+const BACKEND_URL = getApiBaseUrl();
 const SITE_URL = process.env.NEXT_SITE_BASE_URL
 
 /**

@@ -8,6 +8,7 @@ import { getGoogleAuthUrl, GOOGLE_SIGN_IN_START_PATH } from '@/features/auth/lib
 import { startGoogleLink } from '@/features/auth/api/auth'
 import { cn } from '@/lib/cn'
 import { secondaryButtonClass, spinnerClass } from '@/features/auth/styles'
+import { usePublicEnv } from '@/providers/PublicEnvProvider'
 
 interface GoogleButtonProps {
   /** `link` = hubungkan Google ke akun yang sedang login. */
@@ -20,6 +21,7 @@ interface GoogleButtonProps {
 export function GoogleButton({ intent, children, className }: GoogleButtonProps) {
   const t = useTranslations('AuthDialog')
   const tRedirect = useTranslations('AuthRedirect')
+  const { apiBaseUrl } = usePublicEnv()
   const [redirecting, setRedirecting] = useState(false)
 
   const openGoogle = async () => {
@@ -32,7 +34,7 @@ export function GoogleButton({ intent, children, className }: GoogleButtonProps)
     try {
       // Link butuh tiket dari akun yang sedang login; tanpa itu backend menolak.
       const ticket = await startGoogleLink()
-      window.location.href = getGoogleAuthUrl({ intent: 'link', ticket })
+      window.location.href = getGoogleAuthUrl({ apiBaseUrl, intent: 'link', ticket })
     } catch {
       setRedirecting(false)
       toast.error(tRedirect('googleFailed'))

@@ -25,8 +25,4 @@ export const EXTERNAL_LINKS = {
 /** Nama dagang yang tampil ke publik (beda dengan nama badan hukum di i18n `brandName`). */
 export const SITE_NAME = 'PakarGaming'
 
-/**
- * Logo dari env supaya bucket dev/prod tidak tertanam di bundle.
- * Kosong → FooterLogo memakai logo lokal + wordmark (URL bucket dev lama sudah 404).
- */
-export const SITE_LOGO_SRC = process.env.NEXT_PUBLIC_FOOTER_LOGO_URL || null
+// Logo footer (NEXT_PUBLIC_FOOTER_LOGO_URL) dibaca saat runtime: lihat FooterLogo & src/config/runtimeEnv.ts.

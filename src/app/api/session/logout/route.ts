@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getApiBaseUrl } from '@/config/runtimeEnv'
 import { getClientIp } from '@/lib/clientIp'
 import { CSRF_HEADER, CSRF_HEADER_VALUE } from '@/lib/session'
 import { clearSession, readSessionToken } from '@/lib/sessionServer'
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
 
 /** Gagal menghubungi backend tidak menghalangi logout: cookie tetap dihapus. */
 async function revokeOnBackend(req: NextRequest, token: string) {
-  const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+  const backendUrl = getApiBaseUrl()
   if (!backendUrl) return
 
   // Header sama seperti /api/proxy: backend hanya memercayai X-Client-IP yang membawa kunci storefront

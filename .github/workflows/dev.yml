@@ -95,26 +95,15 @@ jobs:
 
       - name: Build and Push to GHCR
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-        env:
-          # The build record and the job summary can hold the build args below; they are not
-          # uploaded as something anyone with read access can download.
-          DOCKER_BUILD_SUMMARY: false
-          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: .
           platforms: linux/amd64
           push: true
-          # Only what `yarn build` bakes in. NEXT_PUBLIC_* are inlined into the bundle: one that isn't
-          # passed (or that the Dockerfile doesn't declare as ARG) is empty in this image for good,
-          # e.g. Turnstile off. NEXT_SITE_BASE_URL is for sitemap.xml, which is built here; the
-          # running container reads its own from the server's .env (deploy/dev.env.example), as it
-          # does every runtime secret.
+          # The app's settings and secrets are not in the image: the container reads them from the
+          # server's .env when it runs (deploy/dev.env.example). The one build arg is the extra
+          # image hosts next.config.ts's images.remotePatterns fixes at build time (optional, a
+          # repository variable, not a secret).
           build-args: |
-            NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_DEV }}
-            NEXT_PUBLIC_ENCRYPT_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPT_KEY_DEV }}
-            NEXT_SITE_BASE_URL=${{ secrets.NEXT_SITE_BASE_URL_DEV }}
-            NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID_DEV }}
-            NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY_DEV }}
             NEXT_PUBLIC_IMAGE_HOSTS=${{ vars.NEXT_PUBLIC_IMAGE_HOSTS_DEV }}
           tags: |
             ghcr.io/${{ steps.repo_lower.outputs.repo }}:dev-latest

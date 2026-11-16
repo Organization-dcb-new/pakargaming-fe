@@ -1,5 +1,7 @@
 /** Verifikasi Cloudflare Turnstile di server (proxy). Kunci rahasia tidak pernah sampai ke browser. */
 
+import { getTurnstileSiteKey } from '@/config/runtimeEnv'
+
 const VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
 
 /**
@@ -7,16 +9,16 @@ const VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
  * sehingga semua login/daftar akan ditolak — guard ini mencegah salah konfigurasi itu.
  */
 export function isTurnstileEnabled() {
-  return Boolean(process.env.TURNSTILE_SECRET_KEY && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
+  return Boolean(process.env.TURNSTILE_SECRET_KEY && getTurnstileSiteKey())
 }
 
 /**
- * Secret diisi tapi site key kosong → Turnstile diam-diam MATI. Biasanya karena image dibangun tanpa
- * build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY (NEXT_PUBLIC_* di-inline saat build, bukan dibaca saat jalan).
+ * Secret diisi tapi site key kosong → Turnstile diam-diam MATI. Biasanya karena NEXT_PUBLIC_TURNSTILE_SITE_KEY
+ * lupa diisi di .env server (keduanya dibaca saat runtime, lihat src/config/runtimeEnv.ts).
  * Dicek saat server start (src/instrumentation.ts) supaya kelihatan di log.
  */
 export function isTurnstileMisconfigured() {
-  return Boolean(process.env.TURNSTILE_SECRET_KEY) && !process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  return Boolean(process.env.TURNSTILE_SECRET_KEY) && !getTurnstileSiteKey()
 }
 
 /** Fail-closed: kalau Cloudflare tidak bisa dihubungi, request auth ditolak (bot tidak lolos saat gangguan). */

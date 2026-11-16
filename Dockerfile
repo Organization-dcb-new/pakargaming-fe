@@ -8,23 +8,12 @@ RUN yarn install --frozen-lockfile
 
 FROM node:24.22.3-alpine3.24@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5 AS builder
 WORKDIR /app
-# NEXT_PUBLIC_* di-inline ke bundle saat `yarn build` — kosong di sini = kosong selamanya di image ini.
-# Build-arg yang dikirim CI tapi tidak dideklarasikan di sini diabaikan diam-diam (begitu GA dulu hilang).
-# NEXT_SITE_BASE_URL di sini hanya untuk sitemap.xml (dibangun statis). ENCRYPT_SECRET_KEY & rahasia lain
-# sengaja tidak ada: dibaca saat runtime dari .env server (deploy/*.env.example).
-ARG NEXT_PUBLIC_API_BASE_URL
-ARG NEXT_PUBLIC_ENCRYPT_KEY
-ARG NEXT_SITE_BASE_URL
-ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
+# Konfigurasi app (URL backend, site key Turnstile, GA, rahasia) TIDAK masuk image: semuanya dibaca saat
+# runtime dari .env server (src/config/runtimeEnv.ts, deploy/*.env.example). Satu-satunya pengecualian:
+# NEXT_PUBLIC_IMAGE_HOSTS, yang dipakai next.config.ts images.remotePatterns (dikunci saat build).
+# Build-arg yang tidak dideklarasikan di sini diabaikan Docker diam-diam.
 ARG NEXT_PUBLIC_IMAGE_HOSTS
-ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
-
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_ENCRYPT_KEY=$NEXT_PUBLIC_ENCRYPT_KEY
-ENV NEXT_SITE_BASE_URL=$NEXT_SITE_BASE_URL
-ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ENV NEXT_PUBLIC_IMAGE_HOSTS=$NEXT_PUBLIC_IMAGE_HOSTS
-ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY --from=deps /app/node_modules ./node_modules
