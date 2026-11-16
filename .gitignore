@@ -21,6 +21,11 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+# Salinan .env server yang sudah diisi (deploy/dev.env, prod.env, ...); contohnya tetap masuk git
+.env.*
+*.env
+!.env.example
+!*.env.example
 
 # IDE / OS
 .DS_Store

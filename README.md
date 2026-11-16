@@ -32,25 +32,24 @@ Polanya sama dengan topup-be dan topup-admin-fe:
 | --- | --- | --- |
 | Folder server | `/opt/dev-deploy/fe-client-dev` | `/data/prod-deploy/fe-client-prod` |
 | Container | `fe-client-dev` | `fe-client-prod` |
-| Network | `pakargaming_network` | `pakargaming_network` |
+| Network (IP tetap) | `pakargaming-dev` (`172.20.0.20`) | `pakargaming-prod` (`172.20.0.20`) |
 | Runner | `[self-hosted, dev]` | `[self-hosted, prod]` |
 
 Manual di server (versi yang sedang jalan ada di `.deployed-tag`):
-`IMAGE_TAG=$(cat .deployed-tag) docker compose up -d`. Rahasia yang biasanya dikirim job tidak ada saat
-itu, jadi yang dibutuhkan container harus ada di `.env` folder tersebut — atau jalankan ulang job deploy.
+`IMAGE_TAG=$(cat .deployed-tag) docker compose up -d`.
 
 ### `.env` di folder server
 
-Dibaca compose untuk `${...}` di file compose; container hanya menerima yang ada di `environment:`.
-Nilai dari job (secret GitHub) menang atas `.env`; secret yang tidak didefinisikan tidak menimpa `.env`.
-Deploy pertama menyalin ke `.env` apa pun yang belum diset job maupun `.env`, dari container yang sedang
-jalan (port, header IP, secret yang dulu hanya ada di compose server).
+Semua yang dibaca container saat **runtime** ada di `.env` folder server, bukan di GitHub (pola
+topup-be). Isinya dan cara mengisinya: [`deploy/dev.env.example`](deploy/dev.env.example) /
+[`deploy/prod.env.example`](deploy/prod.env.example). Compose membacanya untuk `${...}`; container hanya
+menerima yang ada di `environment:`.
 
-| Var | Default | Keterangan |
-| --- | --- | --- |
-| `FE_PUBLISH` | `127.0.0.1:3000` | Sisi host port mapping (tujuan nginx). Tetap di `127.0.0.1` — lihat Edge proxy |
-| `CLIENT_IP_HEADER` | `x-real-ip` | Lihat tabel env runtime |
-| `STOREFRONT_PROXY_SECRET`, `TURNSTILE_SECRET_KEY` | kosong | Kalau tidak disimpan sebagai secret GitHub |
+- Deploy pertama membuat `.env` sendiri (mode 600) dan menyalin ke situ yang dipakai container lama
+  (port, `ENCRYPT_SECRET_KEY`, `NEXT_SITE_BASE_URL`), jadi tidak wajib dibuat dulu.
+- `ENCRYPT_SECRET_KEY` & `NEXT_SITE_BASE_URL` wajib: kalau tetap kosong, deploy berhenti sebelum
+  container lama disentuh.
+- Setelah mengubah `.env`: jalankan ulang job deploy, atau perintah manual di atas. Tidak perlu build ulang.
 
 ### Edge proxy (nginx di host) — wajib
 
@@ -77,31 +76,39 @@ atau tambahkan `header_up X-Real-IP {remote_host}`.
 - IP yang tidak sah / tidak ada dikirim sebagai `X-Client-IP: unknown` — backend menaruh semuanya di
   satu bucket rate limit bersama, jadi salah konfigurasi terlihat sebagai 429 massal, bukan rate limit mati.
 
-### Env runtime (server-only, `environment:` compose)
+### Env runtime (`.env` server → `environment:` compose)
 
 | Env | Default | Keterangan |
 | --- | --- | --- |
-| Env | Default | Sumber | Keterangan |
-| --- | --- | --- | --- |
-| `ENCRYPT_SECRET_KEY` | — | secret `ENCRYPT_SECRET_KEY_<ENV>` | "Enkripsi" body browser→proxy; bukan kontrol keamanan (kuncinya ada di browser). Dibaca saat runtime (layout & proxy) |
-| `NEXT_SITE_BASE_URL` | — | secret `NEXT_SITE_BASE_URL_<ENV>` | Header `X-Forwarded-Origin/Referer` dari proxy |
-| `STOREFRONT_PROXY_SECRET` | kosong | secret `STOREFRONT_PROXY_SECRET_<ENV>` atau `.env` | Sama dengan backend; dikirim sebagai `X-Storefront-Key`. Jangan `NEXT_PUBLIC_` |
-| `TURNSTILE_SECRET_KEY` | kosong | secret `TURNSTILE_SECRET_KEY_<ENV>` atau `.env` | Secret Cloudflare Turnstile |
-| `CLIENT_IP_HEADER` | `x-real-ip` | `.env` | Header yang ditimpa edge dengan IP pembeli |
+| `ENCRYPT_SECRET_KEY` | wajib | "Enkripsi" body browser→proxy; bukan kontrol keamanan (kuncinya ada di browser). Dibaca saat runtime (layout & proxy) |
+| `NEXT_SITE_BASE_URL` | wajib | Header `X-Forwarded-Origin/Referer` dari proxy |
+| `STOREFRONT_PROXY_SECRET` | kosong | Sama persis dengan backend; dikirim sebagai `X-Storefront-Key`. Jangan `NEXT_PUBLIC_` |
+| `TURNSTILE_SECRET_KEY` | kosong | Secret Cloudflare Turnstile (aktif hanya kalau site key ada di image) |
+| `CLIENT_IP_HEADER` | `x-real-ip` | Header yang ditimpa edge dengan IP pembeli |
+| `FE_PUBLISH` | `127.0.0.1:3000` | Sisi host port mapping (tujuan reverse proxy) — lihat Edge proxy |
 
-`<ENV>` = `DEV` (dev.yml) / `PROD` (main.yml). Log job deploy menampilkan mana yang terisi (nama saja).
+Log job deploy menampilkan mana yang terisi (nama saja, tanpa nilai).
 
-### Build-arg (di-inline saat build — kosong di build = kosong di image)
+### Build-arg (secret GitHub, di-inline saat build — kosong di build = kosong di image)
 
-`NEXT_PUBLIC_API_BASE_URL`, `NEXT_SITE_BASE_URL`, `NEXT_PUBLIC_ENCRYPT_KEY`, `ENCRYPT_SECRET_KEY`,
-`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_IMAGE_HOSTS` (opsional).
-Di CI diambil dari secret `<NAMA>_PROD` / `<NAMA>_DEV`; `NEXT_PUBLIC_IMAGE_HOSTS_PROD/_DEV` dari Variables
-(bukan rahasia). Build-arg baru wajib dideklarasikan `ARG` + `ENV` di Dockerfile — kalau tidak, Docker
-mengabaikannya diam-diam.
+Settings → Secrets and variables → Actions → **Repository** secrets (job build tidak memakai
+environment, jadi Environment secrets tidak terbaca), `<ENV>` = `DEV` / `PROD`:
+
+| Secret | Wajib? | Isi |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL_<ENV>` | ✅ | URL backend tanpa `/v1` |
+| `NEXT_SITE_BASE_URL_<ENV>` | ✅ | Domain storefront (untuk sitemap.xml); samakan dengan `.env` server |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY_<ENV>` | berpasangan dengan `TURNSTILE_SECRET_KEY` di `.env` | Site key Cloudflare Turnstile |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID_<ENV>` | opsional | `G-XXXXXXXXXX`; kosong = GA tidak dimuat |
+| `NEXT_PUBLIC_ENCRYPT_KEY_<ENV>` | opsional | Belum dibaca kode |
+
+Variables (bukan secret): `NEXT_PUBLIC_IMAGE_HOSTS_<ENV>` (opsional). Mengubah salah satunya butuh push
+ulang (image baru). Build-arg baru wajib dideklarasikan `ARG` + `ENV` di Dockerfile — kalau tidak,
+Docker mengabaikannya diam-diam. Secret `ENCRYPT_SECRET_KEY_*`, `STOREFRONT_PROXY_SECRET_*` dan
+`TURNSTILE_SECRET_KEY_*` tidak dipakai lagi: hapus setelah nilainya ada di `.env` server.
 
 ### GitHub
 
-- Secrets: lihat dua tabel di atas.
 - Job deploy memakai environment `production` / `development`: pasang aturan proteksinya di
   Settings → Environments (branch `main` / `dev` saja, reviewer untuk production).
 - Supaya PR tidak bisa di-merge kalau CI merah: Settings → Branches → aturan untuk `dev` dan `main` →

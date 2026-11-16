@@ -10,10 +10,11 @@ FROM node:24.22.3-alpine3.24@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9
 WORKDIR /app
 # NEXT_PUBLIC_* di-inline ke bundle saat `yarn build` — kosong di sini = kosong selamanya di image ini.
 # Build-arg yang dikirim CI tapi tidak dideklarasikan di sini diabaikan diam-diam (begitu GA dulu hilang).
+# NEXT_SITE_BASE_URL di sini hanya untuk sitemap.xml (dibangun statis). ENCRYPT_SECRET_KEY & rahasia lain
+# sengaja tidak ada: dibaca saat runtime dari .env server (deploy/*.env.example).
 ARG NEXT_PUBLIC_API_BASE_URL
 ARG NEXT_PUBLIC_ENCRYPT_KEY
 ARG NEXT_SITE_BASE_URL
-ARG ENCRYPT_SECRET_KEY
 ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ARG NEXT_PUBLIC_IMAGE_HOSTS
 ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
@@ -21,7 +22,6 @@ ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_ENCRYPT_KEY=$NEXT_PUBLIC_ENCRYPT_KEY
 ENV NEXT_SITE_BASE_URL=$NEXT_SITE_BASE_URL
-ENV ENCRYPT_SECRET_KEY=$ENCRYPT_SECRET_KEY
 ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ENV NEXT_PUBLIC_IMAGE_HOSTS=$NEXT_PUBLIC_IMAGE_HOSTS
 ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
@@ -41,8 +41,9 @@ ENV NODE_ENV=production
 # ke host tetap `ports:` compose (default 127.0.0.1:3000).
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
-# Rahasia runtime (ENCRYPT_SECRET_KEY, TURNSTILE_SECRET_KEY, STOREFRONT_PROXY_SECRET, ...) diberikan lewat
-# `environment:` compose (deploy/docker-compose.*.yml), bukan build-arg, supaya tidak tersimpan di layer image.
+# Rahasia runtime (ENCRYPT_SECRET_KEY, TURNSTILE_SECRET_KEY, STOREFRONT_PROXY_SECRET, ...) datang dari .env
+# server lewat `environment:` compose (deploy/docker-compose.*.yml), bukan build-arg, supaya tidak tersimpan
+# di layer image.
 
 # Jalan sebagai user `node` (bawaan image), bukan root: celah di app tidak langsung jadi akses root container.
 # File dimiliki `node` supaya cache optimasi gambar (.next/cache) tetap bisa ditulis.

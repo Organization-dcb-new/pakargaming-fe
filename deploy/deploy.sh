@@ -10,7 +10,7 @@
 #   DEPLOY_DIR      folder on the server that holds the compose project and its .env
 #   COMPOSE_SRC     compose file in the checkout, e.g. deploy/docker-compose.prod.yml
 #   CONTAINER       container_name in that compose file, e.g. fe-client-prod
-#   NETWORK         external Docker network that compose file joins: pakargaming_network
+#   NETWORK         external Docker network that compose file joins, e.g. pakargaming-prod
 #   IMAGE_REPO      ghcr.io/<owner>/<repo>, lowercase
 #   NEW_TAG         image tag to deploy, e.g. prod-1.2.3
 #   TAG_PREFIX      prod- or dev-; older images with it are removed after a good deploy
@@ -18,10 +18,9 @@
 #   HEALTH_TIMEOUT  seconds the new version gets to report healthy, default 90. The compose file's
 #                   healthcheck first probes 10s after start and calls it unhealthy after ~40s.
 #   KEEP_IMAGES     versions of the image kept on disk for a rollback, default 3
-#   IN_ENCRYPT_SECRET_KEY, IN_NEXT_SITE_BASE_URL, IN_STOREFRONT_PROXY_SECRET, IN_TURNSTILE_SECRET_KEY
-#                   optional, from the repository's secrets: the runtime setting named without IN_.
-#                   Only a non-empty one is used, so a secret that isn't defined leaves the value in
-#                   DEPLOY_DIR/.env in place.
+#
+# What the container reads when it runs is not passed by the job: it is DEPLOY_DIR/.env on the
+# server (deploy/dev.env.example and prod.env.example list it).
 #
 # The health check is the container's own (healthcheck in the compose file, a request for a static
 # file to the Next.js server inside it), not a request to the host port: that port, and the address
@@ -33,20 +32,12 @@ set -euo pipefail
 HEALTH_TIMEOUT="${HEALTH_TIMEOUT:-90}"
 KEEP_IMAGES="${KEEP_IMAGES:-3}"
 
-# What the container reads when it runs (environment in the compose file), besides CLIENT_IP_HEADER,
-# which only .env sets. compose takes each from, in this order: this script's environment (the
-# job's IN_<name>), DEPLOY_DIR/.env, the compose file's default. Whatever else this shell has under
-# those names is dropped, so it can't override .env.
+# The secrets the container reads when it runs (environment in the compose file). They, FE_PUBLISH
+# and CLIENT_IP_HEADER are the server's: compose takes them from DEPLOY_DIR/.env, or the compose
+# file's default. Whatever this shell has under those names is dropped, so it can't override .env.
 RUNTIME_SETTINGS="ENCRYPT_SECRET_KEY NEXT_SITE_BASE_URL STOREFRONT_PROXY_SECRET TURNSTILE_SECRET_KEY"
-for name in $RUNTIME_SETTINGS; do
-  in="IN_$name"
-  if [ -n "${!in:-}" ]; then
-    export "$name=${!in}"
-  else
-    unset "$name"
-  fi
-  unset "$in"
-done
+# shellcheck disable=SC2086 # one name per word
+unset $RUNTIME_SETTINGS FE_PUBLISH CLIENT_IP_HEADER
 
 # The compose file is used as docker-compose.yml in DEPLOY_DIR; the one it replaces is kept beside
 # it as docker-compose.yml.previous, which a rollback puts back.
@@ -140,8 +131,10 @@ printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdi
 trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
 
 if ! docker network inspect "$NETWORK" >/dev/null 2>&1; then
+  # The subnet topup-be's and topup-admin-fe's deploy.sh create it with: the compose files give
+  # the backend 172.20.0.10 and the storefront 172.20.0.20 in it.
   echo "Creating network $NETWORK..."
-  docker network create --driver bridge "$NETWORK"
+  docker network create --driver bridge --subnet 172.20.0.0/16 "$NETWORK"
 fi
 
 cd "$DEPLOY_DIR"
@@ -186,19 +179,20 @@ fi
 echo "Pulling $NEW_TAG..."
 docker pull "$IMAGE_REPO:$NEW_TAG"
 
-# The settings the job doesn't pass are the server's (see the compose file). When .env doesn't set
-# one either, it is taken from the container running now and written to .env, so the first deploy
-# with the repo's compose file keeps what the server's own compose file gave the container: the port
-# the reverse proxy sends traffic to, the buyer IP header, a secret set only there. Nothing to take
-# means the compose file's default.
+# When .env doesn't set one of the settings, it is taken from the container running now and written
+# to .env, so the first deploy with the repo's compose file keeps what the container had: the port
+# the reverse proxy sends traffic to, the secrets the deploy job used to pass. Nothing to take means
+# the compose file's default, or, for a required one, the stop at `compose config` below.
+# env_has NAME: .env gives NAME a value. An empty one (NAME=, NAME='', as the *.env.example files
+# have them) counts as not set; a line added after it wins.
 env_has() {
-  [ -f .env ] && grep -Eq "^[[:space:]]*(export[[:space:]]+)?$1=" .env
+  [ -f .env ] && grep -Eq "^[[:space:]]*(export[[:space:]]+)?$1=[[:space:]]*([^[:space:]\"'#]|\"[^\"]|'[^'])" .env
 }
 
 # carry_over NAME VALUE [secret]: a secret's value isn't printed.
 carry_over() {
   local name="$1" value="$2" shown="$2"
-  if [ -n "${!name:-}" ] || env_has "$name" || [ -z "$value" ]; then
+  if env_has "$name" || [ -z "$value" ]; then
     return 0
   fi
   if [ "${3:-}" = secret ]; then
@@ -261,7 +255,8 @@ install -m 0644 "$COMPOSE_SRC" "$COMPOSE_NAME"
 
 # A compose file that doesn't resolve here stops the deploy, before the running container is touched.
 if ! IMAGE_TAG="$NEW_TAG" compose config --quiet; then
-  echo "❌ $COMPOSE_SRC does not resolve on this server; the server's previous compose file is back in place"
+  echo "❌ $COMPOSE_SRC does not resolve on this server; the server's previous compose file is back in place."
+  echo "   A setting named above as missing goes in $DEPLOY_DIR/.env; deploy/*.env.example in the repo lists them."
   restore_compose
   exit 1
 fi
