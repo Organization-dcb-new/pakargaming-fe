@@ -6,18 +6,25 @@ import CheckoutView from './CheckoutView'
 import PaymentFAQ from './PaymentFAQ'
 import StatusView from './StatusView'
 
+type TransactionDetailViewProps = {
+  data: PaymentDataWithDetailProduct
+  /** Ambil ulang transaksi (tombol "Cek status pembayaran" saat masih menunggu). */
+  onCheckStatus: () => Promise<unknown>
+  checkingStatus: boolean
+}
+
 /**
  * Tampilan detail transaksi — layout adaptif per status (desain referensi "Neon Arena"):
  * PENDING → checkout (instruksi bayar), PAID/FAILED → kartu status.
  * FAQ pembayaran hanya relevan sebelum transaksi berhasil.
  */
-export default function TransactionDetailView({ data }: { data: PaymentDataWithDetailProduct }) {
+export default function TransactionDetailView({ data, onCheckStatus, checkingStatus }: TransactionDetailViewProps) {
   const status = normalizeTransactionStatus(data.status)
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 md:gap-12 md:py-12 lg:px-8">
       {status === 'pending' ? (
-        <CheckoutView data={data} />
+        <CheckoutView data={data} onCheckStatus={onCheckStatus} checkingStatus={checkingStatus} />
       ) : (
         <StatusView data={data} paid={status === 'paid'} />
       )}

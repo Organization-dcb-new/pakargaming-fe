@@ -1,13 +1,14 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, RefreshCw } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { PaymentDataWithDetailProduct } from '@/types/transaction'
 import { formatPrice } from '@/lib/formatPrice'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { getPaymentView } from '@/features/transactions/lib/paymentView'
-import { btnPrimary } from '@/features/transactions/styles'
+import { btnPrimary, btnSecondary } from '@/features/transactions/styles'
 import { HudPanel } from '@/components/ui/hud-panel'
 import InvoiceChip from './InvoiceChip'
 import OrderSummary from './OrderSummary'
@@ -15,8 +16,20 @@ import PaymentInstructions from './PaymentInstructions'
 import StatusTimeline from './StatusTimeline'
 import { canOptimize } from '@/lib/image'
 
+/**
+ * Jeda antar cek status. Backend menanyakan status ke Paylabs paling sering sekali per 15 detik per
+ * pembayaran; cek yang lebih rapat hanya membaca ulang data yang sama.
+ */
+const CHECK_STATUS_COOLDOWN_SECONDS = 15
+
+type CheckoutViewProps = {
+  data: PaymentDataWithDetailProduct
+  onCheckStatus: () => Promise<unknown>
+  checkingStatus: boolean
+}
+
 /** Layout PENDING (referensi "checkout"): panel bayar dominan di kiri, detail pesanan + progres di kanan. */
-export default function CheckoutView({ data }: { data: PaymentDataWithDetailProduct }) {
+export default function CheckoutView({ data, onCheckStatus, checkingStatus }: CheckoutViewProps) {
   const t = useTranslations('DetailTrx')
   const tStatus = useTranslations('TransactionStatus')
   const view = getPaymentView(data)
@@ -83,16 +96,9 @@ export default function CheckoutView({ data }: { data: PaymentDataWithDetailProd
             </a>
           ) : null}
 
-          <div className="flex max-w-md flex-col gap-1.5">
-            <p className="text-xs font-medium text-foreground">
-              <span aria-hidden className="relative mr-2 inline-flex h-2 w-2 align-middle">
-                <span className="absolute inset-0 rotate-45 animate-ping bg-primary/60 motion-reduce:animate-none" />
-                <span className="relative h-2 w-2 rotate-45 bg-primary" />
-              </span>
-              {t('autoUpdateHint')}
-            </p>
-            <p className="text-xs text-muted-foreground">{tStatus('notePending')}</p>
-          </div>
+          <CheckStatusButton onCheck={onCheckStatus} checking={checkingStatus} />
+
+          <p className="max-w-md text-xs text-muted-foreground">{tStatus('notePending')}</p>
         </HudPanel>
 
         <aside className="flex flex-col gap-5 lg:sticky lg:top-24 lg:col-span-5">
@@ -117,6 +123,54 @@ export default function CheckoutView({ data }: { data: PaymentDataWithDetailProd
           </HudPanel>
         </aside>
       </div>
+    </div>
+  )
+}
+
+/**
+ * Tombol cek status pembayaran. Kalau pembayaran sudah masuk, halaman berganti ke kartu status;
+ * kalau belum, tombol menunggu jeda dulu sebelum bisa ditekan lagi.
+ */
+function CheckStatusButton({ onCheck, checking }: { onCheck: () => Promise<unknown>; checking: boolean }) {
+  const t = useTranslations('DetailTrx')
+  const [cooldown, setCooldown] = useState(0)
+  const [checked, setChecked] = useState(false)
+
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const timer = setTimeout(() => setCooldown((seconds) => seconds - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [cooldown])
+
+  const handleClick = async () => {
+    setCooldown(CHECK_STATUS_COOLDOWN_SECONDS)
+    await onCheck()
+    setChecked(true)
+  }
+
+  const label = checking
+    ? t('checkingStatus')
+    : cooldown > 0
+      ? t('checkStatusAgainIn', { seconds: cooldown })
+      : t('checkStatus')
+
+  return (
+    <div className="flex w-full max-w-md flex-col gap-1.5">
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={checking || cooldown > 0}
+        className={`${btnSecondary} disabled:cursor-not-allowed disabled:opacity-60`}
+      >
+        <RefreshCw
+          className={`h-4 w-4 ${checking ? 'animate-spin motion-reduce:animate-none' : ''}`}
+          aria-hidden
+        />
+        {label}
+      </button>
+      <p className="text-xs text-muted-foreground" aria-live="polite">
+        {checked && !checking ? t('stillPending') : t('checkStatusHint')}
+      </p>
     </div>
   )
 }
