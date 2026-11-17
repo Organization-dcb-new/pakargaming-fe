@@ -583,5 +583,18 @@
     "googleLinkedHint": "You can log in with one click using Google.",
     "googleNotLinkedHint": "Link it to log in with your Google account.",
     "linkGoogle": "Link Google"
+  },
+  "Announcements": {
+    "regionLabel": "Announcements",
+    "levelInfo": "Info",
+    "levelWarning": "Important",
+    "levelPromo": "Promo",
+    "defaultLinkLabel": "See details",
+    "opensInNewTab": "(opens in a new tab)",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "dismiss": "Dismiss announcement: {title}",
+    "close": "Close",
+    "gotIt": "Got it"
   }
 }

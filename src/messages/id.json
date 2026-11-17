@@ -583,5 +583,18 @@
     "googleLinkedHint": "Kamu bisa masuk sekali klik dengan Google.",
     "googleNotLinkedHint": "Hubungkan supaya bisa masuk dengan akun Google.",
     "linkGoogle": "Hubungkan Google"
+  },
+  "Announcements": {
+    "regionLabel": "Pengumuman",
+    "levelInfo": "Info",
+    "levelWarning": "Penting",
+    "levelPromo": "Promo",
+    "defaultLinkLabel": "Lihat detail",
+    "opensInNewTab": "(buka di tab baru)",
+    "showMore": "Tampilkan selengkapnya",
+    "showLess": "Tampilkan lebih sedikit",
+    "dismiss": "Tutup pengumuman: {title}",
+    "close": "Tutup",
+    "gotIt": "Oke, mengerti"
   }
 }

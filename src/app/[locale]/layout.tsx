@@ -23,6 +23,8 @@ import { AuthDialogProvider } from '@/features/auth/components/AuthDialogProvide
 import MaintenancePage from '@/features/maintenance/MaintenancePage'
 import MaintenanceWatcher from '@/features/maintenance/MaintenanceWatcher'
 import { getActiveMaintenance } from '@/features/maintenance/lib/maintenance'
+import AnnouncementCenter from '@/features/announcements/AnnouncementCenter'
+import { getActiveAnnouncements } from '@/features/announcements/lib/announcements'
 
 export const metadata = {
   title: 'Pakar Gaming - Ahlinya Top Up Game Murah, Instan & Terpercaya',
@@ -52,7 +54,12 @@ export default async function RootLayout({
 
   // Providing all messages to the client
   // side is the easiest way to get started
-  const [messages, maintenance] = await Promise.all([getMessages(), getActiveMaintenance()])
+  // Pengumuman & maintenance sama-sama dari cache memori server (paling lama menunggu ~3 detik)
+  const [messages, maintenance, announcements] = await Promise.all([
+    getMessages(),
+    getActiveMaintenance(),
+    getActiveAnnouncements(),
+  ])
 
   return (
     <html
@@ -86,6 +93,8 @@ export default async function RootLayout({
                 <AuthDialogProvider>
                   <div className="min-h-screen">
                     <ProgressBar />
+                    {/* Bar pengumuman di alur normal di atas navbar sticky: ikut tergulir, navbar tetap menempel di top-0 */}
+                    <AnnouncementCenter initial={announcements} />
                     <Navbar />
                     <main>
                       {children}
