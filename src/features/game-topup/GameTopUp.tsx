@@ -121,6 +121,22 @@ export default function GameTopUp() {
     }
   }, [selectedPaymentLimit, selectedPayment, t]);
 
+  // Produk terpilih ikut data terbaru: setelah checkout ditolak karena harga berubah (409) daftar
+  // produk dimuat ulang, dan ringkasan harus menampilkan harga yang akan ditagih. Produk yang
+  // hilang dari daftar (stok habis) dilepas.
+  useEffect(() => {
+    if (!selectedPackage || !dataGameDetail?.data) return;
+    const latest = [
+      ...(dataGameDetail.data.product ?? []),
+      ...(categoryProduct?.data ?? []).flatMap((category) => category.product ?? []),
+    ].find((product) => product.id === selectedPackage.id);
+    if (!latest) {
+      setSelectedPackage(null);
+    } else if (latest.selling_price !== selectedPackage.selling_price) {
+      setSelectedPackage(latest);
+    }
+  }, [dataGameDetail, categoryProduct, selectedPackage]);
+
   // Mengedit ID akun TIDAK lagi mengosongkan produk & pembayaran yang sudah dipilih: langkahnya
   // hanya terkunci sampai ID lolos cek ulang (validasi sebelum pesan tetap mewajibkan akun valid).
 
@@ -240,7 +256,8 @@ export default function GameTopUp() {
         .filter((field) => field.value)
     : [];
 
-  const handleCreateOrder = () => {
+  /** captchaToken: token Turnstile dari modal konfirmasi (null kalau Turnstile tidak aktif). */
+  const handleCreateOrder = (captchaToken: string | null) => {
     mutate({
       email: email,
       payment_method_id: selectedPayment.id,
@@ -248,6 +265,7 @@ export default function GameTopUp() {
       product_id: selectedPackage.id,
       ...(needsUserMdn ? { user_mdn: normalizeUserMdn(userMdn) } : {}),
       referral_code: referralCode ? referralCode.trim() : undefined,
+      captchaToken,
     });
   };
 

@@ -83,11 +83,16 @@ const SESSION_ISSUING_PATHS = new Set([
   "v1/auth/google/exchange",
 ]);
 
-/** Target favorit bot (tebak password, spam akun, spam email reset) → wajib lolos Turnstile kalau aktif. */
+/**
+ * Target favorit bot (tebak password, spam akun, spam email reset, spam checkout) → wajib lolos
+ * Turnstile kalau aktif. Checkout: tiap request membuat order + tagihan Paylabs, dan bot yang
+ * berganti-ganti IP bisa menghabiskan kuota checkout bersama sehingga pembeli asli kena 429.
+ */
 const TURNSTILE_PATHS = new Set([
   "v1/auth/login",
   "v1/auth/register",
   "v1/auth/forgot-password",
+  "v1/transactions",
 ]);
 
 /** Tukar kode login Google: wajib membawa nonce dari cookie browser yang memulai login (kontrak M5). */
@@ -179,7 +184,7 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
   // Sudah divalidasi (net.isIP) atau "unknown" — lihat src/lib/clientIp.ts untuk syarat di edge proxy
   const clientIp = getClientIp(req.headers);
 
-  if (TURNSTILE_PATHS.has(targetPath) && isTurnstileEnabled()) {
+  if (method === "POST" && TURNSTILE_PATHS.has(targetPath) && isTurnstileEnabled()) {
     const remoteIp = clientIp === UNKNOWN_CLIENT_IP ? undefined : clientIp;
     const passed = await verifyTurnstile(req.headers.get(TURNSTILE_HEADER), remoteIp);
     if (!passed) {

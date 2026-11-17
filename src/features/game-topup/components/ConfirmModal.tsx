@@ -1,6 +1,8 @@
 'use client'
 import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useRef } from 'react'
+import { useTurnstile } from '@/features/auth/hooks/useTurnstile'
 import { Price } from '@/types/game'
 import { PaymentMethod } from '@/types/paymentMethod'
 import { calculateTotalPrice } from './PaymentMethodList'
@@ -14,7 +16,8 @@ import {
 
 interface ConfirmModalProps {
   loading?: boolean
-  onConfirm: () => void
+  /** captchaToken: token Turnstile (null kalau Turnstile tidak dikonfigurasi). */
+  onConfirm: (captchaToken: string | null) => void
   Product: Price
   Payment: PaymentMethod
   setOpen: (value: boolean) => void
@@ -105,26 +108,63 @@ export default function ConfirmModal({
           </div>
         </dl>
 
-        <div className="flex gap-2.5">
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            disabled={loading}
-            className="h-12 flex-1 cursor-pointer rounded-sm border border-border text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
-          >
-            {t('confirmEdit')}
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={loading}
-            className="chamfer flex h-12 flex-[2] cursor-pointer items-center justify-center gap-2 rounded-sm bg-primary text-sm font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
-          >
-            {loading && <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />}
-            {loading ? t('confirmProcessing') : t('confirmContinue')}
-          </button>
-        </div>
+        <ConfirmActions loading={loading} onConfirm={onConfirm} onEdit={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
+  )
+}
+
+/**
+ * Tombol modal + Cloudflare Turnstile (proxy mewajibkannya untuk POST v1/transactions kalau aktif).
+ * Komponen terpisah karena isi Dialog baru di-mount saat modal terbuka: hook Turnstile butuh
+ * container-nya sudah ada saat efeknya jalan.
+ */
+function ConfirmActions({
+  loading,
+  onConfirm,
+  onEdit,
+}: {
+  loading: boolean
+  onConfirm: (captchaToken: string | null) => void
+  onEdit: () => void
+}) {
+  const t = useTranslations('GameCheckout')
+  const captcha = useTurnstile()
+  const { reset } = captcha
+
+  // Token hanya berlaku sekali: setelah percobaan selesai (gagal), minta token baru untuk klik berikutnya.
+  const wasLoading = useRef(false)
+  useEffect(() => {
+    if (wasLoading.current && !loading) reset()
+    wasLoading.current = loading
+  }, [loading, reset])
+
+  const waiting = !loading && captcha.blocked
+
+  return captcha.withWidget(
+    <div className="flex gap-2.5">
+      <button
+        type="button"
+        onClick={onEdit}
+        disabled={loading}
+        className="h-12 flex-1 cursor-pointer rounded-sm border border-border text-sm font-semibold text-foreground transition-colors duration-200 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+      >
+        {t('confirmEdit')}
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          if (captcha.blocked) return
+          onConfirm(captcha.token)
+        }}
+        disabled={loading || captcha.blocked}
+        className="chamfer flex h-12 flex-[2] cursor-pointer items-center justify-center gap-2 rounded-sm bg-primary text-sm font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+      >
+        {(loading || (waiting && captcha.verifying)) && (
+          <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />
+        )}
+        {loading ? t('confirmProcessing') : waiting && captcha.verifying ? t('confirmVerifying') : t('confirmContinue')}
+      </button>
+    </div>,
   )
 }
