@@ -113,7 +113,24 @@ export default function OrderSummary({ data }: { data: PaymentDataWithDetailProd
         </div>
       </dl>
 
-      {voucher ? <VoucherCode code={voucher} /> : null}
+      {voucher ? <VoucherCode code={voucher} /> : product?.voucher_hidden ? <VoucherHidden /> : null}
+    </div>
+  )
+}
+
+/**
+ * Pesanan punya kode voucher, tapi backend tidak mengirimnya: halaman ini dibuka di luar browser
+ * pembelian dan tanpa login sebagai pembelinya (SEC1). Kodenya tetap ada di email pembeli.
+ */
+function VoucherHidden() {
+  const t = useTranslations('DetailTrx')
+  return (
+    <div className="rounded-sm border border-border bg-muted/60 p-3.5">
+      <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+        <Ticket className="h-4 w-4" aria-hidden />
+        {t('labelVoucher')}
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t('voucherHidden')}</p>
     </div>
   )
 }

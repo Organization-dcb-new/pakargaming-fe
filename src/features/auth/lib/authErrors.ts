@@ -14,6 +14,7 @@ export type AuthErrorCode =
   | 'captchaFailed'
   | 'nameInvalid'
   | 'passwordTooCommon'
+  | 'disposableEmail'
   | 'verifyLinkInvalid'
   | 'verifyRecentlySent'
   | 'emailNotVerified'
@@ -41,6 +42,7 @@ const MESSAGE_TO_CODE: Record<string, AuthErrorCode> = {
   'account already linked to google': 'alreadyLinked',
   "name may only contain letters, spaces and . ' -": 'nameInvalid',
   'password is too common': 'passwordTooCommon',
+  'disposable email addresses are not accepted': 'disposableEmail',
   'verification link is invalid or has expired': 'verifyLinkInvalid',
   'a verification email was sent less than a minute ago': 'verifyRecentlySent',
   'email not verified': 'emailNotVerified',

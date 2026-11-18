@@ -101,6 +101,75 @@ const GOOGLE_EXCHANGE_PATH = "v1/auth/google/exchange";
 /** Hapus akun: setelah berhasil, cookie sesi browser ini ikut dibersihkan. */
 const DELETE_ACCOUNT_PATH = "v1/auth/account";
 
+/**
+ * Kunci akses transaksi (review SEC1, 18 Nov 2026). Checkout mengembalikan `access_key`; proxy
+ * memindahkannya ke cookie HttpOnly yang path-nya hanya `/api/proxy/v1/transactions/<id>`, jadi
+ * browser pembeli mengirimnya saat membaca transaksi itu saja. Backend menampilkan kode voucher dan
+ * email lengkap hanya kepada pemegang kunci, atau kepada pembeli yang login dengan email itu.
+ */
+const CHECKOUT_PATH = "v1/transactions";
+const TRANSACTION_KEY_COOKIE = "pg_trx_key";
+const TRANSACTION_KEY_HEADER = "X-Transaction-Key";
+/** Selama vouchernya masih mungkin dibuka lagi; kodenya juga ada di email. */
+const TRANSACTION_KEY_MAX_AGE = 60 * 60 * 24 * 30;
+const TRANSACTION_ID = new RegExp(`^${UUID_PATTERN}$`);
+const TRANSACTION_READ = new RegExp(`^v1/transactions/(${UUID_PATTERN})$`);
+
+/**
+ * Route panel admin yang dicoba lewat proxy ini. Storefront tidak pernah memanggilnya, jadi setiap
+ * percobaan adalah pemindaian (seperti 15–17 Nov 2026: login admin, customers, export-csv, upload
+ * lewat /api/proxy). Tiga bentuk: prefix route admin tepat setelah `v1/` (tanpa batas kata, supaya
+ * `admin%2Fbrief`, `customers.json`, `admins` ikut), export-csv di mana saja, dan trik traversal
+ * atau encoding yang menuju route admin (`games/%2e%2e/admin/me`).
+ */
+const ADMIN_PROBE_PATTERN =
+  /^v1\/+(admin|activity-logs|customers|upload|roles|permissions|orders|summary|dashboard|cashflows|lapak-gaming|provider|supplier-|users)|export-csv|(\.\.|%2e|%2f|%5c).*(admin|customers|upload|roles|permissions|users)/i;
+
+/** Backend yang menerima laporan percobaan di atas, lalu mengirim alert Telegram. */
+const PROBE_REPORT_PATH = "v1/security/proxy-probes";
+
+/** Batas laporan per menit per proses, supaya banjir percobaan tidak ikut membanjiri backend. */
+const PROBE_REPORTS_PER_MINUTE = 20;
+let probeWindowStart = 0;
+let probeReportsInWindow = 0;
+
+/**
+ * Melaporkan route admin yang ditolak allowlist ke backend, tanpa ditunggu: gagal lapor tidak
+ * mengubah jawaban 404. Hanya jalan kalau STOREFRONT_PROXY_SECRET diisi, karena backend menerima
+ * laporan hanya dari request yang membawa kunci itu.
+ */
+function reportAdminProbe(method: Method, pathSegments: string[], clientIp: string, userAgent: string | null) {
+  if (!STOREFRONT_PROXY_SECRET || !BACKEND_URL) return;
+  const path = pathSegments.join("/").slice(0, 500);
+  if (!ADMIN_PROBE_PATTERN.test(path)) return;
+
+  const now = Date.now();
+  if (now - probeWindowStart > 60_000) {
+    probeWindowStart = now;
+    probeReportsInWindow = 0;
+  }
+  if (++probeReportsInWindow > PROBE_REPORTS_PER_MINUTE) return;
+
+  try {
+    const base = new URL(BACKEND_URL);
+    const url = `${base.origin}${base.pathname.replace(/\/+$/, "")}/${PROBE_REPORT_PATH}`;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      "X-Storefront-Key": STOREFRONT_PROXY_SECRET,
+      "X-Client-IP": clientIp,
+    };
+    if (userAgent) headers["X-Client-User-Agent"] = userAgent.slice(0, 512);
+    void fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ method, path }),
+      signal: AbortSignal.timeout(3000),
+    }).catch(() => undefined);
+  } catch {
+    // BACKEND_URL tidak valid: proxyRequest sudah melaporkannya sendiri.
+  }
+}
+
 export async function GET(req: NextRequest, { params }: RouteContext) {
   return proxyRequest(req, (await params).path, "GET");
 }
@@ -173,6 +242,7 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
     ? buildTargetUrl(method, targetPath, req.nextUrl.search)
     : null;
   if (!targetPath || !targetUrl) {
+    reportAdminProbe(method, pathSegments, getClientIp(req.headers), req.headers.get("user-agent"));
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 
@@ -219,6 +289,12 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
       if (binding) headers["X-Google-Binding"] = binding;
     }
 
+    // Kunci transaksi dari checkout di browser ini (cookie-nya hanya terkirim untuk transaksi ini)
+    if (method === "GET" && TRANSACTION_READ.test(targetPath)) {
+      const key = req.cookies.get(TRANSACTION_KEY_COOKIE)?.value;
+      if (key) headers[TRANSACTION_KEY_HEADER] = key;
+    }
+
     // Sesi dibaca dari cookie HttpOnly; header Authorization dari browser tidak dipakai lagi.
     // readSessionToken hanya mengembalikan token pembeli — token admin/NOC tidak pernah diteruskan.
     const buyerSession = readSessionToken(req);
@@ -262,6 +338,16 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
       data = { ...data, data: rest };
     }
 
+    // Kunci transaksi baru: tidak boleh sampai ke JavaScript halaman, pindah ke cookie HttpOnly
+    let issuedTransactionKey: { id: string; key: string } | null = null;
+    if (method === "POST" && targetPath === CHECKOUT_PATH && data?.data && typeof data.data === "object" && "access_key" in data.data) {
+      const { access_key: accessKey, ...rest } = data.data;
+      if (response.ok && typeof accessKey === "string" && accessKey && typeof rest.id === "string" && TRANSACTION_ID.test(rest.id)) {
+        issuedTransactionKey = { id: rest.id, key: accessKey };
+      }
+      data = { ...data, data: rest };
+    }
+
     // Teruskan Retry-After (429 lockout login) supaya client bisa menampilkan sisa waktu tunggu
     const retryAfter = response.headers.get("retry-after");
 
@@ -271,6 +357,16 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
     });
 
     const accountDeleted = response.ok && method === "DELETE" && targetPath === DELETE_ACCOUNT_PATH;
+
+    if (issuedTransactionKey) {
+      res.cookies.set(TRANSACTION_KEY_COOKIE, issuedTransactionKey.key, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: `/api/proxy/v1/transactions/${issuedTransactionKey.id}`,
+        maxAge: TRANSACTION_KEY_MAX_AGE,
+      });
+    }
 
     if (issuedToken) {
       writeSession(res, issuedToken, data?.data?.user);

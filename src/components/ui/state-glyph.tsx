@@ -15,6 +15,10 @@ export const STATE_GLYPH = {
   password: '•••',
   /** Link/kode kadaluarsa — seperti timer yang habis */
   expired: '00:00',
+  /** Pesanan dibayar dan sedang dikirim */
+  processing: '...',
+  /** Dana dikembalikan */
+  refunded: 'Rp',
 } as const
 
 export type StateGlyphTone = 'brand' | 'destructive' | 'success' | 'warning' | 'muted'

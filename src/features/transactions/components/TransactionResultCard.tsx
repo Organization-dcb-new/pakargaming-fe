@@ -8,6 +8,7 @@ import { formatDateTime } from '@/lib/formatDate'
 import { formatPrice } from '@/lib/formatPrice'
 import { StatusBadge, statusAccentClass, statusBorderClass } from '@/components/ui/status-badge'
 import TransactionThumb from '@/components/TransactionThumb'
+import { displayStatus, orderProgress } from '@/features/transactions/lib/orderProgress'
 import { HudPanel } from '@/components/ui/hud-panel'
 
 /** Kartu hasil cek invoice — klik menuju halaman detail transaksi. */
@@ -17,7 +18,19 @@ export default function TransactionResultCard({
   transaction: PaymentDataWithDetailProduct
 }) {
   const t = useTranslations('CheckTransaction')
+  const tCommon = useTranslations('Common')
   const locale = useLocale()
+  // Dibayar belum tentu terkirim (review SF1): warna dan label mengikuti pesanannya.
+  const shownStatus = displayStatus(transaction)
+  const progress = orderProgress(transaction)
+  const progressLabel =
+    progress === 'processing'
+      ? tCommon('statusProcessing')
+      : progress === 'delayed'
+        ? tCommon('statusDelayed')
+        : progress === 'refunded'
+          ? tCommon('statusRefunded')
+          : undefined
   const product = transaction.detail_product
   const title = [product?.item_name, product?.item_product].filter(Boolean).join(' · ') || '—'
 
@@ -27,11 +40,11 @@ export default function TransactionResultCard({
       href={`/detail-trx/${transaction.id}`}
       size="md"
       // Garis tepi mengikuti status (berhasil / menunggu / gagal); hover menyala penuh
-      borderClassName={`${statusBorderClass(transaction.status)} hover:bg-primary`}
+      borderClassName={`${statusBorderClass(shownStatus)} hover:bg-primary`}
       className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       innerClassName="flex flex-wrap items-center gap-4 p-4 pl-5"
     >
-      <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${statusAccentClass(transaction.status)}`} />
+      <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${statusAccentClass(shownStatus)}`} />
       <TransactionThumb src={product?.item_image} name={product?.item_name} size="lg" />
 
       <span className="flex min-w-0 flex-[1_1_12rem] flex-col gap-1">
@@ -46,7 +59,7 @@ export default function TransactionResultCard({
       </span>
 
       <span className="flex basis-full items-center justify-between gap-2 sm:basis-auto sm:flex-col sm:items-end">
-        <StatusBadge status={transaction.status} />
+        <StatusBadge status={shownStatus} label={progressLabel} />
         <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary">
           {t('viewDetail')}
           <ChevronRight

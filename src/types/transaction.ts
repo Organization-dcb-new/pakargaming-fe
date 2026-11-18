@@ -24,6 +24,8 @@ export interface PaymentDataWithDetailProduct {
   order_id: string
   amount: number
   status: 'PENDING' | 'PAID' | 'FAILED' | string
+  /** Status pesanan (COMPLETED, PROCESSING, FULFILMENT_FAILED, REFUNDED…); kosong di backend lama. */
+  order_status?: string
   payment_method_id: string
   payment_channel: string
   detail_product: DetailProduct
@@ -45,6 +47,8 @@ export interface DetailProduct {
   payment_image: string
   game_slug: string
   voucher_code: string
+  /** Pesanan punya kode voucher, tapi tidak dikirim karena pembaca bukan pembelinya (SEC1). */
+  voucher_hidden?: boolean
   payment_name: string
 }
 

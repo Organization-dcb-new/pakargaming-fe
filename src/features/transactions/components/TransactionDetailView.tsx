@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { PaymentDataWithDetailProduct } from '@/types/transaction'
 import { normalizeTransactionStatus } from '@/components/ui/status-badge'
 import { CHECKOUT_EXIT_SECONDS, revealItem, revealPage } from '@/features/transactions/lib/statusReveal'
+import { orderProgress } from '@/features/transactions/lib/orderProgress'
 import CheckoutView from './CheckoutView'
 import PaymentFAQ from './PaymentFAQ'
 import StatusView from './StatusView'
@@ -41,7 +42,8 @@ export default function TransactionDetailView({ data, onCheckStatus, checkingSta
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 md:py-12 lg:px-8">
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
-          key={status}
+          // Pesanan yang berubah (dikirim → selesai) juga mengganti kartu, bukan hanya pembayaran.
+          key={`${status}-${orderProgress(data) ?? ''}`}
           className="flex flex-col gap-8 md:gap-12"
           variants={revealPage}
           initial={reveal ? 'hidden' : false}
@@ -55,7 +57,13 @@ export default function TransactionDetailView({ data, onCheckStatus, checkingSta
           {status === 'pending' ? (
             <CheckoutView data={data} onCheckStatus={onCheckStatus} checkingStatus={checkingStatus} />
           ) : (
-            <StatusView data={data} paid={status === 'paid'} focusTitle={statusChanged} />
+            <StatusView
+              data={data}
+              paid={status === 'paid'}
+              focusTitle={statusChanged}
+              onCheckStatus={onCheckStatus}
+              checkingStatus={checkingStatus}
+            />
           )}
 
           {status !== 'paid' ? (

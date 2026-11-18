@@ -10,7 +10,9 @@ type StatusKey = 'paid' | 'pending' | 'failed'
 export function normalizeTransactionStatus(status?: string | null): StatusKey {
   const s = (status || '').toUpperCase()
   if (s === 'PAID' || s === 'SUCCESS') return 'paid'
-  if (s === 'FAILED' || s === 'EXPIRED' || s === 'CANCELLED' || s === 'CANCELED') return 'failed'
+  // REFUNDED: dana sudah kembali — bukan pembayaran yang masih ditunggu (dulu jatuh ke 'pending'
+  // sehingga halaman bayar muncul lagi).
+  if (s === 'FAILED' || s === 'EXPIRED' || s === 'CANCELLED' || s === 'CANCELED' || s === 'REFUNDED') return 'failed'
   return 'pending'
 }
 
@@ -34,11 +36,20 @@ export const statusAccentClass = (status?: string | null) => STATUS_STYLE[normal
 export const statusBorderClass = (status?: string | null) => STATUS_STYLE[normalizeTransactionStatus(status)].border
 
 /** Badge status transaksi (rules §5): warna dari token status + ikon + label, bukan warna saja. */
-export function StatusBadge({ status, className }: { status?: string | null; className?: string }) {
+export function StatusBadge({
+  status,
+  label: labelOverride,
+  className,
+}: {
+  status?: string | null
+  /** Teks pengganti label bawaan (mis. "Diproses" untuk pesanan dibayar yang belum terkirim). */
+  label?: string
+  className?: string
+}) {
   const t = useTranslations('Common')
   const key = normalizeTransactionStatus(status)
   const { badge: tone, Icon } = STATUS_STYLE[key]
-  const label = { paid: t('statusPaid'), pending: t('statusPending'), failed: t('statusFailed') }[key]
+  const label = labelOverride || { paid: t('statusPaid'), pending: t('statusPending'), failed: t('statusFailed') }[key]
 
   return (
     <span

@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { isMaintenanceExempt } from './lib/exempt'
 
 const POLL_MS = 60_000
 
@@ -9,8 +10,16 @@ const POLL_MS = 60_000
  * Layout tidak dirender ulang saat navigasi di sisi client, jadi status maintenance dicek berkala.
  * Kalau berubah, router.refresh() merender ulang layout supaya halaman maintenance muncul/hilang.
  */
-export default function MaintenanceWatcher({ active }: { active: boolean }) {
+export default function MaintenanceWatcher({ active, showing }: { active: boolean; showing: boolean }) {
   const router = useRouter()
+  const pathname = usePathname()
+
+  // Saat maintenance, halaman bayar & cek transaksi tetap terbuka (lib/exempt.ts). Pindah dari sana
+  // ke halaman lain lewat navigasi client tidak merender ulang layout: refresh supaya halaman
+  // maintenance muncul.
+  useEffect(() => {
+    if (active && !showing && !isMaintenanceExempt(pathname)) router.refresh()
+  }, [active, showing, pathname, router])
 
   useEffect(() => {
     let cancelled = false

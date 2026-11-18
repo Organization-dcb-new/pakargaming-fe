@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { PaymentDataWithDetailProduct } from '@/types/transaction'
 import { formatDateTime } from '@/lib/formatDate'
 import { normalizeTransactionStatus } from '@/components/ui/status-badge'
+import { orderProgress } from '@/features/transactions/lib/orderProgress'
 
 type StepState = 'done' | 'current' | 'failed' | 'idle'
 
@@ -28,9 +29,22 @@ export default function StatusTimeline({ data }: { data: PaymentDataWithDetailPr
   const tDetail = useTranslations('DetailTrx')
   const locale = useLocale()
   const status = normalizeTransactionStatus(data.status)
-  const paid = status === 'paid'
-  const failed = status === 'failed'
+  const progress = orderProgress(data)
+  // Pesanan yang dananya dikembalikan sudah pernah dibayar.
+  const paid = status === 'paid' || progress === 'refunded'
+  const failed = status === 'failed' && progress !== 'refunded'
   const method = data.detail_product?.payment_name?.trim() || data.payment_channel
+
+  // Langkah terakhir mengikuti pesanan: dibayar belum berarti sudah terkirim (review SF1).
+  const completed: { desc: string; state: StepState } = !paid
+    ? { desc: failed ? t('trackCompletedDescFailed') : t('trackCompletedDescPending'), state: 'idle' }
+    : progress === 'processing'
+      ? { desc: t('trackCompletedDescProcessing'), state: 'current' }
+      : progress === 'delayed'
+        ? { desc: t('trackCompletedDescDelayed'), state: 'failed' }
+        : progress === 'refunded'
+          ? { desc: t('trackCompletedDescRefunded'), state: 'failed' }
+          : { desc: t('trackCompletedDescPaid'), state: 'done' }
 
   const steps: { title: string; desc: string; state: StepState }[] = [
     {
@@ -49,12 +63,8 @@ export default function StatusTimeline({ data }: { data: PaymentDataWithDetailPr
     },
     {
       title: t('trackCompleted'),
-      desc: paid
-        ? t('trackCompletedDescPaid')
-        : failed
-          ? t('trackCompletedDescFailed')
-          : t('trackCompletedDescPending'),
-      state: paid ? 'done' : 'idle',
+      desc: completed.desc,
+      state: completed.state,
     },
   ]
 

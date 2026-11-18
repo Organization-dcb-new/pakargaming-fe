@@ -23,6 +23,8 @@ import { AuthDialogProvider } from '@/features/auth/components/AuthDialogProvide
 import MaintenancePage from '@/features/maintenance/MaintenancePage'
 import MaintenanceWatcher from '@/features/maintenance/MaintenanceWatcher'
 import { getActiveMaintenance } from '@/features/maintenance/lib/maintenance'
+import { isMaintenanceExempt, PATHNAME_HEADER } from '@/features/maintenance/lib/exempt'
+import { headers } from 'next/headers'
 import AnnouncementCenter from '@/features/announcements/AnnouncementCenter'
 import { getActiveAnnouncements } from '@/features/announcements/lib/announcements'
 
@@ -55,11 +57,14 @@ export default async function RootLayout({
   // Providing all messages to the client
   // side is the easiest way to get started
   // Pengumuman & maintenance sama-sama dari cache memori server (paling lama menunggu ~3 detik)
-  const [messages, maintenance, announcements] = await Promise.all([
+  const [messages, maintenance, announcements, requestHeaders] = await Promise.all([
     getMessages(),
     getActiveMaintenance(),
     getActiveAnnouncements(),
+    headers(),
   ])
+  // Halaman bayar dan cek transaksi tetap terbuka saat maintenance (lib/exempt.ts)
+  const showMaintenance = Boolean(maintenance) && !isMaintenanceExempt(requestHeaders.get(PATHNAME_HEADER))
 
   return (
     <html
@@ -86,8 +91,8 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <NextIntlClientProvider messages={messages}>
-              <MaintenanceWatcher active={Boolean(maintenance)} />
-              {maintenance ? (
+              <MaintenanceWatcher active={Boolean(maintenance)} showing={showMaintenance} />
+              {showMaintenance && maintenance ? (
                 <MaintenancePage schedule={maintenance} />
               ) : (
                 <AuthDialogProvider>
