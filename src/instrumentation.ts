@@ -12,7 +12,8 @@ export async function register() {
 
   if (!getServerApiBaseUrl()) {
     console.error(
-      '[Config] API_INTERNAL_URL dan NEXT_PUBLIC_API_BASE_URL kosong → semua request /api/proxy gagal (500). ' +
+      '[Config] API_INTERNAL_URL kosong → semua request server ke backend gagal (/api/proxy 500, sitemap, ' +
+        'metadata game, maintenance). NEXT_PUBLIC_API_BASE_URL hanya untuk login Google, bukan cadangan. ' +
         'Isi di .env server (deploy/*.env.example) atau .env lokal, lalu restart.',
     )
   }

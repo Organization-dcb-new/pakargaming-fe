@@ -20,18 +20,20 @@ function readRuntimeEnv(name: string): string | undefined {
 }
 
 /**
- * Base URL backend (tanpa /v1) untuk request DARI SERVER INI: proxy /api/proxy, sitemap, metadata game,
- * maintenance, logout. API_INTERNAL_URL — alamat backend di network Docker, mis. http://172.20.0.10:4001 —
- * supaya tidak memutar lewat internet & nginx; kosong → NEXT_PUBLIC_API_BASE_URL (mis. `yarn dev` lokal).
+ * Base URL backend (tanpa /v1) untuk SEMUA request DARI SERVER INI: proxy /api/proxy, sitemap, metadata
+ * game, maintenance, pengumuman, logout. Hanya API_INTERNAL_URL — di server alamat backend di network
+ * Docker (http://172.16.10.10:4001), saat `yarn dev` lokal boleh URL publik. Tidak ada fallback ke
+ * NEXT_PUBLIC_API_BASE_URL: kosong = request server gagal (instrumentation.ts menulis error saat start).
  * Jangan dipakai untuk URL yang dibuka browser: alamat internal tidak bisa dijangkau pembeli.
  */
 export function getServerApiBaseUrl(): string | undefined {
-  return readRuntimeEnv('API_INTERNAL_URL') ?? getPublicApiBaseUrl()
+  return readRuntimeEnv('API_INTERNAL_URL')
 }
 
 /**
- * Base URL backend (tanpa /v1) yang dibuka BROWSER pembeli: tujuan redirect login & link Google. Harus
- * alamat publik (https://api.pakargaming.id), bukan alamat internal Docker.
+ * Base URL backend (tanpa /v1) yang dibuka BROWSER pembeli, KHUSUS login & link Google (redirect ke
+ * /v1/auth/google). Harus alamat publik (https://api.pakargaming.id), bukan alamat internal Docker.
+ * Bukan untuk request server — itu getServerApiBaseUrl().
  */
 export function getPublicApiBaseUrl(): string | undefined {
   return readRuntimeEnv('NEXT_PUBLIC_API_BASE_URL')

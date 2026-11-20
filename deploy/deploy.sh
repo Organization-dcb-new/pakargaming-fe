@@ -10,7 +10,10 @@
 #   DEPLOY_DIR      folder on the server that holds the compose project and its .env
 #   COMPOSE_SRC     compose file in the checkout, e.g. deploy/docker-compose.prod.yml
 #   CONTAINER       container_name in that compose file, e.g. fe-client-prod
-#   NETWORK         external Docker network that compose file joins, e.g. pakargaming-prod
+#   NETWORK         external Docker network that compose file joins, e.g. pakargaming-prod-client;
+#                   the backend's deploy creates it (topup-be deploy/NETWORKS.md)
+#   BACKEND_CONTAINER  the backend's container, e.g. backend-prod: the deploy stops while it isn't
+#                   on NETWORK yet
 #   IMAGE_REPO      ghcr.io/<owner>/<repo>, lowercase
 #   NEW_TAG         image tag to deploy, e.g. prod-1.2.3
 #   TAG_PREFIX      prod- or dev-; older images with it are removed after a good deploy
@@ -137,11 +140,17 @@ printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdi
 # Leave no registry credential behind on the server.
 trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
 
+# The backend's deploy (topup-be deploy/deploy.sh) creates this network and joins the backend to it
+# (topup-be deploy/NETWORKS.md). Before that, this app would start where it can't reach the backend:
+# stop instead, before the running container is touched.
 if ! docker network inspect "$NETWORK" >/dev/null 2>&1; then
-  # The subnet topup-be's and topup-admin-fe's deploy.sh create it with: the compose files give
-  # the backend 172.20.0.10 and the storefront 172.20.0.20 in it.
-  echo "Creating network $NETWORK..."
-  docker network create --driver bridge --subnet 172.20.0.0/16 "$NETWORK"
+  echo "❌ Network $NETWORK does not exist yet: deploy topup-be first, which creates it (topup-be deploy/NETWORKS.md)."
+  exit 1
+fi
+if [ -n "${BACKEND_CONTAINER:-}" ] &&
+  ! docker inspect --format '{{range $name, $v := .NetworkSettings.Networks}}{{$name}}{{"\n"}}{{end}}' "$BACKEND_CONTAINER" 2>/dev/null | grep -qx "$NETWORK"; then
+  echo "❌ $BACKEND_CONTAINER is not on $NETWORK yet: deploy topup-be first (topup-be deploy/NETWORKS.md)."
+  exit 1
 fi
 
 cd "$DEPLOY_DIR"
@@ -225,10 +234,20 @@ carry_over() {
   fi
 }
 
+# moved_backend VALUE: VALUE with the backend's old address on the network the apps used to share
+# replaced by its address on NETWORK (topup-be deploy/NETWORKS.md), for a value taken from the
+# container before.
+moved_backend() {
+  printf '%s' "${1//172.20.0.10:4001/172.16.10.10:4001}"
+}
+
 carry_over FE_PUBLISH "$(publish_of "$CURRENT_CONTAINER")"
 SET_BEFORE=" "
 for name in $RUNTIME_SETTINGS; do
   value="$(env_of "$CURRENT_CONTAINER" "$name")"
+  if [ "$name" = API_INTERNAL_URL ]; then
+    value="$(moved_backend "$value")"
+  fi
   if [ -n "$value" ]; then
     SET_BEFORE="$SET_BEFORE$name "
   fi
@@ -269,6 +288,15 @@ install -m 0644 "$COMPOSE_SRC" "$COMPOSE_NAME"
 if ! IMAGE_TAG="$NEW_TAG" compose config --quiet; then
   echo "❌ $COMPOSE_SRC does not resolve on this server; the server's previous compose file is back in place."
   echo "   A setting named above as missing goes in $DEPLOY_DIR/.env; deploy/*.env.example in the repo lists them."
+  restore_compose
+  exit 1
+fi
+
+# The backend's address on the network every app used to share (172.20.0.10) can't be reached from
+# NETWORK: a API_INTERNAL_URL still naming it in .env stops here.
+if IMAGE_TAG="$NEW_TAG" compose config 2>/dev/null | grep -Eq '^[[:space:]]+API_INTERNAL_URL: .*172\.20\.'; then
+  echo "❌ API_INTERNAL_URL names the backend's old address (172.20.x), which $NETWORK can't reach."
+  echo "   In $DEPLOY_DIR/.env set API_INTERNAL_URL=http://172.16.10.10:4001, then deploy again (topup-be deploy/NETWORKS.md)."
   restore_compose
   exit 1
 fi
@@ -347,7 +375,6 @@ done
 # rollback: a backend that is down is not this deploy's to fix. A 403 is the backend's ALLOWED_IPS
 # not listing this container, the usual slip when API_INTERNAL_URL is first set.
 BACKEND="$(env_of "$CONTAINER" API_INTERNAL_URL)"
-BACKEND="${BACKEND:-$(env_of "$CONTAINER" NEXT_PUBLIC_API_BASE_URL)}"
 BACKEND="${BACKEND%/}"
 if [ -n "$BACKEND" ]; then
   if PROBE="$(docker exec "$CONTAINER" wget -q -T 5 -O /dev/null "$BACKEND/v1/maintenances" 2>&1)"; then
@@ -357,7 +384,7 @@ if [ -n "$BACKEND" ]; then
     echo "⚠️ $CONTAINER can't use the backend at $BACKEND: ${PROBE:-no answer}"
     case "$PROBE" in
       *403*) echo "   Add this container's address (${ADDRS% }) to ALLOWED_IPS in the backend's .env, then restart the backend." ;;
-      *refused* | *"timed out"* | *"bad address"*) echo "   Check the address and port (the backend listens on 4001: http://172.20.0.10:4001)." ;;
+      *refused* | *"timed out"* | *"bad address"*) echo "   Check the address and port (the backend listens on 4001: http://172.16.10.10:4001)." ;;
     esac
   fi
 fi

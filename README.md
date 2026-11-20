@@ -32,7 +32,7 @@ Polanya sama dengan topup-be dan topup-admin-fe:
 | --- | --- | --- |
 | Folder server | `/opt/dev-deploy/fe-client-dev` | `/data/prod-deploy/fe-client-prod` |
 | Container | `fe-client-dev` | `fe-client-prod` |
-| Network (IP tetap) | `pakargaming-dev` (`172.20.0.20`) | `pakargaming-prod` (`172.20.0.20`) |
+| Network (IP tetap) | `pakargaming-dev-client` (`172.16.10.20`) | `pakargaming-prod-client` (`172.16.10.20`) |
 | Runner | `[self-hosted, dev]` | `[self-hosted, prod]` |
 
 Manual di server (versi yang sedang jalan ada di `.deployed-tag`):
@@ -50,8 +50,8 @@ menerima yang ada di `environment:`.
 - Deploy pertama membuat `.env` sendiri (mode 600) dan menyalin ke situ yang dipakai container lama
   (port, `NEXT_PUBLIC_API_BASE_URL`, `NEXT_SITE_BASE_URL`, `ENCRYPT_SECRET_KEY`), jadi tidak wajib dibuat
   dulu. Yang dulu tertanam di image (site key Turnstile, id GA) harus diisi sendiri.
-- `NEXT_PUBLIC_API_BASE_URL`, `NEXT_SITE_BASE_URL`, `ENCRYPT_SECRET_KEY` wajib: kalau tetap kosong, deploy
-  berhenti sebelum container lama disentuh.
+- `NEXT_PUBLIC_API_BASE_URL`, `API_INTERNAL_URL`, `NEXT_SITE_BASE_URL`, `ENCRYPT_SECRET_KEY` wajib: kalau
+  tetap kosong, deploy berhenti sebelum container lama disentuh.
 - Setelah mengubah `.env`: jalankan ulang job deploy, atau perintah manual di atas. Tidak perlu build ulang.
 - Di kode: jangan menulis `process.env.NEXT_PUBLIC_*` langsung — Next.js menggantinya dengan nilai saat
   build (kosong di image). Pakai fungsi di `runtimeEnv.ts` (server) atau `usePublicEnv()` (client).
@@ -85,8 +85,8 @@ atau tambahkan `header_up X-Real-IP {remote_host}`.
 
 | Env | Default | Keterangan |
 | --- | --- | --- |
-| `NEXT_PUBLIC_API_BASE_URL` | wajib | URL backend **publik** tanpa `/v1`: tujuan redirect login & link Google (dibuka browser). Jangan alamat internal |
-| `API_INTERNAL_URL` | kosong | Backend di network Docker untuk request dari server ini (proxy, sitemap, metadata game, maintenance, logout): `http://172.20.0.10:4001`, port wajib. Kosong = `NEXT_PUBLIC_API_BASE_URL`. Syarat: `ALLOWED_IPS` backend memuat `172.20.0.20` — log deploy mengecek ini |
+| `NEXT_PUBLIC_API_BASE_URL` | wajib | URL backend **publik** tanpa `/v1`, **khusus** redirect login & link Google (dibuka browser). Jangan alamat internal. Tidak dipakai untuk request server |
+| `API_INTERNAL_URL` | wajib | Backend di network Docker untuk **semua** request dari server ini (proxy, sitemap, metadata game, maintenance, pengumuman, logout): `http://172.16.10.10:4001`, port wajib. Tidak ada fallback. Syarat: `ALLOWED_IPS` backend memuat `172.16.10.20` — log deploy mengecek ini |
 | `NEXT_SITE_BASE_URL` | wajib | Domain storefront: URL sitemap.xml, header `X-Forwarded-Origin/Referer` dari proxy |
 | `ENCRYPT_SECRET_KEY` | wajib | "Enkripsi" body browser→proxy; bukan kontrol keamanan (kuncinya ada di browser) |
 | `STOREFRONT_PROXY_SECRET` | kosong | Sama persis dengan backend; dikirim sebagai `X-Storefront-Key`. Jangan `NEXT_PUBLIC_` |

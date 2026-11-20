@@ -148,5 +148,6 @@ jobs:
           DEPLOY_DIR: /data/prod-deploy/fe-client-prod
           COMPOSE_SRC: deploy/docker-compose.prod.yml
           CONTAINER: fe-client-prod
-          NETWORK: pakargaming-prod
+          NETWORK: pakargaming-prod-client
+          BACKEND_CONTAINER: backend-prod
         run: bash deploy/deploy.sh

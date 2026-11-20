@@ -22,12 +22,12 @@ services:
     # Read when the app runs, so changing one needs a restart, not a new image. NEXT_PUBLIC_* are the
     # ones the browser may see: the layout hands them to the client components.
     environment:
-      # Public (https://dev-api.pakargaming.id): the browser is sent there to sign in with Google.
+      # Public (https://dev-api.pakargaming.id), for Google sign-in only: the browser is sent there.
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set NEXT_PUBLIC_API_BASE_URL in .env, see deploy/dev.env.example}
-      # The backend on this network for this server's own requests (http://172.20.0.10:4001, the
-      # port included); empty = NEXT_PUBLIC_API_BASE_URL. The backend's ALLOWED_IPS must list this
-      # container's address (172.20.0.20) first.
-      API_INTERNAL_URL: ${API_INTERNAL_URL:-}
+      # The backend on this network, for every request this server makes (http://172.16.10.10:4001,
+      # the port included). No fallback to NEXT_PUBLIC_API_BASE_URL. The backend's ALLOWED_IPS must
+      # list this container's address (172.16.10.20).
+      API_INTERNAL_URL: ${API_INTERNAL_URL:?set API_INTERNAL_URL in .env, see deploy/dev.env.example}
       NEXT_SITE_BASE_URL: ${NEXT_SITE_BASE_URL:?set NEXT_SITE_BASE_URL in .env, see deploy/dev.env.example}
       ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY:?set ENCRYPT_SECRET_KEY in .env, see deploy/dev.env.example}
       # The same as the backend's STOREFRONT_PROXY_SECRET; the proxy sends it as X-Storefront-Key.
@@ -62,13 +62,14 @@ services:
         max-size: "10m"
         max-file: "3"
 
-    # The network and the fixed address the storefront had before this file managed it; the backend
-    # is 172.20.0.10 on the same network (topup-be: deploy/docker-compose.dev.yml). Its IP allowlist
-    # and the reverse proxy may name this address: check them before changing it.
+    # The storefront's and the blog's network, pakargaming-dev-client: the backend is 172.16.10.10
+    # on it, the admin panel is not (topup-be: deploy/NETWORKS.md). The backend's ALLOWED_IPS and
+    # CLIENT_NETWORK, and the reverse proxy if it sends traffic here by address, may name this
+    # container's address: check them before changing it.
     networks:
-      pakargaming-dev:
-        ipv4_address: 172.20.0.20
+      pakargaming-dev-client:
+        ipv4_address: 172.16.10.20
 
 networks:
-  pakargaming-dev:
+  pakargaming-dev-client:
     external: true
