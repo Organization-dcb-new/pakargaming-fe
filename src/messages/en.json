@@ -611,5 +611,11 @@
     "dismiss": "Dismiss announcement: {title}",
     "close": "Close",
     "gotIt": "Got it"
+  },
+  "TransactionStop": {
+    "title": "Transactions temporarily stopped",
+    "defaultMessage": "Transactions are temporarily stopped. Please try again later.",
+    "resumeAt": "Expected to reopen around {time} WIB",
+    "browseHint": "You can still browse products. Orders already placed are still processed as usual."
   }
 }

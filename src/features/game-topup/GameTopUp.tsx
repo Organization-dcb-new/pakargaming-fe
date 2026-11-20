@@ -31,6 +31,8 @@ import { StepStatusContext, type StepStatus } from "@/features/game-topup/compon
 import { formatPrice } from "@/lib/formatPrice";
 import { CharacterBackdrop } from "@/components/character-backdrop/CharacterBackdrop";
 import { paymentTotalLimit } from "@/features/game-topup/lib/paymentTotal";
+import { useTransactionStop } from "@/features/transaction-stop/hooks/useTransactionStop";
+import TransactionStopNotice from "@/features/transaction-stop/components/TransactionStopNotice";
 
 /** Aturan metode (biaya, batas total, butuh nomor HP) dikirim backend — sama dengan yang dicek checkout. */
 function paymentRequiresUserMdn(payment: PaymentMethod | null): boolean {
@@ -52,6 +54,7 @@ function isValidUserMdn(raw: string): boolean {
 
 export default function GameTopUp() {
   const t = useTranslations("GameCheckout");
+  const tStop = useTranslations("TransactionStop");
   const { slug } = useParams<{ slug: string }>();
   const [selectedPackage, setSelectedPackage] = useState<Price | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(null);
@@ -75,7 +78,11 @@ export default function GameTopUp() {
 
   const { data: categoryProduct } = useGetCategoryProduct(gameId);
 
-  const { mutate, isPending } = useCreateTransaction();
+  // Stop transaksi dari admin: halaman tetap bisa dipakai (pilih paket, isi form, cek ID), hanya tombol
+  // beli & lanjut bayar yang nonaktif. Checkout ditolak 503 → cek ulang, supaya pemberitahuannya muncul.
+  const transactionStop = useTransactionStop();
+  const { mutate, isPending } = useCreateTransaction({ onUnavailable: transactionStop.refresh });
+  const stopReason = transactionStop.isStopped ? tStop("title") : null;
   /** Langkah yang sedang ditunjuk karena belum lengkap (setelah klik "Beli" / langkah terkunci). */
   const [flaggedStep, setFlaggedStep] = useState<string | null>(null);
 
@@ -241,6 +248,7 @@ export default function GameTopUp() {
     : dataPaymentMethods;
 
   const handleOpenConfirm = () => {
+    if (transactionStop.isStopped) return;
     if (revealFirstIncompleteStep()) return;
     setOpenModalConfirm(true);
   };
@@ -258,6 +266,7 @@ export default function GameTopUp() {
 
   /** captchaToken: token Turnstile dari modal konfirmasi (null kalau Turnstile tidak aktif). */
   const handleCreateOrder = (captchaToken: string | null) => {
+    if (transactionStop.isStopped) return;
     mutate({
       email: email,
       payment_method_id: selectedPayment.id,
@@ -320,6 +329,13 @@ export default function GameTopUp() {
     <TopUpLayout>
       <CharacterBackdrop gameSlug={slug} />
       <GameHeader game={dataGameDetail.data} />
+      {transactionStop.isStopped && (
+        <TransactionStopNotice
+          message={transactionStop.message}
+          resumeAt={transactionStop.resumeAt}
+          className="mb-6"
+        />
+      )}
       {regionMismatch && (
         <RegionNotice
           gameName={dataGameDetail.data.name}
@@ -348,6 +364,7 @@ export default function GameTopUp() {
             gameName={dataGameDetail.data.name}
             accountName={accountName}
             steps={stepSummary}
+            disabledReason={stopReason}
           />
           <HelpCard />
         </aside>
@@ -363,6 +380,7 @@ export default function GameTopUp() {
         Product={activeProduct}
         handleConfirm={handleOpenConfirm}
         steps={stepSummary}
+        disabledReason={stopReason}
       />
       <ConfirmModal
         open={openModalConfirm}
@@ -375,6 +393,11 @@ export default function GameTopUp() {
         accountFields={accountFields}
         email={email}
         phone={needsUserMdn ? userMdn : undefined}
+        transactionStop={
+          transactionStop.isStopped
+            ? { message: transactionStop.message, resumeAt: transactionStop.resumeAt }
+            : null
+        }
       />
     </TopUpLayout>
   );

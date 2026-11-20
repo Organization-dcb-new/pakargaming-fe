@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef } from 'react'
 import { useTurnstile } from '@/features/auth/hooks/useTurnstile'
+import TransactionStopNotice from '@/features/transaction-stop/components/TransactionStopNotice'
 import { Price } from '@/types/game'
 import { PaymentMethod } from '@/types/paymentMethod'
 import { calculateTotalPrice } from './PaymentMethodList'
@@ -29,7 +30,14 @@ interface ConfirmModalProps {
   email?: string | null
   /** Hanya untuk metode yang butuh nomor HP (OVO, Smartfren) */
   phone?: string
+  /**
+   * Transaksi sedang dihentikan admin (muncul juga kalau stop dimulai saat modal terbuka, atau setelah
+   * checkout ditolak 503): pemberitahuan tampil di atas tombol dan "Lanjutkan Pembayaran" nonaktif.
+   */
+  transactionStop?: { message: string | null; resumeAt: string | null } | null
 }
+
+const STOP_NOTICE_ID = 'confirm-transaction-stop'
 
 /** Modal konfirmasi pesanan — Dialog ui/ (focus trap, Esc, aria-modal; rules §7). */
 export default function ConfirmModal({
@@ -43,6 +51,7 @@ export default function ConfirmModal({
   accountFields = [],
   email,
   phone,
+  transactionStop,
 }: ConfirmModalProps) {
   const t = useTranslations('GameCheckout')
   const finalPrice = calculateTotalPrice(Payment, Product)
@@ -108,7 +117,21 @@ export default function ConfirmModal({
           </div>
         </dl>
 
-        <ConfirmActions loading={loading} onConfirm={onConfirm} onEdit={() => setOpen(false)} />
+        {transactionStop && (
+          <TransactionStopNotice
+            id={STOP_NOTICE_ID}
+            message={transactionStop.message}
+            resumeAt={transactionStop.resumeAt}
+            compact
+          />
+        )}
+
+        <ConfirmActions
+          loading={loading}
+          onConfirm={onConfirm}
+          onEdit={() => setOpen(false)}
+          blockedBy={transactionStop ? STOP_NOTICE_ID : undefined}
+        />
       </DialogContent>
     </Dialog>
   )
@@ -123,10 +146,13 @@ function ConfirmActions({
   loading,
   onConfirm,
   onEdit,
+  blockedBy,
 }: {
   loading: boolean
   onConfirm: (captchaToken: string | null) => void
   onEdit: () => void
+  /** id pemberitahuan yang menahan pembayaran (stop transaksi); ada = tombol lanjut nonaktif */
+  blockedBy?: string
 }) {
   const t = useTranslations('GameCheckout')
   const captcha = useTurnstile()
@@ -154,10 +180,11 @@ function ConfirmActions({
       <button
         type="button"
         onClick={() => {
-          if (captcha.blocked) return
+          if (captcha.blocked || blockedBy) return
           onConfirm(captcha.token)
         }}
-        disabled={loading || captcha.blocked}
+        disabled={loading || captcha.blocked || Boolean(blockedBy)}
+        aria-describedby={blockedBy}
         className="chamfer flex h-12 flex-[2] cursor-pointer items-center justify-center gap-2 rounded-sm bg-primary text-sm font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
       >
         {(loading || (waiting && captcha.verifying)) && (

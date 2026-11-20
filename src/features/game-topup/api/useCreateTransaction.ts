@@ -15,7 +15,15 @@ type CreateTransactionInput = CreateOrderRequest & { captchaToken?: string | nul
 /** Jawaban proxy kalau token Turnstile tidak lolos (src/app/api/proxy/[...path]/route.ts). */
 const CAPTCHA_FAILED_MESSAGE = "captcha verification failed";
 
-export function useCreateTransaction() {
+type CreateTransactionOptions = {
+  /**
+   * Checkout dibalas 503 (stop transaksi, maintenance, cek ID tidak tersedia). Dipakai halaman top-up
+   * untuk cek ulang status stop transaksi, supaya pemberitahuannya langsung muncul.
+   */
+  onUnavailable?: () => void;
+};
+
+export function useCreateTransaction({ onUnavailable }: CreateTransactionOptions = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("GameCheckout");
@@ -42,7 +50,8 @@ export function useCreateTransaction() {
           void queryClient.invalidateQueries({ queryKey: ["get-games-slug"] });
           void queryClient.invalidateQueries({ queryKey: ["categories-product"] });
         }
-        // Pesan 4xx dan 503 (maintenance, cek ID tidak tersedia) dari backend ditulis untuk pembeli.
+        if (status === 503) onUnavailable?.();
+        // Pesan 4xx dan 503 (stop transaksi, maintenance, cek ID tidak tersedia) dari backend ditulis untuk pembeli.
         if (typeof message === "string" && message && ((status >= 400 && status < 500) || status === 503)) {
           toast.error(message);
           return;

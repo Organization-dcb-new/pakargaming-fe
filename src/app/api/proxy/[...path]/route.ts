@@ -20,6 +20,7 @@ import {
 } from "@/lib/sessionServer";
 import { isTurnstileEnabled, verifyTurnstile } from "@/lib/turnstile";
 import { getServerApiBaseUrl } from "@/config/runtimeEnv";
+import { invalidateTransactionStop } from "@/features/transaction-stop/lib/transactionStop";
 
 /**
  * Dibaca saat runtime dari .env server (bukan di-inline saat build): API_INTERNAL_URL (backend di network
@@ -348,7 +349,13 @@ async function proxyRequest(req: NextRequest, pathSegments: string[], method: Me
       data = { ...data, data: rest };
     }
 
-    // Teruskan Retry-After (429 lockout login) supaya client bisa menampilkan sisa waktu tunggu
+    // Checkout ditolak 503 (mungkin stop transaksi baru dinyalakan): halaman top-up langsung membaca
+    // /api/transaction-stop lagi, jadi cache status-nya jangan menunggu REFRESH_MS penuh.
+    if (method === "POST" && targetPath === CHECKOUT_PATH && response.status === 503) {
+      invalidateTransactionStop();
+    }
+
+    // Teruskan Retry-After (429 lockout login, 503 stop transaksi) supaya client bisa menampilkan sisa waktu tunggu
     const retryAfter = response.headers.get("retry-after");
 
     const res = NextResponse.json(data, {
