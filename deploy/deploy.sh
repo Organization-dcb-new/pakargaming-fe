@@ -191,9 +191,24 @@ if [ -n "$CURRENT_IMAGE_ID" ]; then
   docker tag "$CURRENT_IMAGE_ID" "$IMAGE_REPO:$ROLLBACK_TAG"
 fi
 
-# Pulled before anything on the server changes, so a failed pull leaves it as it was.
-echo "Pulling $NEW_TAG..."
-docker pull "$IMAGE_REPO:$NEW_TAG"
+# Pulled before anything on the server changes, so a failed pull leaves it as it was. A pull can fail
+# for a reason that is gone a moment later: the registry, or containerd losing a blob it was still
+# writing ("failed commit on ref ... no such file or directory") when something else on this host
+# pulls or prunes at the same time. Tried a few times before the deploy gives up.
+PULL_ATTEMPTS=3
+for attempt in $(seq 1 "$PULL_ATTEMPTS"); do
+  echo "Pulling $NEW_TAG (attempt $attempt of $PULL_ATTEMPTS)..."
+  if docker pull "$IMAGE_REPO:$NEW_TAG"; then
+    break
+  fi
+  if [ "$attempt" -eq "$PULL_ATTEMPTS" ]; then
+    echo "❌ Could not pull $NEW_TAG; nothing on the server was changed, $CONTAINER still runs the version it did."
+    echo "   If it keeps failing: df -h /var/lib/containerd /var/lib/docker, and check no other job pulls or prunes at the same time."
+    exit 1
+  fi
+  echo "⚠️ Pull failed; trying again in 15s..."
+  sleep 15
+done
 
 # When .env doesn't set one of the settings, it is taken from the container running now and written
 # to .env, so the first deploy with the repo's compose file keeps what the container had: the port
