@@ -1,0 +1,75 @@
+# Storefront on the production server.
+#
+# The deploy job (.github/workflows/main.yml → deploy/deploy.sh) installs this file as
+# /data/prod-deploy/fe-client-prod/docker-compose.yml and starts it with IMAGE_TAG set to the
+# version it deploys. Change it here, not on the server: the next deploy overwrites the server's copy.
+#
+# Every setting of the app is the server's, NEXT_PUBLIC_* included (none is built into the image, see
+# src/config/runtimeEnv.ts): the .env beside this file, which compose reads for the ${...} below (the
+# container gets only what `environment` lists). deploy/prod.env.example says what goes in it, owned
+# by the runner's user, mode 600. The first deploy with deploy.sh copies to .env whatever .env lacks
+# from the container running then. A required value that is still missing stops the deploy before
+# the running container is touched.
+#
+# By hand on the server, with the version that is deployed:
+#   IMAGE_TAG=$(cat .deployed-tag) docker compose up -d
+services:
+  fe-client:
+    image: ${IMAGE_REPO:-ghcr.io/organization-dcb-new/pakargaming-fe}:${IMAGE_TAG:?set IMAGE_TAG, the deployed one is in .deployed-tag}
+    container_name: fe-client-prod
+    restart: always
+
+    # Read when the app runs, so changing one needs a restart, not a new image. NEXT_PUBLIC_* are the
+    # ones the browser may see: the layout hands them to the client components.
+    environment:
+      # Public (https://api.pakargaming.id), for Google sign-in only: the browser is sent there.
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set NEXT_PUBLIC_API_BASE_URL in .env, see deploy/prod.env.example}
+      # The backend on this network, for every request this server makes (http://172.16.10.10:4001,
+      # the port included). No fallback to NEXT_PUBLIC_API_BASE_URL. The backend's ALLOWED_IPS must
+      # list this container's address (172.16.10.20).
+      API_INTERNAL_URL: ${API_INTERNAL_URL:?set API_INTERNAL_URL in .env, see deploy/prod.env.example}
+      NEXT_SITE_BASE_URL: ${NEXT_SITE_BASE_URL:?set NEXT_SITE_BASE_URL in .env, see deploy/prod.env.example}
+      ENCRYPT_SECRET_KEY: ${ENCRYPT_SECRET_KEY:?set ENCRYPT_SECRET_KEY in .env, see deploy/prod.env.example}
+      # The same as the backend's STOREFRONT_PROXY_SECRET; the proxy sends it as X-Storefront-Key.
+      STOREFRONT_PROXY_SECRET: ${STOREFRONT_PROXY_SECRET:-}
+      # Turnstile is on only when both are set.
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-}
+      NEXT_PUBLIC_FOOTER_LOGO_URL: ${NEXT_PUBLIC_FOOTER_LOGO_URL:-}
+      # The header the reverse proxy overwrites with the buyer's IP (nginx: proxy_set_header X-Real-IP $remote_addr).
+      CLIENT_IP_HEADER: ${CLIENT_IP_HEADER:-x-real-ip}
+
+    # Keep it on 127.0.0.1 unless the reverse proxy is on another machine: the proxy route trusts the
+    # buyer IP header the reverse proxy sets (README, "Edge proxy").
+    ports:
+      - "${FE_PUBLISH:-127.0.0.1:3000}:3000"
+
+    # deploy.sh waits for healthy before it calls a deploy good, and rolls back otherwise. A static
+    # file the Next.js server serves itself (no middleware, no backend call): a backend that is down
+    # must not roll the storefront back. Needs HOSTNAME=0.0.0.0 from the Dockerfile.
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/robots.txt"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    # Docker keeps the container's output without limit unless told otherwise.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # The storefront's and the blog's network, pakargaming-prod-client: the backend is 172.16.10.10
+    # on it, the admin panel is not (topup-be: deploy/NETWORKS.md). The backend's ALLOWED_IPS and
+    # CLIENT_NETWORK, and the reverse proxy if it sends traffic here by address, may name this
+    # container's address: check them before changing it.
+    networks:
+      pakargaming-prod-client:
+        ipv4_address: 172.16.10.20
+
+networks:
+  pakargaming-prod-client:
+    external: true

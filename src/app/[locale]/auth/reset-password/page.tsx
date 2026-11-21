@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
-import ResetPassword from '../../../../components/ResetPassword/ResetPassword'
+import ResetPassword from '@/features/auth/components/ResetPassword'
 
 export async function generateMetadata({
   params,

@@ -20,7 +20,7 @@ Nada: ringkas, langsung, kolaboratif. Tetap patuh §0 (jangan sentuh logika back
 
 ## 0. Prinsip Utama (WAJIB)
 
-1. **JANGAN sentuh logika backend.** Data fetching, hooks (`useGame`, `useTransaction`, dst), mutation, interceptor axios, proxy, enkripsi, WebSocket, routing param — **biarkan apa adanya**. Refactor hanya menyentuh **presentasi**: markup, className, styling, layout, state UI, komponen visual.
+1. **JANGAN sentuh logika backend.** Data fetching, hook API (`src/api/*`, `features/*/api/*`), mutation, interceptor axios, proxy, enkripsi, WebSocket, routing param — **biarkan apa adanya**. Refactor hanya menyentuh **presentasi**: markup, className, styling, layout, state UI, komponen visual.
    - Boleh: ganti warna → token, pecah komponen, tambah skeleton/empty/error UI, tambah `aria-*`, disable tombol saat `isPending` (murni UI).
    - Tidak boleh: ubah `queryKey`, endpoint, bentuk payload, urutan pemanggilan hook, validasi yang dipakai backend.
 2. **Token dulu, baru styling.** Dilarang menambah warna hardcoded baru (lihat §2).
@@ -33,11 +33,49 @@ Nada: ringkas, langsung, kolaboratif. Tetap patuh §0 (jangan sentuh logika back
 
 ## 1. Struktur & Penamaan
 
-- Halaman di `src/app/[locale]/**` hanya **wrapper tipis** — semua UI di `src/components/<Fitur>/`.
+### 1.1 Layout folder (feature-based)
+
+```
+src/
+├─ app/                 route Next.js — page.tsx hanya wrapper tipis (render 1 komponen fitur)
+├─ features/<fitur>/    semua milik satu halaman/domain
+│  ├─ <Fitur>.tsx       komponen entry yang dirender page (ambil data, susun layout)
+│  ├─ components/       sub-komponen fitur
+│  ├─ api/              hook React Query milik fitur ini (useGet…, useCreate…)
+│  ├─ hooks/            hook non-API (state UI, efek)
+│  ├─ lib/              helper murni, konten statis, skema validasi
+│  ├─ types/            tipe khusus fitur ini
+│  └─ styles.ts         class Tailwind bersama di dalam fitur
+├─ api/                 API client (client.ts = browser via /api/proxy, serverClient.ts = server)
+│                       + hook API yang dipakai ≥2 fitur (games.ts, useGetPaymentMethod.ts, …)
+├─ components/          shared: ui/ (primitive shadcn + custom), Logo, ThemeToggle, LanguageSwitcher, …
+├─ config/site.ts       kontak, link sosial, nama situs — jangan hardcode di komponen
+├─ hooks/  lib/  providers/  styles/  types/   shared lintas fitur
+└─ i18n/  messages/  proxy.ts
+```
+
+Fitur saat ini: `auth`, `home`, `game-topup` (`/games/[slug]`), `transactions` (`/detail-trx`, `/check-transaction`), `dashboard`, `navbar`, `footer`, `legal`, `about`, `maintenance`, `not-found`.
+
+- **Arah import:** `app → features → shared`. Folder shared (`api/`, `components/`, `hooks/`, `lib/`, `types/`, `config/`, `styles/`) **tidak boleh** mengimpor dari `features/`. Antar fitur boleh saling impor bila perlu (mis. `navbar` → `auth`), tapi jangan melingkar.
+- **Dipakai ≥2 fitur → pindah ke shared.** Dipakai satu fitur → tetap di fitur itu.
+- **Import:** pakai alias `@/…`; `./` hanya untuk file di folder yang sama. Hindari `../` (satu-satunya pengecualian: import dinamis `messages` di `src/i18n/request.ts`, pola bawaan next-intl).
+- **Endpoint baru:** daftarkan juga method + path-nya di `ALLOWED_ROUTES` (`src/app/api/proxy/[...path]/route.ts`), kalau tidak proxy membalas 404.
+- File yang mengimpor hook React (`useState`, dst.) **jangan** ikut terimpor kode server (route handler, `sitemap.ts`, metadata) — `next build` gagal walau `next dev` lolos. Helper non-React taruh terpisah (contoh: `lib/sessionClient.ts` vs `hooks/useAuth.ts`).
+
+### 1.2 Penamaan
+
+| Jenis | Konvensi | Contoh |
+|---|---|---|
+| Folder | kebab-case | `features/game-topup/`, `components/game-backdrop/` |
+| Komponen | PascalCase.tsx, **nama file = nama komponen** | `GameTopUp.tsx` → `export default function GameTopUp` |
+| Hook | `useXxx.ts`, nama file = nama hook | `api/useCheckID.ts` → `useCheckID` |
+| Modul lain (lib, types, config, styles) | camelCase.ts; isi banyak export → nama domain | `lib/formatPrice.ts`, `types/transaction.ts`, `api/games.ts` |
+| Primitive `components/ui/` | kebab-case (konvensi shadcn) | `status-badge.tsx` |
+
+- Nama menjelaskan isi, bukan bentuk: `BannerSkeleton`, bukan `Loading`; `FooterFrame`, bukan `Layout`; `FooterCompliance`, bukan `Etc`.
 - Satu komponen = satu tanggung jawab. Target < ~200 baris; kalau lebih, pecah ke sub-komponen.
-- Sub-komponen fitur diletakkan di `src/components/<Fitur>/components/`, hook lokal di `.../hooks/`, tipe di `.../types/`.
-- **Dead code dihapus, bukan dibiarkan.** (`GameDetail/*` dan `Transaction/Status.tsx` sudah teridentifikasi tak terpakai — hapus saat menyentuh area itu.)
-- Referensi file di PR/diskusi pakai path relatif, mis. `src/components/Home/Games.tsx:63`.
+- **Dead code dihapus, bukan dibiarkan** — termasuk export, dependency, dan route yang tak terpakai. Route yang dihapus tetap diberi redirect 308 di `next.config.ts` bila URL-nya mungkin masih beredar.
+- Referensi file di PR/diskusi pakai path relatif, mis. `src/features/games/GameCatalog.tsx:63`.
 
 ---
 
@@ -115,7 +153,7 @@ Tambahkan di `:root` dan `.dark` pada `src/styles/theme.css`, lalu daftarkan di 
 - **Skala minimum**: teks yang dibaca user **≥ 12px** (`text-xs`). Dilarang `text-[11px]`/`text-[10px]` untuk konten (langgar WCAG 1.4.4). Label mikro pakai `text-xs` + `tracking-wide`.
 - Hierarki heading via elemen semantik (`h1`→`h2`→`h3`), jangan lompat level demi ukuran. Ukuran diatur utility, bukan mengandalkan default `@layer base`.
 - Teks panjang (halaman legal/about) dibatasi lebar baca: `max-w-prose` (~65 karakter). Jangan biarkan baris memanjang selebar `max-w-4xl`.
-- Angka uang selalu lewat helper `formatPrice` ([src/utils/format_price.ts](src/utils/format_price.ts)) + komponen `<PriceText>` — konsisten prefix `Rp` dan pemisah ribuan.
+- Angka uang selalu lewat helper `formatPrice` ([src/lib/formatPrice.ts](src/lib/formatPrice.ts)) + komponen `<PriceText>` — konsisten prefix `Rp` dan pemisah ribuan.
 
 ---
 
@@ -127,7 +165,7 @@ Sebelum styling ulang, pakai/klarifikasi komponen ini. Yang belum ada → **buat
 |---|---|---|
 | `<StatusBadge status="paid\|pending\|failed\|...">` | Badge status transaksi, warna dari token status | logika badge inline yang **terduplikasi di 3 file** (StatusTrx, PaymentDetail, my-transaction) |
 | `<EmptyState icon title description action?>` | Tampilan "tidak ada data" | teks polos "Game not Available", "No transactions found" |
-| `<ErrorState onRetry?>` | Tampilan error + tombol coba lagi | kotak merah ad-hoc, `Banner/Error.tsx` |
+| `<ErrorState onRetry?>` | Tampilan error + tombol coba lagi | kotak merah ad-hoc, `features/home/components/BannerError.tsx` |
 | `<Spinner size>` | Indikator loading konsisten | `border-2 animate-spin` DIY yang beda-beda warna |
 | `<CopyButton value>` | Salin + toast + ikon centang sementara | handler copy tanpa feedback |
 | `<FormField>` / `<FormError>` | Label + input + pesan error konsisten | asterisk `*` & `AlertCircle` yang ditulis ulang tiap form |

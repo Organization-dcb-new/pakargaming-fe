@@ -1,10 +1,5 @@
-'use client'
-
-import useLoginGoogleOauth from "../../../../hooks/useLogin"
-import { useTranslations } from 'next-intl'
+import GoogleSignInCallback from '@/features/auth/components/GoogleSignInCallback'
 
 export default function GoogleCallbackPage() {
-  const t = useTranslations('Auth')
-  useLoginGoogleOauth()
-  return <p className="text-center mt-10">{t('loggingIn')}</p>
+  return <GoogleSignInCallback />
 }

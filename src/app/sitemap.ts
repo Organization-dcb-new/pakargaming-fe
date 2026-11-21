@@ -1,13 +1,17 @@
 import { MetadataRoute } from 'next'
-import { routing } from '../i18n/routing'
-import { serverApi } from '../api/axios'
-import { GetGamesResponse } from '../types/Game'
+import { routing } from '@/i18n/routing'
+import { serverApi } from '@/api/serverClient'
+import { GetGamesResponse } from '@/types/game'
 
-const pages = [
-  '', // homepage
-  'top-up-ml',
-  'top-up-free-fire',
-]
+/** Halaman publik statis (tanpa /dashboard yang butuh login). Halaman top-up per game ditambahkan di bawah. */
+const pages = ['', 'check-transaction', 'about', 'policy-and-privacy', 'term-and-condition']
+
+/**
+ * Dibuat saat diminta, bukan saat `next build`: NEXT_SITE_BASE_URL & URL backend ada di .env server, dan
+ * daftar game harus diambil dari server FE — backend menolak IP runner build (dulu sitemap production
+ * dibangun di runner CI, jadi daftar gamenya kosong).
+ */
+export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_SITE_BASE_URL
@@ -15,7 +19,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let gameUrls: MetadataRoute.Sitemap = []
 
   try {
-    const { data: games } = await serverApi.get<GetGamesResponse>('/v1/games', {
+    // The storefront catalog: /v1/games is the admin panel's and answered 401 here.
+    const { data: games } = await serverApi.get<GetGamesResponse>('/v1/games/letter', {
+      // Every region's game pages (mobile-legends, mobile-legends-my, …), not just the buyer's.
+      params: { letter: 'all', region: 'all' },
       timeout: 5000,
     })
 

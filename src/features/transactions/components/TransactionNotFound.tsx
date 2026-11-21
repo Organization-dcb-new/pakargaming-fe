@@ -1,0 +1,78 @@
+'use client'
+
+import { useState } from 'react'
+import { Loader2, RotateCw, Search } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/routing'
+import { focusRing } from '@/styles/focusRing'
+import { STATE_GLYPH, StateGlyph } from '@/components/ui/state-glyph'
+
+/**
+ * Transaksi tidak ditemukan (dipakai detail-trx & transaction/[order_id]).
+ * Hook tidak membedakan 404 vs gagal jaringan, jadi `onRetry` (refetch yang sudah ada) sekaligus jadi state error (rules §6).
+ */
+export function TransactionNotFound({ onRetry }: { onRetry?: () => unknown }) {
+  const t = useTranslations('Orders')
+  const [retrying, setRetrying] = useState(false)
+
+  const handleRetry = async () => {
+    if (!onRetry) return
+    setRetrying(true)
+    try {
+      await onRetry()
+    } finally {
+      setRetrying(false)
+    }
+  }
+
+  return (
+    <section
+      aria-labelledby="trx-not-found-title"
+      className="mx-auto flex min-h-[calc(100dvh-3.5rem)] w-full max-w-7xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6 md:min-h-[calc(100dvh-4rem)] lg:px-8"
+    >
+      <StateGlyph glyph={STATE_GLYPH.notFound} tone="destructive" size="xl" />
+
+      <h1
+        id="trx-not-found-title"
+        className="mt-5 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
+      >
+        {t('notFoundTitle')}
+      </h1>
+      <p className="mt-3 max-w-prose text-base leading-relaxed text-muted-foreground">
+        {t('notFoundDesc')}
+      </p>
+
+      <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <Link
+          href="/check-transaction"
+          className={`chamfer flex h-12 items-center justify-center gap-2 rounded-sm bg-primary px-7 text-base font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/85 motion-reduce:transition-none ${focusRing}`}
+        >
+          <Search className="size-4" aria-hidden />
+          {t('notFoundCheck')}
+        </Link>
+        {onRetry ? (
+          <button
+            type="button"
+            onClick={handleRetry}
+            disabled={retrying}
+            className={`flex h-12 cursor-pointer items-center justify-center gap-2 rounded-sm border border-border bg-card px-7 text-base font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none ${focusRing}`}
+          >
+            {retrying ? (
+              <Loader2 className="size-4 animate-spin motion-reduce:animate-none" aria-hidden />
+            ) : (
+              <RotateCw className="size-4" aria-hidden />
+            )}
+            {t('notFoundRetry')}
+          </button>
+        ) : (
+          <Link
+            href="/"
+            className={`flex h-12 items-center justify-center gap-2 rounded-sm border border-border bg-card px-7 text-base font-semibold text-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary motion-reduce:transition-none ${focusRing}`}
+          >
+            {t('notFoundHome')}
+          </Link>
+        )}
+      </div>
+    </section>
+  )
+}

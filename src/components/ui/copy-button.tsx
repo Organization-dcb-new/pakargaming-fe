@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { cn } from './utils'
+import { cn } from '@/lib/cn'
 
 interface CopyButtonProps {
   value: string
@@ -21,7 +21,7 @@ interface CopyButtonProps {
 export function CopyButton({ value, successMessage, label, className, children }: CopyButtonProps) {
   const t = useTranslations('Common')
   const [copied, setCopied] = useState(false)
-  const timer = useRef<ReturnType<typeof setTimeout>>()
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useEffect(() => () => clearTimeout(timer.current), [])
 

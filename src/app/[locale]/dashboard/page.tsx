@@ -1,5 +1,5 @@
-import DashboardPages from '../../../components/Dashboard/Dashboard'
+import Dashboard from '@/features/dashboard/Dashboard'
 
-export default function Dashboard() {
-  return <DashboardPages />
+export default function DashboardPage() {
+  return <Dashboard />
 }

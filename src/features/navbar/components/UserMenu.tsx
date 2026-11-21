@@ -1,0 +1,98 @@
+'use client'
+
+import { useState } from 'react'
+import { ChevronDown, LayoutDashboard, LogIn, LogOut } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/routing'
+import LogoutConfirmDialog from '@/features/auth/components/LogoutConfirmDialog'
+import {
+  DropdownMenu,
+  DropdownMenuHudContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { PlayerAvatar } from '@/components/ui/player-avatar'
+import { focusRing } from '@/styles/focusRing'
+import { getAvatarSrc } from '@/lib/avatar'
+
+interface UserMenuProps {
+  user: any
+  /** Buka dialog Masuk/Daftar (Google tetap tersedia di dalam dialog). */
+  onLogin: () => void
+}
+
+const menuItemClass =
+  'cursor-pointer rounded-sm py-2.5 font-medium focus:bg-primary/10 focus:text-primary [&:focus_svg]:!text-primary'
+
+export default function UserMenu({ user, onLogin }: UserMenuProps) {
+  const t = useTranslations('Navigation')
+  const [logoutOpen, setLogoutOpen] = useState(false)
+
+  if (!user) {
+    return (
+      <button
+        type="button"
+        onClick={onLogin}
+        aria-haspopup="dialog"
+        className={`chamfer inline-flex h-9 shrink-0 cursor-pointer touch-manipulation items-center gap-2 whitespace-nowrap rounded-sm bg-primary px-3 sm:px-4 lg:h-10 text-sm font-bold text-primary-foreground transition-colors duration-200 [--chamfer:8px] hover:bg-primary/85 active:scale-[0.98] motion-reduce:active:scale-100 ${focusRing}`}
+      >
+        <LogIn className="h-4 w-4 shrink-0 max-sm:hidden" aria-hidden="true" />
+        {t('login')}
+      </button>
+    )
+  }
+
+  const avatarSrc = getAvatarSrc(user)
+
+  return (
+    <>
+      {/* modal={false}: mencegah body terkunci (pointer-events) saat dialog logout dibuka dari menu */}
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label={t('accountMenu')}
+            className={`group flex shrink-0 cursor-pointer items-center gap-1.5 rounded-sm p-0.5 pr-1.5 transition-colors duration-200 hover:bg-accent data-[state=open]:bg-accent ${focusRing}`}
+          >
+            <PlayerAvatar src={avatarSrc} size="sm" />
+            <ChevronDown
+              className="h-4 w-4 text-muted-foreground transition-transform max-sm:hidden duration-200 group-data-[state=open]:rotate-180 motion-reduce:transition-none"
+              aria-hidden="true"
+            />
+          </button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuHudContent align="end" sideOffset={8} className="w-64">
+          {/* Mini kartu pemain — sama dengan header Dasbor */}
+          <DropdownMenuLabel className="relative -m-1.5 mb-1.5 flex items-center gap-3 overflow-hidden p-3 font-normal">
+            <span aria-hidden="true" className="bg-stripes pointer-events-none absolute inset-0" />
+            <PlayerAvatar src={avatarSrc} size="md" className="relative" />
+            <div className="relative min-w-0">
+              <p className="truncate font-display text-sm font-bold text-foreground">{user.name}</p>
+              <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuItem asChild className={menuItemClass}>
+            <Link href="/dashboard">
+              <LayoutDashboard />
+              {t('dashboard')}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            className="cursor-pointer rounded-sm py-2.5"
+            onSelect={() => setLogoutOpen(true)}
+          >
+            <LogOut />
+            {t('logout')}
+          </DropdownMenuItem>
+        </DropdownMenuHudContent>
+      </DropdownMenu>
+
+      <LogoutConfirmDialog open={logoutOpen} onOpenChange={setLogoutOpen} />
+    </>
+  )
+}

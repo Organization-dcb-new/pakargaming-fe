@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
+import { CheckIcon, ChevronRightIcon } from "lucide-react";
 
-import { cn } from "./utils";
+import { cn } from "@/lib/cn";
 
 function DropdownMenu({
   ...props
@@ -135,7 +135,8 @@ function DropdownMenuRadioItem({
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
-          <CircleIcon className="size-2 fill-current" />
+          {/* Penanda pilihan: bilah miring (jajar genjang), senada chip & judul section */}
+          <span className="block h-3.5 w-1.5 -skew-x-12 bg-current" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -238,8 +239,34 @@ function DropdownMenuSubContent({
   );
 }
 
+/**
+ * Isi menu bergaya panel HUD: sudut terpotong, garis tepi 1px, aksen gradient brand di atas.
+ * Dua lapis karena clip-path ikut memotong border & box-shadow; bayangannya dipasang di pembungkus
+ * popper lewat [data-hud-popover] (styles/theme.css).
+ */
+function DropdownMenuHudContent({
+  className,
+  innerClassName,
+  children,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & { innerClassName?: string }) {
+  return (
+    <DropdownMenuContent
+      data-hud-popover=""
+      className={cn("chamfer rounded-none border-0 bg-border p-px shadow-none [--chamfer:14px]", className)}
+      {...props}
+    >
+      <div className={cn("chamfer relative bg-popover p-1.5 [--chamfer:13.6px]", innerClassName)}>
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 bg-gradient-brand" />
+        {children}
+      </div>
+    </DropdownMenuContent>
+  );
+}
+
 export {
   DropdownMenu,
+  DropdownMenuHudContent,
   DropdownMenuPortal,
   DropdownMenuTrigger,
   DropdownMenuContent,

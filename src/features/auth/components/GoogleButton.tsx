@@ -1,0 +1,86 @@
+'use client'
+
+import { Loader2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useEffect, useState, type ReactNode } from 'react'
+import { toast } from 'sonner'
+import { getGoogleAuthUrl, GOOGLE_SIGN_IN_START_PATH } from '@/features/auth/lib/authUrls'
+import { startGoogleLink } from '@/features/auth/api/auth'
+import { cn } from '@/lib/cn'
+import { secondaryButtonClass, spinnerClass } from '@/features/auth/styles'
+import { usePublicEnv } from '@/providers/PublicEnvProvider'
+
+interface GoogleButtonProps {
+  /** `link` = hubungkan Google ke akun yang sedang login. */
+  intent?: 'link'
+  children: ReactNode
+  className?: string
+}
+
+/** Navigasi penuh ke OAuth Google (login lewat /api/session/google/start, link langsung ke backend). */
+export function GoogleButton({ intent, children, className }: GoogleButtonProps) {
+  const t = useTranslations('AuthDialog')
+  const tRedirect = useTranslations('AuthRedirect')
+  const { apiBaseUrl } = usePublicEnv()
+  const [redirecting, setRedirecting] = useState(false)
+
+  const openGoogle = async () => {
+    setRedirecting(true)
+    if (intent !== 'link') {
+      // Lewat route server yang mengikat login ini ke browser ini (cookie nonce), bukan langsung ke backend
+      window.location.href = GOOGLE_SIGN_IN_START_PATH
+      return
+    }
+    try {
+      // Link butuh tiket dari akun yang sedang login; tanpa itu backend menolak.
+      const ticket = await startGoogleLink()
+      window.location.href = getGoogleAuthUrl({ apiBaseUrl, intent: 'link', ticket })
+    } catch {
+      setRedirecting(false)
+      toast.error(tRedirect('googleFailed'))
+    }
+  }
+
+  // Kembali lewat tombol Back (bfcache) → tombol aktif lagi
+  useEffect(() => {
+    const reset = () => setRedirecting(false)
+    window.addEventListener('pageshow', reset)
+    return () => window.removeEventListener('pageshow', reset)
+  }, [])
+
+  return (
+    <button
+      type="button"
+      disabled={redirecting}
+      aria-busy={redirecting || undefined}
+      onClick={openGoogle}
+      className={cn(secondaryButtonClass, className)}
+    >
+      {redirecting ? (
+        <Loader2 className={spinnerClass} aria-hidden="true" />
+      ) : (
+        <img
+          src="/icons/google.svg"
+          alt=""
+          aria-hidden="true"
+          className="h-5 w-5 shrink-0 rounded-full bg-white p-0.5"
+        />
+      )}
+      {redirecting ? t('redirecting') : children}
+    </button>
+  )
+}
+
+export function OrDivider() {
+  const t = useTranslations('AuthDialog')
+
+  return (
+    <div className="flex items-center gap-3">
+      <span aria-hidden="true" className="h-px flex-1 bg-border" />
+      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {t('or')}
+      </span>
+      <span aria-hidden="true" className="h-px flex-1 bg-border" />
+    </div>
+  )
+}

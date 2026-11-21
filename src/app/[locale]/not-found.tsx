@@ -1,4 +1,4 @@
-import NotFound from '../../components/NotFound/NotFound'
+import NotFound from '@/features/not-found/NotFound'
 
 export default function LocaleNotFound() {
   return <NotFound />

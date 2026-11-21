@@ -5,8 +5,9 @@
 :root {
   --logo-purple: #8a35ac;
   --logo-cyan: #0bc1dc;
-  /* Warna brand pihak ketiga (rules §2.3: boleh literal) — tombol CS WhatsApp */
+  /* Warna brand pihak ketiga (rules §2.3: boleh literal) — tombol CS WhatsApp & ikon sosial footer */
   --whatsapp: #25d366;
+  --instagram: oklch(59.2% 0.249 0.584); /* = pink-600 Tailwind, warna ikon Instagram di footer */
   /* Kilau terang di item backdrop game (GameBackdrop) — dekoratif, sama di light & dark */
   --game-glint: color-mix(in oklab, var(--logo-cyan) 25%, white);
 }
@@ -32,6 +33,8 @@
   --gradient-brand: linear-gradient(135deg, var(--logo-purple) 0%, var(--logo-cyan) 100%);
   /* Background "arena": glow logo di pojok atas + item game melayang (GameBackdrop) */
   --game-item-opacity: 0.2;
+  /* Karakter latar (CharacterBackdrop) — lebih tipis di mode terang supaya teks tetap kontras */
+  --character-opacity: 0.45;
   --glow-purple: 10%;
   --glow-cyan: 8%;
   /* Status semantik (rules §2.2) — badge, ribbon, toast */
@@ -89,6 +92,7 @@
   --brand: #c98be6;
   --brand-foreground: #0c0b14;
   --game-item-opacity: 0.32;
+  --character-opacity: 0.7;
   --glow-purple: 22%;
   --glow-cyan: 12%;
   /* Status dark: bg terang + teks sangat gelap — kontras AA aman di permukaan gelap */
@@ -150,6 +154,7 @@
   --color-brand-solid: var(--brand-solid);
   --color-brand-solid-foreground: var(--brand-solid-foreground);
   --color-whatsapp: var(--whatsapp);
+  --color-instagram: var(--instagram);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
@@ -219,6 +224,12 @@
   &:focus-visible {
     clip-path: none;
   }
+}
+
+/* Bayangan menu HUD (DropdownMenuHudContent). box-shadow & filter di elemen ber-clip-path ikut terpotong,
+   jadi drop-shadow dipasang di pembungkus popper milik Radix. */
+[data-radix-popper-content-wrapper]:has(> [data-hud-popover]) {
+  filter: drop-shadow(0 12px 28px color-mix(in oklab, var(--foreground) 16%, transparent));
 }
 
 /* Bar aksen kiri toast (ui/sonner.tsx). Warna diatur per tipe lewat --toast-accent.
@@ -407,5 +418,19 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
+  }
+}
+
+/* Reduced motion global (rules §7, §12): animasi & transisi berhenti / instan untuk user yang memintanya —
+   termasuk animate-in/out Radix (dialog, sheet, dropdown), animate-pulse/spin, dan komponen baru nanti,
+   tanpa perlu `motion-reduce:` di tiap elemen. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

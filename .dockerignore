@@ -1,0 +1,51 @@
+# Konteks build Docker. Tanpa file ini `COPY . .` ikut menyalin .env (rahasia) ke image,
+# dan output standalone Next.js menyalin .env ke folder yang dijalankan di runner.
+# Konfigurasi build datang dari build-arg, konfigurasi runtime dari `environment:` compose.
+
+# Env & rahasia
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Git & CI
+.git
+.gitignore
+.github
+
+# Dependensi & hasil build lokal (di-install/di-build ulang di dalam image)
+node_modules
+.next
+out
+dist
+build
+coverage
+.turbo
+.vercel
+.cache
+*.tsbuildinfo
+package-lock.json
+
+# Log, editor, OS, alat bantu lokal
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+*.swp
+*.swo
+.claude
+
+# Docker, deploy & dokumen (tidak dipakai saat build)
+Dockerfile
+.dockerignore
+deploy
+docker-compose*.yml
+.agents
+README.md
+ATTRIBUTIONS.md
+rules.md
